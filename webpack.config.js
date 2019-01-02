@@ -9,10 +9,10 @@ function resolve (dir) {
 module.exports = {
     mode: 'development',
     context: path.resolve(__dirname),
-    entry: 'src/main.js',
+    entry: './public/src/main.js',
     output: {
         path: path.resolve(__dirname, 'dist'),
-        publicPath: '/dist',
+        publicPath: '/public/dist',
         filename: 'build.js'
     },
     plugins: [
@@ -30,11 +30,11 @@ module.exports = {
             }, {
                 test: /\.vue$/,
                 loader: 'vue-loader',
-                options: {
-                    loaders: {
-                    }
+                // options: {
+                //     loaders: {
+                //     }
                     // other vue-loader options go here
-                }
+                // }
             },
             {
                 test: /\.js$/,
