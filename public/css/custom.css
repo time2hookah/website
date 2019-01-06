@@ -1,5 +1,5 @@
 #content {
-  margin-top: 100px;
+
 }
 
 #app {
@@ -7,8 +7,13 @@
   height: 300px;
 }
 
-/* Utilities */
+#wizard-html {
+    border: black solid 1px;
+    width: 100%;
+}
 
+
+/* Utilities */
 
 .center {
     margin: 0 auto;
@@ -50,9 +55,21 @@
     width: 90%;
 }
 
+.wp-100 {
+    width: 100%;
+}
+
 /* MARGIN */
 .m-0 {
     margin: 0px;
+}
+
+.m-1 {
+    margin: 5px;
+}
+
+.m-2 {
+    margin: 10px;
 }
 
 .mt-0 {

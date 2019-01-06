@@ -1,6 +1,8 @@
 var path = require('path');
 var webpack = require('webpack');
 var VueLoaderPlugin = require('vue-loader/lib/plugin');
+const compiler = require('vue-template-compiler')
+
 
 function resolve (dir) {
     return path.join(__dirname, dir);
@@ -9,32 +11,34 @@ function resolve (dir) {
 module.exports = {
     mode: 'development',
     context: path.resolve(__dirname),
-    entry: './public/src/main.js',
+    entry: './src/main.js',
     output: {
-        path: path.resolve(__dirname, 'dist'),
-        publicPath: '/public/dist',
+        path: path.resolve(__dirname, 'public', 'dist'),
+        publicPath: './public/dist',
         filename: 'build.js'
     },
-    plugins: [
-        new VueLoaderPlugin(),
-        new webpack.HotModuleReplacementPlugin()
-    ],
     module: {
-        rules: [
+        rules: [ 
+            {   
+                test: /\.html$/,
+                loader: 'vue-template-loader'
+            },
             {
                 test: /\.css$/,
                 use: [
                     'vue-style-loader',
                     'css-loader'
                 ],
-            }, {
+            }, 
+            {
                 test: /\.vue$/,
                 loader: 'vue-loader',
-                // options: {
-                //     loaders: {
-                //     }
+                options: {
+                    loaders: {
+                        compiler
+                    }
                     // other vue-loader options go here
-                // }
+                }
             },
             {
                 test: /\.js$/,
@@ -50,6 +54,10 @@ module.exports = {
             }
         ]
     },
+    plugins: [
+        new VueLoaderPlugin(),
+        new webpack.HotModuleReplacementPlugin()
+    ],
     resolve: {
         modules: [
             'node_modules',
@@ -65,7 +73,7 @@ module.exports = {
     },
     devServer: {
         // historyApiFallback: true,
-        index: './html/home/index.html',
+        index: './public/template/html/home/index.html',
         // noInfo: true,
         // overlay: true,
         hot: true,
@@ -73,7 +81,7 @@ module.exports = {
         // port: 3000
     },
     performance: {
-        hints: false
+
     },
     devtool: '#eval-source-map'
 };
