@@ -17,6 +17,7 @@ import './mixin';
 window.toastr = require('toastr');
 toastr.options.positionClass = 'toast-top-center';
 
+window.$ = require('jquery');
                     /* INITIALIZE */
 
 // Vue.use(axios);
@@ -26,6 +27,7 @@ Vue.use(VueToastr2);
 
 Vue.prototype.$http = axios;
 var $axios = axios;
+
 
                     /* OPTIONS */
 
