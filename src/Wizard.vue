@@ -178,6 +178,29 @@
         <p class='text-left p-1'>All flavors of the brands you choose will be available to choose from; you will be charged the higher cost for all.</p>
       </div>
 
+      <div class="row">
+        <div class="col-6">
+          <input type="radio" name="" id=""> 
+          <label for="">1/3 + 1/3 + 1/3</label>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-6">
+          <input type="radio" name="" id="combo3-fifths"> 
+          <label for="">1/5 + 2/5 + 2/5</label>
+        </div>
+        
+        <div class="col-6" v-if="whichFifth">
+          <label for="">Which one is 1/5?</label>
+          <select name="" id="">
+            <option value="" disabled>Select</option>
+
+            <option v-for='(f, i) in order.new.tobaccoFlavors.list' :key="i" :value="f.id">{{f.name}}</option>
+          </select>
+        </div>
+      </div>
+
     </div>
 
   </div>
@@ -488,6 +511,11 @@ export default {
 
       return res;
     },
+    whichFifth () {
+      let res = false;
+      if ($('#combo3-fifths').length > 0 && $('#combo3-fifths').checked() ) res = true;
+      return res;
+    }
   }, 
   created () {
     // this.$set(this, 'curStep', 0);
