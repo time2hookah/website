@@ -68,15 +68,19 @@ const dict = {
 VeeValidate.Validator.localize('en', dict);
 
                     /* START VUE */
-var vue = new Vue({
+var vm = new Vue({
   el: '#app',
   router,
   data: {
-    message: 'Hello Vue!'
+    message: 'Hello Vue!',
+    curStep: 0
+
   },
   mounted: function (x) {
     
   }, 
   render: h => h(App)
 });
+
+window.vmHamlet = vm;
 

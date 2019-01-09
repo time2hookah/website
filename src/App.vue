@@ -1,6 +1,5 @@
 <template>
   <div id="vueApp" class='container-fluid'>
-    <div class="row">
       
       <router-view id='left-content' name='left' class='col-sm-2'></router-view>
       <div id='main-content' class='col-sm'>
@@ -9,7 +8,6 @@
       </div>
       <router-view id='right-content' name='right' class='col-sm-2'></router-view>
 
-    </div>
   </div>
 </template>
 

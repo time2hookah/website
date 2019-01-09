@@ -15,6 +15,14 @@
 
 /* Utilities */
 
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.markOnHover:hover {
+    background-color: cadetblue;
+}
+
 .center {
     margin: 0 auto;
 }
