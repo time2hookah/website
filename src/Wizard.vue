@@ -518,6 +518,8 @@ export default {
       this.addTobaccoFlavorActive = false;
       this.removeTobaccoFlavorActive = false;
 
+      this.clearTiles();  // TODO: without clearing tiles, marking from previous wizard page appears on new page; coincides with selection spacially
+
 
       /* ONLY IF ON STEP: FLAVOR SELECT */
       /* DECIDE PROPPER NEXT STEP BASED ON NUMBER OF FLAVORS CHOSEN */
@@ -613,7 +615,7 @@ export default {
       this.order.new.fruit.name = this.fruits.list[i].name;
 
       this.clearTiles(); 
-      $(event.currentTarget).css('background-color', 'red');
+      $(event.target).css('background-color', 'red');
     },
 
     /* MIX TYPE */
