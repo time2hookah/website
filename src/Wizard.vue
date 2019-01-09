@@ -139,6 +139,13 @@
         <p class='text-left p-1'>All flavors of the brands you choose will be available to choose from; you will be charged the higher cost for all.</p>
       </div>
 
+
+      <div class="row">
+        <div class="col-12 text-center">
+          <h5>{{order.new.tobaccoFlavors.list[0].name}}</h5>
+          <input id="combo2-flavor1" class="combo2-range wp-75" type="range" name="combo2-flavor1" min="0" max="100" value="50" step="25" @change="combo2RangeChange()">
+        </div>
+      </div>
       <div class="wp-75 center">
     
         <div class="row">
@@ -153,14 +160,7 @@
 
       <div class="row">
         <div class="col-12 text-center">
-          <input class="combo2-range wp-75" type="range" name="combo2-flavor1" id="combo2-flavor1" min="0" max="100" value="50" step="25">
-          <h5>{{order.new.tobaccoFlavors.list[0].name}}</h5>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-12 text-center">
-          <input class="combo2-range wp-75" type="range" name="combo2-flavor2" id="combo2-flavor2" min="0" max="100" value="50" step="25" disabled @change="combo2RangeChange()">
+          <input id="combo2-flavor2" class="combo2-range wp-75" type="range" name="combo2-flavor2" min="0" max="100" value="50" step="25" disabled >
           <h5>{{order.new.tobaccoFlavors.list[1].name}}</h5>
         </div>
       </div>
@@ -350,7 +350,7 @@ export default {
             confirmed: false,
             numberOfFlavors: '',
             maxPrice: '',
-            mixAmounts: ''
+            mixCode: ''
           }
         },
         cart: [],
@@ -389,7 +389,7 @@ export default {
             confirmed: false,
             numberOfFlavors: '',
             maxPrice: '',
-            mixAmounts: ''
+            mixCode: ''
           }
         }
       },
@@ -499,6 +499,7 @@ export default {
     /* COMMON */
     next () {
       let cur = this.stepList[this.$root.curStep];
+      if (cur == 'combo2' || cur == 'combo3') cur = 'comboOptions';
       
       /* CONFIRM or REJECT */
       if (cur != 'review1') {
@@ -520,10 +521,19 @@ export default {
 
       this.clearTiles();  // TODO: without clearing tiles, marking from previous wizard page appears on new page; coincides with selection spacially
 
-
-      /* ONLY IF ON STEP: FLAVOR SELECT */
-      /* DECIDE PROPPER NEXT STEP BASED ON NUMBER OF FLAVORS CHOSEN */
+      
+      /* ONLY IF ON STEP 4: FLAVOR SELECT */
       if (this.$root.curStep == 4) {
+        /* set the price that will be paid for this mix */
+        let max = 0;
+
+        this.order.new.tobaccoFlavors.list.forEach(function(el) {
+          if (+max < +el.brandPrice) max = el.brandPrice;
+        });
+
+        this.order.new.comboOptions.maxPrice = max;
+
+        /* decide propper next step based on number of flavors chosen*/
         this.order.new.comboOptions.numberOfFlavors = this.order.new.tobaccoFlavors.list.length;
 
         if (this.order.new.comboOptions.numberOfFlavors == 1) {
@@ -615,7 +625,7 @@ export default {
       this.order.new.fruit.name = this.fruits.list[i].name;
 
       this.clearTiles(); 
-      $(event.target).css('background-color', 'red');
+      $(event.currentTarget).css('background-color', 'red');
     },
 
     /* MIX TYPE */
@@ -662,6 +672,7 @@ export default {
 
         brand.id = this.tobaccoBrands.list[i].id;
         brand.name = this.tobaccoBrands.list[i].name;
+        brand.price = this.tobaccoBrands.list[i].price;
 
         this.order.new.tobaccoBrands.list.push(brand);
 
@@ -736,6 +747,7 @@ export default {
         flavor.name = f.name;
         flavor.brandID = b.id;
         flavor.brandName = b.name;
+        flavor.brandPrice = b.price;
 
 
         this.order.new.tobaccoFlavors.list.push(flavor);
@@ -766,7 +778,24 @@ export default {
 
     /* COMBO2 */
     combo2RangeChange() {
+      let f1 = event.target.value;
+      let reverse = 100 - f1;
+      let id = f1/25;
 
+      /* 
+      id will represent structure/mix of hookah flavors
+      0 ==> 0   of 1st : 100 of 2nd
+      1 ==> 25  of 1st : 75  of 2nd
+      2 ==> 50  of 1st : 50  of 2nd
+      3 ==> 75  of 1st : 25  of 2nd
+      4 ==> 100 of 1st : 0   of 2nd
+      */
+
+      $('#combo2-flavor2').val(reverse);
+
+      this.order.new.comboOptions.mixCode = id;
+
+      this.order.new.comboOptions.picked = true;
     },
 
     /* REVIEW1 */
