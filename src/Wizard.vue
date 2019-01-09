@@ -519,6 +519,26 @@ export default {
   }, 
   created () {
     // this.$set(this, 'curStep', 0);
+    this.$http({
+      method: 'get',
+      url: 'http://localhost:3001/api/tobaccobrands/',
+      headers: {
+        'x-auth-token': 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YzE4MmI1NjdhNzIwYWQ2MGU1ZWIwODIiLCJlbWFpbCI6ImhhbWxldHRhbWF6QGdtYWlsLmNvbSIsImlzQWRtaW4iOnRydWUsImlhdCI6MTU0NzA3MzM0NywiZXhwIjoxNTQ3MDc2OTQ3LCJhdWQiOiJodHRwOi8vdGltZTJob29rYWguY29tIiwiaXNzIjoidGltZTJob29rYWggbGxjIiwic3ViIjoiaW5mb0B0aW1lMmhvb2thaC5jb20ifQ.IpuikXJXzItrc7Wp8qEY0gi8YHoykf2BzEzeC7RkMDGpOpKt81Uaaj6ryNrg66lJLht08MAk-lcs35y8FdVsTQ'
+      }
+      })
+    .then(function (response) {
+      // handle success
+      console.log(response);
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+    })
+    .then(function () {
+      // always executed
+    });
+
+
   },
   mounted: function () {
     // $('#wizard-selection-fruits').show();
