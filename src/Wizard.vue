@@ -75,22 +75,22 @@
       </div>
 
       <ul class='tile-list row p-0'>
-        <li v-for="(el, i) in tobaccoBrands.list" :key="i" class='col-6' >
-          <div class='tile p-1' @click="selectTobaccoBrand(i)">
+        <li v-for="(el, i) in tobaccoBrands.list" :key="i" class='col-6' data-selected='false'>
+          <div class='tile p-1' @click="selectTobaccoBrand(el)">
             <h5 class='text-center'>{{el.name}}</h5>
             <span>${{el.price}}</span>
           </div>
         </li>
       </ul>
 
-      <div class="row">
+      <!-- <div class="row">
         <div class="col-6 text-center">
           <button class='btn-secondary center wp-100' @click="removeTobaccoBrand()">Remove</button>
         </div>
         <div class="col-6 text-center">
           <button class='btn- primary wp-100' @click="addTobaccoBrand()">Add</button>
         </div>
-      </div>
+      </div> -->
     </div>
 
   </div>
@@ -108,22 +108,13 @@
 
           <h5 class='text-center col-12'>{{b.name}} - ${{b.price}}</h5>
 
-          <li v-for="(f, i) in b.flavors.list" :key="i" class='col-6'>
+          <li v-for="(f, i) in b.flavors.list" :key="i" class='col-6' data-selected='false'>
             <div class='tile p-1' @click="selectTobaccoFlavor(b, f)">
               <h5 class='text-center'>{{f.name}}</h5>
             </div>
           </li>
 
       </ul>
-
-      <div class="row">
-        <div class="col-6 text-center">
-          <button class='btn-secondary center wp-100' @click="removeTobaccoFlavor()">Remove</button>
-        </div>
-        <div class="col-6 text-center">
-          <button class='btn- primary wp-100' @click="addTobaccoFlavor()">Add</button>
-        </div>
-      </div>
 
     </div>
 
@@ -136,31 +127,31 @@
 
       <div class="text-center row">
         <h3 class='step-title bg-secondary col-12'>2 Flavor Combo</h3>
-        <p class='text-left p-1'>All flavors of the brands you choose will be available to choose from; you will be charged the higher cost for all.</p>
+        <p class='text-left p-1'>Please choose the proportion of each flavor you'd like.</p>
       </div>
 
 
       <div class="row">
         <div class="col-12 text-center">
           <h5>{{order.new.tobaccoFlavors.list[0].name}}</h5>
-          <input id="combo2-flavor1" class="combo2-range wp-75" type="range" name="combo2-flavor1" min="0" max="100" value="50" step="25" @change="combo2RangeChange()">
+          <input id="combo2-flavor1" class="combo2-range wp-75" type="range" name="combo2-flavor1" min="25" max="75" value='50' step="25" @change="combo2RangeChange()">
         </div>
       </div>
       <div class="wp-75 center">
     
         <div class="row">
-          <span class="col-2 text-left">0</span>
-          <span class="col-2 text-center">25</span>
-          <span class="col-4 text-center">50</span>
-          <span class="col-2 text-center">75</span>
-          <span class="col-2 text-right">100</span>
+          <span class="col-2 text-left">25</span>
+          <span class="col-2 text-center"></span>
+          <span class="col-4 text-center">50%</span>
+          <span class="col-2 text-center"></span>
+          <span class="col-2 text-right">75</span>
         </div>
 
       </div>
 
       <div class="row">
         <div class="col-12 text-center">
-          <input id="combo2-flavor2" class="combo2-range wp-75" type="range" name="combo2-flavor2" min="0" max="100" value="50" step="25" disabled >
+          <input id="combo2-flavor2" class="combo2-range wp-75" type="range" name="combo2-flavor2" min="25" max="75" value="50" step="25" disabled >
           <h5>{{order.new.tobaccoFlavors.list[1].name}}</h5>
         </div>
       </div>
@@ -180,20 +171,20 @@
 
       <div class="row">
         <div class="col-6">
-          <input type="radio" name="" id=""> 
+          <input type="radio" name="combo3" id="combo3-thirds" value='thirds' v-model="order.new.comboOptions.combo3Split"> 
           <label for="">1/3 + 1/3 + 1/3</label>
         </div>
       </div>
       
       <div class="row">
         <div class="col-6">
-          <input type="radio" name="" id="combo3-fifths"> 
+          <input type="radio" name="combo3" id="combo3-fifths" value='fifths' v-model="order.new.comboOptions.combo3Split"> 
           <label for="">1/5 + 2/5 + 2/5</label>
         </div>
         
-        <div class="col-6" v-if="whichFifth">
+        <div class="col-6" v-if="order.new.comboOptions.combo3Split=='fifths'">
           <label for="">Which one is 1/5?</label>
-          <select name="" id="">
+          <select name="" id="" v-model="order.new.comboOptions.whichIsFifth">
             <option value="" disabled>Select</option>
 
             <option v-for='(f, i) in order.new.tobaccoFlavors.list' :key="i" :value="f.id">{{f.name}}</option>
@@ -331,12 +322,6 @@ export default {
       nextStep: 1,
       // curStep: 0,
 
-      addTobaccoBrandActive: false,
-      removeTobaccoBrandActive: false,
-      
-      addTobaccoFlavorActive: false,
-      removeTobaccoFlavorActive: false,
-
       order: {
         new: {
           quantity: 1,
@@ -369,11 +354,12 @@ export default {
             list: []
           },
           comboOptions: {
-            picked: false,
             confirmed: false,
             numberOfFlavors: '',
             maxPrice: '',
-            mixCode: ''
+            mixCode: '',
+            combo3Split: '',
+            whichIsFifth: ''
           }
         },
         cart: [],
@@ -408,11 +394,12 @@ export default {
             list: []
           },
           comboOptions: {
-            picked: false,
             confirmed: false,
             numberOfFlavors: '',
             maxPrice: '',
-            mixCode: ''
+            mixCode: '',
+            combo3Split: '',
+            whichIsFifth: ''
           }
         }
       },
@@ -506,29 +493,26 @@ export default {
     orderedTobaccoBrands () {
       let self = this;
       let res = this.tobaccoBrands.list.filter(function(el, i) {
-        return self.brandIsOrdered(el)
+        return self.brandIsOrdered(el);
       });
 
-      return res;
-    },
-    whichFifth () {
-      let res = false;
-      if ($('#combo3-fifths').length > 0 && $('#combo3-fifths').checked() ) res = true;
       return res;
     }
   }, 
   created () {
+    let self = this;
     // this.$set(this, 'curStep', 0);
+    
+    // Get fruits
     this.$http({
       method: 'get',
-      url: 'http://localhost:3001/api/tobaccobrands/',
-      headers: {
-        'x-auth-token': 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YzE4MmI1NjdhNzIwYWQ2MGU1ZWIwODIiLCJlbWFpbCI6ImhhbWxldHRhbWF6QGdtYWlsLmNvbSIsImlzQWRtaW4iOnRydWUsImlhdCI6MTU0NzA3MzM0NywiZXhwIjoxNTQ3MDc2OTQ3LCJhdWQiOiJodHRwOi8vdGltZTJob29rYWguY29tIiwiaXNzIjoidGltZTJob29rYWggbGxjIiwic3ViIjoiaW5mb0B0aW1lMmhvb2thaC5jb20ifQ.IpuikXJXzItrc7Wp8qEY0gi8YHoykf2BzEzeC7RkMDGpOpKt81Uaaj6ryNrg66lJLht08MAk-lcs35y8FdVsTQ'
-      }
+      url: 'http://localhost:3001/api/hookahHeadTypes/',
       })
     .then(function (response) {
       // handle success
-      console.log(response);
+      console.log('res: ', response);
+      debugger
+      self.fruits.list = response.data;
     })
     .catch(function (error) {
       // handle error
@@ -539,9 +523,50 @@ export default {
     });
 
 
+
+    /* // Get houseMixes
+    this.$http({
+      method: 'get',
+      url: 'http://localhost:3001/api/houseMixes/',
+      })
+    .then(function (response) {
+      // handle success
+      console.log('res: ', response);
+      debugger
+      self.houseMixes.list = response.data;
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+    })
+    .then(function () {
+      // always executed
+    });
+
+
+    // Get tobacco brands & their available flavors
+    this.$http({
+      method: 'get',
+      url: 'http://localhost:3001/api/tobaccobrands/',
+      })
+    .then(function (response) {
+      // handle success
+      console.log('res: ', response);
+      debugger
+      self.tobaccoBrands.list = response.data;
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+    })
+    .then(function () {
+      // always executed
+    }); */
+
+
   },
   mounted: function () {
-    // $('#wizard-selection-fruits').show();
+
   },
   methods: {
     /* COMMON */
@@ -549,23 +574,15 @@ export default {
       let cur = this.stepList[this.$root.curStep];
       if (cur == 'combo2' || cur == 'combo3') cur = 'comboOptions';
       
-      /* CONFIRM or REJECT */
-      if (cur != 'review1') {
-        if (this.order.new[cur].picked == false ) {
+      /* CONFIRM or REJECT based on whether selection is made */
+      if (cur != 'review1' ) {
+        if (this.order.new[cur].picked == false || cur == 'combo2') {   // combo2 gets CHANGED not PICKED- so this check is irrelevant
           alert('Please pick an option to continue');
-        return;
         } else {
           this.order.new[cur].confirmed = true;
         }
       }
 
-
-      /* DEACTIVATE ALL ADD/REMOVE ACTIVATORS */
-      this.addTobaccoBrandActive = false;
-      this.removeTobaccoBrandActive = false;
-      
-      this.addTobaccoFlavorActive = false;
-      this.removeTobaccoFlavorActive = false;
 
       this.clearTiles();  // TODO: without clearing tiles, marking from previous wizard page appears on new page; coincides with selection spacially
 
@@ -651,10 +668,7 @@ export default {
         // this.$set(this, 'curStep', 8);
         this.$root.curStep = 8;
       }
-
-      // this.$nextTick();
-
-      
+     
 
     },
     back() {
@@ -705,46 +719,37 @@ export default {
     },
 
     /* TOBACCO BRANDS */
-    addTobaccoBrand () {
-      this.addTobaccoBrandActive = true;
-    },
-    removeTobaccoBrand () {
-      this.removeTobaccoBrandActive = true;
-    },
-    selectTobaccoBrand (i) {
-      if (this.addTobaccoBrandActive) {
-        /* IF ADDING IS ACTIVE */
+    selectTobaccoBrand (b) {
+      if ($(event.currentTarget).parent().data('selected') == false) {
+        /* IF OPTION IS NOT SELECTED */
+        $(event.currentTarget).parent().data('selected', true);
+
         let brand = {};
 
         this.order.new.tobaccoBrands.picked = true;
 
-        brand.id = this.tobaccoBrands.list[i].id;
-        brand.name = this.tobaccoBrands.list[i].name;
-        brand.price = this.tobaccoBrands.list[i].price;
+        brand.id = b.id;
+        brand.name = b.name;
+        brand.price = b.price;
 
         this.order.new.tobaccoBrands.list.push(brand);
 
         $(event.currentTarget).css('background-color', 'red');
 
-        this.addTobaccoBrandActive = false;
-      } else if (this.removeTobaccoBrandActive) {
-        /* IF REMOVAL IS ACTIVE */
-        
-        let toRemove;
-        this.order.new.tobaccoBrands.list.forEach(function(tobacco, index) {
-          if (tobacco.id == i) {
-            toRemove = index;
-          }
-        });
-        this.order.new.tobaccoBrands.list.splice(toRemove, 1);
-
+      } else {
+        /* IF OPTION IS ALREADY SLECTED */
+        $(event.currentTarget).parent().data('selected', false);
         $(event.currentTarget).css('background-color', '');
+      
+        this.order.new.tobaccoBrands.list = this.order.new.tobaccoBrands.list.filter(function(el, i) {
+          return b.id != el.id;
+        });
+
 
         if (this.order.new.tobaccoBrands.list.length == 0) {
           this.order.new.tobaccoBrands.picked = false;
         }
         
-        this.removeTobaccoBrandActive = false;
       }
     },
     brandIsOrdered(b) {
@@ -760,67 +765,56 @@ export default {
     },
 
     /* TOBACCO FLAVORS */
-    addTobaccoFlavor () {
-      /* CHECK FOR MAX 3 FLAVORS */
-      if (this.order.new.tobaccoFlavors.list.length < 3) {
-        this.addTobaccoFlavorActive = true;
-      } else {
-        alert('You can only add 3.');
-        return;
-      }
-
-      /* CHECK WHAT NEXT STEP TO DO; 2 OR 3 FLAVOR COMBO PAGE NEXT */
-      /* if (this.order.new.tobaccoFlavors.list.length == 1) {
-        this.nextStep = ;
-      } else if (this.order.new.tobaccoFlavors.list.length == 2) {
-        this.nextStep = ;
-
-      } else  if (this.order.new.tobaccoFlavors.list.length == 3) {
-        this.nextStep = ;
-
-      } */
-
-    },
-    removeTobaccoFlavor () {
-      this.removeTobaccoFlavorActive = true;
-    },
     selectTobaccoFlavor (b, f) {
-      if (this.addTobaccoFlavorActive) {
-        /* IF ADDING IS ACTIVE */
-        let flavor = {};
-
-        this.order.new.tobaccoFlavors.picked = true;
-
-        flavor.id = f.id;
-        flavor.name = f.name;
-        flavor.brandID = b.id;
-        flavor.brandName = b.name;
-        flavor.brandPrice = b.price;
-
-
-        this.order.new.tobaccoFlavors.list.push(flavor);
-
-        $(event.currentTarget).css('background-color', 'red');
-
-        this.addTobaccoFlavorActive = false;
-      } else if (this.removeTobaccoFlavorActive) {
-        /* IF REMOVAL IS ACTIVE */
+      /* IF OPTION IS NOT SELECTED */
+      if ($(event.currentTarget).parent().data('selected') == false) {
         
-        let toRemove;
+        /* IF THERE ARE FEWER THAN 3 SELECTIONS */
+        if (this.order.new.tobaccoFlavors.list.length < 3) {
+          $(event.currentTarget).parent().data('selected', true);
+
+          let flavor = {};
+
+          this.order.new.tobaccoFlavors.picked = true;
+
+          flavor.id = f.id;
+          flavor.name = f.name;
+          flavor.brandID = b.id;
+          flavor.brandName = b.name;
+          flavor.brandPrice = b.price;
+
+
+          this.order.new.tobaccoFlavors.list.push(flavor);
+
+          $(event.currentTarget).css('background-color', 'red');
+
+        } else {
+          alert('You can only add 3.');
+          return;
+        }
+  
+      } else {
+        /* IF OPTION IS ALREADY ACTIVE */
+        $(event.currentTarget).parent().data('selected', false);
+        $(event.currentTarget).css('background-color', '');
+        
+        /* let toRemove;
         this.order.new.tobaccoFlavors.list.forEach(function(flavor, index) {
-          if (flavor.id == f) {
+          if (flavor.id == f.id) {
             toRemove = index;
           }
         });
-        this.order.new.tobaccoFlavors.list.splice(toRemove, 1);
+        this.order.new.tobaccoFlavors.list.splice(toRemove, 1); */
 
-        $(event.currentTarget).css('background-color', '');
+
+        this.order.new.tobaccoFlavors.list = this.order.new.tobaccoFlavors.list.filter(function(el, i) {
+          return f.id != el.id;
+        });
 
         if (this.order.new.tobaccoFlavors.list.length == 0) {
           this.order.new.tobaccoFlavors.picked = false;
         }
-        
-        this.removeTobaccoFlavorActive = false;
+      
       }
     },
 
@@ -843,7 +837,6 @@ export default {
 
       this.order.new.comboOptions.mixCode = id;
 
-      this.order.new.comboOptions.picked = true;
     },
 
     /* REVIEW1 */
