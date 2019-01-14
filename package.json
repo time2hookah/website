@@ -1,12 +1,53 @@
 {
-  "name": "template",
+  "name": "time2hookah",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --config webpack.config.js",
+    "hot": "webpack-dev-server --progress --color --hot",
+    "watch": "webpack --progress --watch --hot",
+    "wp": "webpack-dev-server"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/time2hookah/website.git"
+  },
+  "bugs": {
+    "url": "https://github.com/time2hookah/website/issues"
+  },
+  "homepage": "https://github.com/time2hookah/website#readme",
+  "description": "",
+  "dependencies": {
+    "axios": "0.18.0",
+    "jquery": "3.3.1",
+    "mongodb": "3.1.10",
+    "toastr": "2.1.4",
+    "total.js": "3.1.0",
+    "vee-validate": "2.1.4",
+    "vue": "2.5.21",
+    "vue-router": "3.0.1",
+    "vue-the-mask": "0.11.1",
+    "vue-toastr-2": "0.0.10"
+  },
+  "devDependencies": {
+    "@babel/core": "7.2.2",
+    "@babel/preset-env": "7.2.3",
+    "babel-core": "6.26.3",
+    "babel-loader": "8.0.5",
+    "css-loader": "2.1.0",
+    "vue-loader": "15.5.0",
+    "vue-template-compiler": "2.5.21",
+    "webpack-cli": "3.2.0",
+    "webpack-dev-server": "3.1.14",
+    "webpack": "4.28.3",
+    "eslint": "4.0.0",
+    "eslint-plugin-vue": "4.7.1"
+  },
+  "peerDependencies": {
+    "vue-template-compiler": "2.5.21"
+  }
 }
