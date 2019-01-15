@@ -1,0 +1,1 @@
+import*as $ from"jquery";$(document).ready(function(e){alert(5)})

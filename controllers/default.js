@@ -11,6 +11,8 @@ exports.install = function() {
 
 	F.route('/home/', home);
 	F.route('/wizard/', wizard);
+	F.route('/aboutUs/', aboutUs);
+	F.route('/signup/', signup);
 };
 
 function home (req, res) {
@@ -36,4 +38,14 @@ function test(req, res) {
 	
 	this.layout('');
 	this.view('static/signup');
+}
+
+function aboutUs (req, res) {
+	// this.layout('');
+	this.view('aboutUs');
+}
+
+function signup (req, res) {
+	// this.layout('');
+	this.view('signup');
 }
