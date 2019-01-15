@@ -32,7 +32,7 @@ var $axios = axios;
                     /* OPTIONS */
 
 /* AXIOS INTERCEPTROS */
-axios.interceptors.request.use(function (config) {
+/* axios.interceptors.request.use(function (config) {
     // Do something before request is sent
     // config.headers.common['Access-Control-Request-Headers'] = 'x-requested-with';
     // config.headers['x-auth-token'] =  'ciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YzE4MmI1NjdhNzIwYWQ2MGU1ZWIwODIiLCJlbWFpbCI6ImhhbWxldHRhbWF6QGdtYWlsLmNvbSIsImlzQWRtaW4iOnRydWUsImlhdCI6MTU0NzA3MzM0NywiZXhwIjoxNTQ3MDc2OTQ3LCJhdWQiOiJodHRwOi8vdGltZTJob29rYWguY29tIiwiaXNzIjoidGltZTJob29rYWggbGxjIiwic3ViIjoiaW5mb0B0aW1lMmhvb2thaC5jb20ifQ.IpuikXJXzItrc7Wp8qEY0gi8YHoykf2BzEzeC7RkMDGpOpKt81Uaaj6ryNrg66lJLht08MAk-lcs35y8FdVsTQ'
@@ -41,7 +41,7 @@ axios.interceptors.request.use(function (config) {
 }, function (error) {
     // Do something with request error
     return Promise.reject(error);
-});
+}); */
 
 /* axios.interceptors.response.use(function (response) {
     // Do something with response data

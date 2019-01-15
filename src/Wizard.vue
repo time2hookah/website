@@ -1,21 +1,24 @@
 <template>
 <div id='wizard'>
 
-  <!-- FRUIT SELECTION -->
-  <div id="wizard-selection-fruits" class='wizard-selection row' v-if="this.$root.curStep==0">
+  <!-- HOOKAH HEAD TYPE SELECTION -->
+  <div id="wizard-selection-hookahHeadTypes" class='wizard-selection row' v-if="this.$root.curStep==0">
     
     <div class="col-12">
 
     
       <div class="text-center row">
-        <h3 class='step-title bg-secondary col-12'>Please select the fruit.</h3>
+        <h3 class='step-title bg-secondary col-12'>Please select the hookah head type.</h3>
       </div>
 
       <ul class='tile-list row p-0'>
-        <li v-for="(el, i) in fruits.list" :key="i" class='col-6' >
-          <div class='tile p-1' @click="selectFruit(i)">
+        <li v-for="(el, i) in hookahHeadTypes.list" :key="i" class='col-6' >
+          <div class='tile p-1' @click="selectHookahHeadYpe(i)">
             <h5 class='text-center'>{{el.name}}</h5>
-            <span>${{el.price}}</span>
+            <div class="row">
+              <div class="col-2"> ${{el.price}} </div>
+              <div class="col-10"> {{el.description}} </div>
+            </div>
           </div>
         </li>
       </ul>
@@ -307,7 +310,7 @@ export default {
       /* 
       WIZARD SELECTION PAGES
       -----------------------
-      0 - fruit
+      0 - hookahHeadType
       1 - mixType
       2 - houseMix
       3 - tobaccoBrands
@@ -318,14 +321,14 @@ export default {
       8 - reviewTotal
       */
       myMessage: "Wizard's Message",
-      stepList: ['fruit', 'mixType', 'houseMix', 'tobaccoBrands', 'tobaccoFlavors', 'combo2', 'combo3', 'review1', 'reviewTotal'],
+      stepList: ['hookahHeadType', 'mixType', 'houseMix', 'tobaccoBrands', 'tobaccoFlavors', 'combo2', 'combo3', 'review1', 'reviewTotal'],
       nextStep: 1,
       // curStep: 0,
 
       order: {
         new: {
           quantity: 1,
-          fruit: {
+          hookahHeadType: {
             picked: false,
             confirmed: false,
             name: '',
@@ -365,7 +368,7 @@ export default {
         cart: [],
         newTemp: {
           quantity: 1,
-          fruit: {
+          hookahHeadType: {
             picked: false,
             confirmed: false,
             name: '',
@@ -404,7 +407,7 @@ export default {
         }
       },
 
-      fruits: {
+      hookahHeadTypes: {
         list: [
           {id: '1', name: 'apple', price: '5'},
           {id: '2', name: 'orange', price: '7'},
@@ -415,8 +418,8 @@ export default {
       }, 
       mixTypes: {
         list: [
-          {id: '1', name: 'custom', details: 'Create your own mix of 2 or 3 flavors.'},
-          {id: '2', name: 'house', details: 'Pick from a selection of house Mixes'}
+          {id: '1', name: 'Custom', details: 'Create your own mix of 2 or 3 flavors.'},
+          {id: '2', name: 'House', details: 'Pick from a selection of house Mixes'}
         ]
       },
       houseMixes: {
@@ -501,18 +504,17 @@ export default {
   }, 
   created () {
     let self = this;
-    // this.$set(this, 'curStep', 0);
     
-    // Get fruits
+    // Get hookahHeadTypes
     this.$http({
       method: 'get',
       url: 'http://localhost:3001/api/hookahHeadTypes/',
       })
     .then(function (response) {
       // handle success
-      console.log('res: ', response);
-      debugger
-      self.fruits.list = response.data;
+      console.log('hookahHeadTypes: ', response);
+
+      self.hookahHeadTypes.list = response.data;
     })
     .catch(function (error) {
       // handle error
@@ -618,7 +620,7 @@ export default {
       /* DISPLAY APPROPRIATE SELECTION */
       /* if next step isn't decided here, it happens dynamically either when next() or add() run */
       if (this.nextStep == 0) {
-        // $('#wizard-selection-fruits').show();
+        // $('#wizard-selection-hookahHeadTypes').show();
         // this.curStep = 0;
         // this.$set(this, 'curStep', 0);
         this.$root.curStep = 0;
@@ -680,11 +682,11 @@ export default {
       });
     },
 
-    /* FRUIT */
-    selectFruit (i) {
-      this.order.new.fruit.picked = true;
-      this.order.new.fruit.id = this.fruits.list[i].id;
-      this.order.new.fruit.name = this.fruits.list[i].name;
+    /* HookahHeadType */
+    selectHookahHeadYpe (i) {
+      this.order.new.hookahHeadType.picked = true;
+      this.order.new.hookahHeadType.id = this.hookahHeadTypes.list[i].id;
+      this.order.new.hookahHeadType.name = this.hookahHeadTypes.list[i].name;
 
       this.clearTiles(); 
       $(event.currentTarget).css('background-color', 'red');
