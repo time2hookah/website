@@ -1,0 +1,16 @@
+name                            : Total.js
+author                          : Your company name
+version                         : 1.0.0
+secret                          : secret-key-for-web
+
+static_url                      : '/public/template/html'
+
+// allow_compile_script            : false
+
+// Mail settings
+mail_smtp                       : smtp.yourwebsite.com
+mail_smtp_options               : {"secure":false,"port":25,"user":"","password":"","timeout":10000}
+mail_address_from               : your@yourwebsite.com
+mail_address_reply              : your@yourwebsite.com
+mail_address_bcc                :
+mail.contact                    : petersirka@gmail.com
