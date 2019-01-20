@@ -75,7 +75,8 @@ var vm = new Vue({
   router,
   data: {
     message: 'Hello Vue!',
-    curStep: 0
+    curStep: 0,
+    stepSequence: [0]
 
   },
   mounted: function (x) {
