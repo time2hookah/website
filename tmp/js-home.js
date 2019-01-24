@@ -1,1 +1,1 @@
-import*as $ from"jquery";$(document).ready(function(e){alert(5)})
+$(document).ready(function(e){alert(5)})
