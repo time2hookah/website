@@ -68,7 +68,10 @@
 
       <ul class='tile-list row p-0'>
         <li v-for="(el, i) in houseMixes.list" :key="i" class='col-6' >
-          <div class='tile p-1' @click="selectHouseMix(i)">
+          <div class='tile p-1' 
+          @click="selectHouseMix(i)"
+          :class="{selected : (el.id == order.new.houseMix.id) }"
+          >
             <h5 class='text-center'>{{el.name}}</h5>
             <span>${{el.price}}</span>
           </div>
@@ -88,9 +91,14 @@
         <p class='text-left p-1'>All flavors of the brands you choose will be available to choose from in the next slide. You will be charged the higher cost.</p>
       </div>
 
+          {{order.new.tobaccoBrands.list}}
       <ul class='tile-list row p-0'>
-        <li v-for="(el, i) in tobaccoBrands.list" :key="i" class='col-6' data-selected='false'>
-          <div class='tile p-1' @click="selectTobaccoBrand(el)">
+        <li v-for="(el, i) in tobaccoBrands.list" :key="i" class='col-6' 
+        :data-selected='brandIsOrdered(el, true)'>
+          <div class='tile p-1' 
+          @click="selectTobaccoBrand(el)"
+          :class="{selected : brandIsOrdered(el) }"
+          >
             <h5 class='text-center'>{{el.name}}</h5>
             <span>${{el.price}}</span>
           </div>
@@ -592,12 +600,12 @@ export default {
   methods: {
     /* COMMON */
     next () {
-      /* CHECK IF THERE IS ALREADY A DEFINED PATH FOR THE NEXT SLIDE, GIVEN FROM A PREVIOUS SELECTION */
-      let curStep_i = this.$root.stepSequence.indexOf(this.$root.curStep);
-      if (curStep_i != this.$root.stepSequence.length - 1 ) {
-        this.$root.curStep = this.$root.stepSequence[curStep_i + 1];
-        return;
-      }
+      // /* CHECK IF THERE IS ALREADY A DEFINED PATH FOR THE NEXT SLIDE, GIVEN FROM A PREVIOUS SELECTION */
+      // let curStep_i = this.$root.stepSequence.indexOf(this.$root.curStep);
+      // if (curStep_i != this.$root.stepSequence.length - 1 ) {
+      //   this.$root.curStep = this.$root.stepSequence[curStep_i + 1];
+      //   return;
+      // }
 
       /* INITIALIZATION */
       let cur = this.stepList[this.$root.curStep];
@@ -648,6 +656,34 @@ export default {
 
 
       /* DISPLAY APPROPRIATE SELECTION */
+      
+      /* CHECK IF THERE IS ALREADY A DEFINED PATH FOR THE NEXT SLIDE, GIVEN FROM A PREVIOUS SELECTION */
+      let curStep_i = this.$root.stepSequence.indexOf(this.$root.curStep);
+      if (curStep_i != this.$root.stepSequence.length - 1) {
+        if (this.nextStep == this.$root.stepSequence[curStep_i + 1]) {
+          this.$root.curStep = this.$root.stepSequence[curStep_i + 1];
+
+          if (this.nextStep == 0) {
+            this.nextStep = 1;
+          } else if (this.nextStep == 1) {
+          } else if (this.nextStep == 2) {
+            this.nextStep = 7;
+          } else if (this.nextStep == 3) {
+            this.nextStep = 4;
+          } else if (this.nextStep == 4) {
+          } else if (this.nextStep == 5) {
+            this.nextStep = 7;
+          } else if (this.nextStep == 6) {
+            this.nextStep = 7;
+          } else if (this.nextStep == 7) {
+          }  else if (this.nextStep == 8) {
+          }
+          return;
+        } else {
+          this.$root.stepSequence.splice(curStep_i + 1);
+        }
+      }
+      
       /* if next step isn't decided here, it happens dynamically either when next() or add() run */
       if (this.nextStep == 0) {
         this.$root.curStep = 0;
@@ -684,8 +720,8 @@ export default {
       let self = this;
       sessionStorage.setItem('order', JSON.stringify(self.order));
       sessionStorage.setItem('stepSequence', JSON.stringify(self.$root.stepSequence));
-      sessionStorage.setItem('curStep', self.nextStep);
-      sessionStorage.setItem('nextStep', self.$root.curStep);
+      sessionStorage.setItem('curStep', self.$root.curStep);
+      sessionStorage.setItem('nextStep', self.nextStep);
     },
     back() {
       this.editStepSequence('back');
@@ -693,12 +729,12 @@ export default {
     editStepSequence(option) {
       let root = this.$root;
 
-      if (option == 'next') {
+      if (option == 'next' && root.curStep != root.stepSequence[root.stepSequence.length - 1]) {
         root.stepSequence.push(root.curStep);
       } else if (option == 'back') {
         this.nextStep = root.curStep;
 
-        let curStep_i = root.stepSequence.indexOf(root.curStep - 1);
+        let curStep_i = root.stepSequence.indexOf(root.curStep) - 1;
         root.curStep = root.stepSequence[curStep_i];
       }
     },
@@ -785,7 +821,7 @@ export default {
         
       }
     },
-    brandIsOrdered(b) {
+    brandIsOrdered(b, opt) {
       let test = false;
 
       this.order.new.tobaccoBrands.list.forEach(function(el) {
@@ -794,7 +830,11 @@ export default {
         }
       });
 
-      return test;
+      if (opt) {
+        return test.toString();
+      } else {
+        return test;
+      }
     },
 
     /* TOBACCO FLAVORS */
@@ -899,6 +939,13 @@ export default {
     }
   }
 }
+
+
+/* CUSTOM JS */
+
+/* $('.tile').on('clikc', function() {
+  alert(1);
+}); */
 </script>
 
 <style>
