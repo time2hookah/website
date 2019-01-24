@@ -29,3 +29,5 @@ npm-debug.log
 */build.js⼊敳瑴湩獧砮汭
 
 # custom
+.vscode/
+tmp/

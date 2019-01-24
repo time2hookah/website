@@ -19,6 +19,9 @@ export default {
     return {
       title: 'APP'
     }
+  },
+  created () {
+    
   }
 }
 </script>

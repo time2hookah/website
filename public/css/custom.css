@@ -15,6 +15,10 @@
 
 /* Utilities */
 
+.selected {
+    background-color: #a94442;
+}
+
 .cursor-pointer {
     cursor: pointer;
 }

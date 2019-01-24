@@ -1,21 +1,32 @@
 <template>
 <div id='wizard'>
 
-  <!-- FRUIT SELECTION -->
-  <div id="wizard-selection-fruits" class='wizard-selection row' v-if="this.$root.curStep==0">
+  <!-- HOOKAH HEAD TYPE SELECTION -->
+  <div id="wizard-selection-hookahHeadTypes" class='wizard-selection row' v-if="this.$root.curStep==0">
     
     <div class="col-12">
 
     
       <div class="text-center row">
-        <h3 class='step-title bg-secondary col-12'>Please select the fruit.</h3>
+        <h3 class='step-title bg-secondary col-12'>Please select the hookah head type.</h3>
       </div>
 
       <ul class='tile-list row p-0'>
-        <li v-for="(el, i) in fruits.list" :key="i" class='col-6' >
-          <div class='tile p-1' @click="selectFruit(i)">
+        <li v-for="(el, i) in hookahHeadTypes.list" :key="i" class='col-6'>
+          <div class='tile p-1' 
+          @click="selectHookahHeadType(i)"
+          :class="{selected : (el._id == order.new.hookahHeadType.id) }"
+          >
+<!-- (el._id == order.new.hookahHeadType.id) -->
+<!-- checkIfSelected(el) -->
+          
+
             <h5 class='text-center'>{{el.name}}</h5>
-            <span>${{el.price}}</span>
+            <div class="row">
+              <div class="col-2"> ${{el.price}} </div>
+              <div class="col-10"> {{el.description}} </div>
+            </div>
+              <!-- <div class="row"> {{el._id}} </div> -->
           </div>
         </li>
       </ul>
@@ -34,7 +45,10 @@
 
       <ul class='tile-list row p-0'>
         <li v-for="(el, i) in mixTypes.list" :key="i" class='col-6' >
-          <div class='tile p-1' @click="selectMixType(i)">
+          <div class='tile p-1' 
+          @click="selectMixType(i)" 
+          :class="{selected : (el.id == order.new.mixType.id) }"
+          >
             <h5 class='text-center'>{{el.name}}</h5>
           </div>
         </li>
@@ -49,12 +63,15 @@
     <div class="col-12">
 
       <div class="text-center row">
-        <h3 class='step-title bg-secondary col-12'>Please select the house mix.</h3>
+        <h3 class='step-title bg-secondary col-12'>Please select the House mix.</h3>
       </div>
 
       <ul class='tile-list row p-0'>
         <li v-for="(el, i) in houseMixes.list" :key="i" class='col-6' >
-          <div class='tile p-1' @click="selectHouseMix(i)">
+          <div class='tile p-1' 
+          @click="selectHouseMix(i)"
+          :class="{selected : (el.id == order.new.houseMix.id) }"
+          >
             <h5 class='text-center'>{{el.name}}</h5>
             <span>${{el.price}}</span>
           </div>
@@ -74,23 +91,28 @@
         <p class='text-left p-1'>All flavors of the brands you choose will be available to choose from in the next slide. You will be charged the higher cost.</p>
       </div>
 
+          {{order.new.tobaccoBrands.list}}
       <ul class='tile-list row p-0'>
-        <li v-for="(el, i) in tobaccoBrands.list" :key="i" class='col-6' >
-          <div class='tile p-1' @click="selectTobaccoBrand(i)">
+        <li v-for="(el, i) in tobaccoBrands.list" :key="i" class='col-6' 
+        :data-selected='brandIsOrdered(el, true)'>
+          <div class='tile p-1' 
+          @click="selectTobaccoBrand(el)"
+          :class="{selected : brandIsOrdered(el) }"
+          >
             <h5 class='text-center'>{{el.name}}</h5>
             <span>${{el.price}}</span>
           </div>
         </li>
       </ul>
 
-      <div class="row">
+      <!-- <div class="row">
         <div class="col-6 text-center">
           <button class='btn-secondary center wp-100' @click="removeTobaccoBrand()">Remove</button>
         </div>
         <div class="col-6 text-center">
           <button class='btn- primary wp-100' @click="addTobaccoBrand()">Add</button>
         </div>
-      </div>
+      </div> -->
     </div>
 
   </div>
@@ -108,22 +130,13 @@
 
           <h5 class='text-center col-12'>{{b.name}} - ${{b.price}}</h5>
 
-          <li v-for="(f, i) in b.flavors.list" :key="i" class='col-6'>
+          <li v-for="(f, i) in b.flavors.list" :key="i" class='col-6' data-selected='false'>
             <div class='tile p-1' @click="selectTobaccoFlavor(b, f)">
               <h5 class='text-center'>{{f.name}}</h5>
             </div>
           </li>
 
       </ul>
-
-      <div class="row">
-        <div class="col-6 text-center">
-          <button class='btn-secondary center wp-100' @click="removeTobaccoFlavor()">Remove</button>
-        </div>
-        <div class="col-6 text-center">
-          <button class='btn- primary wp-100' @click="addTobaccoFlavor()">Add</button>
-        </div>
-      </div>
 
     </div>
 
@@ -136,31 +149,31 @@
 
       <div class="text-center row">
         <h3 class='step-title bg-secondary col-12'>2 Flavor Combo</h3>
-        <p class='text-left p-1'>All flavors of the brands you choose will be available to choose from; you will be charged the higher cost for all.</p>
+        <p class='text-left p-1'>Please choose the proportion of each flavor you'd like.</p>
       </div>
 
 
       <div class="row">
         <div class="col-12 text-center">
           <h5>{{order.new.tobaccoFlavors.list[0].name}}</h5>
-          <input id="combo2-flavor1" class="combo2-range wp-75" type="range" name="combo2-flavor1" min="0" max="100" value="50" step="25" @change="combo2RangeChange()">
+          <input id="combo2-flavor1" class="combo2-range wp-75" type="range" name="combo2-flavor1" min="25" max="75" value='50' step="25" @change="combo2RangeChange()">
         </div>
       </div>
       <div class="wp-75 center">
     
         <div class="row">
-          <span class="col-2 text-left">0</span>
-          <span class="col-2 text-center">25</span>
-          <span class="col-4 text-center">50</span>
-          <span class="col-2 text-center">75</span>
-          <span class="col-2 text-right">100</span>
+          <span class="col-2 text-left">25%</span>
+          <span class="col-2 text-center"></span>
+          <span class="col-4 text-center">50%</span>
+          <span class="col-2 text-center"></span>
+          <span class="col-2 text-right">75%</span>
         </div>
 
       </div>
 
       <div class="row">
         <div class="col-12 text-center">
-          <input id="combo2-flavor2" class="combo2-range wp-75" type="range" name="combo2-flavor2" min="0" max="100" value="50" step="25" disabled >
+          <input id="combo2-flavor2" class="combo2-range wp-75" type="range" name="combo2-flavor2" min="25" max="75" value="50" step="25" disabled >
           <h5>{{order.new.tobaccoFlavors.list[1].name}}</h5>
         </div>
       </div>
@@ -180,20 +193,20 @@
 
       <div class="row">
         <div class="col-6">
-          <input type="radio" name="" id=""> 
+          <input type="radio" name="combo3" id="combo3-thirds" value='thirds' v-model="order.new.comboOptions.combo3Split"> 
           <label for="">1/3 + 1/3 + 1/3</label>
         </div>
       </div>
       
       <div class="row">
         <div class="col-6">
-          <input type="radio" name="" id="combo3-fifths"> 
+          <input type="radio" name="combo3" id="combo3-fifths" value='fifths' v-model="order.new.comboOptions.combo3Split"> 
           <label for="">1/5 + 2/5 + 2/5</label>
         </div>
         
-        <div class="col-6" v-if="whichFifth">
+        <div class="col-6" v-if="order.new.comboOptions.combo3Split=='fifths'">
           <label for="">Which one is 1/5?</label>
-          <select name="" id="">
+          <select name="" id="" v-model="order.new.comboOptions.whichIsFifth">
             <option value="" disabled>Select</option>
 
             <option v-for='(f, i) in order.new.tobaccoFlavors.list' :key="i" :value="f.id">{{f.name}}</option>
@@ -316,7 +329,7 @@ export default {
       /* 
       WIZARD SELECTION PAGES
       -----------------------
-      0 - fruit
+      0 - hookahHeadType
       1 - mixType
       2 - houseMix
       3 - tobaccoBrands
@@ -327,20 +340,14 @@ export default {
       8 - reviewTotal
       */
       myMessage: "Wizard's Message",
-      stepList: ['fruit', 'mixType', 'houseMix', 'tobaccoBrands', 'tobaccoFlavors', 'combo2', 'combo3', 'review1', 'reviewTotal'],
+      stepList: ['hookahHeadType', 'mixType', 'houseMix', 'tobaccoBrands', 'tobaccoFlavors', 'combo2', 'combo3', 'review1', 'reviewTotal'],
       nextStep: 1,
       // curStep: 0,
-
-      addTobaccoBrandActive: false,
-      removeTobaccoBrandActive: false,
-      
-      addTobaccoFlavorActive: false,
-      removeTobaccoFlavorActive: false,
 
       order: {
         new: {
           quantity: 1,
-          fruit: {
+          hookahHeadType: {
             picked: false,
             confirmed: false,
             name: '',
@@ -369,17 +376,18 @@ export default {
             list: []
           },
           comboOptions: {
-            picked: false,
             confirmed: false,
             numberOfFlavors: '',
             maxPrice: '',
-            mixCode: ''
+            mixCode: '',
+            combo3Split: '',
+            whichIsFifth: ''
           }
         },
         cart: [],
         newTemp: {
           quantity: 1,
-          fruit: {
+          hookahHeadType: {
             picked: false,
             confirmed: false,
             name: '',
@@ -408,28 +416,29 @@ export default {
             list: []
           },
           comboOptions: {
-            picked: false,
             confirmed: false,
             numberOfFlavors: '',
             maxPrice: '',
-            mixCode: ''
+            mixCode: '',
+            combo3Split: '',
+            whichIsFifth: ''
           }
         }
       },
 
-      fruits: {
+      hookahHeadTypes: {
         list: [
-          {id: '1', name: 'apple', price: '5'},
+          /* {id: '1', name: 'apple', price: '5'},
           {id: '2', name: 'orange', price: '7'},
           {id: '3', name: 'melon', price: '10'},
           {id: '4', name: 'watermelon', price: '15'},
-          {id: '5', name: 'pineapple', price: '20'}
+          {id: '5', name: 'pineapple', price: '20'} */
         ]
       }, 
       mixTypes: {
         list: [
-          {id: '1', name: 'custom', details: 'Create your own mix of 2 or 3 flavors.'},
-          {id: '2', name: 'house', details: 'Pick from a selection of house Mixes'}
+          {id: '1', name: 'Custom', details: 'Create your own mix of 2 or 3 flavors.'},
+          {id: '2', name: 'House', details: 'Pick from a selection of House Mixes'}
         ]
       },
       houseMixes: {
@@ -506,50 +515,122 @@ export default {
     orderedTobaccoBrands () {
       let self = this;
       let res = this.tobaccoBrands.list.filter(function(el, i) {
-        return self.brandIsOrdered(el)
+        return self.brandIsOrdered(el);
       });
 
-      return res;
-    },
-    whichFifth () {
-      let res = false;
-      if ($('#combo3-fifths').length > 0 && $('#combo3-fifths').checked() ) res = true;
       return res;
     }
   }, 
   created () {
-    // this.$set(this, 'curStep', 0);
+    let self = this;
+
+    // Get saved order info if it exists
+    if (sessionStorage.getItem('order')) {
+      this.order = JSON.parse(sessionStorage.getItem('order'));
+      this.$root.stepSequence = JSON.parse(sessionStorage.getItem('stepSequence'));
+      this.$root.curStep = +sessionStorage.getItem('curStep');
+      this.nextStep = +sessionStorage.getItem('nextStep');
+    }
+    
+    // Get hookahHeadTypes
+    this.$http({
+      method: 'get',
+      url: 'http://localhost:3001/api/hookahHeadTypes/',
+      })
+    .then(function (response) {
+      // handle success
+      console.log('hookahHeadTypes: ', response);
+
+      self.hookahHeadTypes.list = response.data;
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+    })
+    .then(function () {
+      // always executed
+    });
+
+
+
+    /* // Get houseMixes
+    this.$http({
+      method: 'get',
+      url: 'http://localhost:3001/api/houseMixes/',
+      })
+    .then(function (response) {
+      // handle success
+      console.log('res: ', response);
+      debugger
+      self.houseMixes.list = response.data;
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+    })
+    .then(function () {
+      // always executed
+    });
+
+
+    // Get tobacco brands & their available flavors
+    this.$http({
+      method: 'get',
+      url: 'http://localhost:3001/api/tobaccobrands/',
+      })
+    .then(function (response) {
+      // handle success
+      console.log('res: ', response);
+      debugger
+      self.tobaccoBrands.list = response.data;
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+    })
+    .then(function () {
+      // always executed
+    }); */
+
+
   },
   mounted: function () {
-    // $('#wizard-selection-fruits').show();
+
   },
   methods: {
     /* COMMON */
     next () {
+      // /* CHECK IF THERE IS ALREADY A DEFINED PATH FOR THE NEXT SLIDE, GIVEN FROM A PREVIOUS SELECTION */
+      // let curStep_i = this.$root.stepSequence.indexOf(this.$root.curStep);
+      // if (curStep_i != this.$root.stepSequence.length - 1 ) {
+      //   this.$root.curStep = this.$root.stepSequence[curStep_i + 1];
+      //   return;
+      // }
+
+      /* INITIALIZATION */
       let cur = this.stepList[this.$root.curStep];
       if (cur == 'combo2' || cur == 'combo3') cur = 'comboOptions';
       
-      /* CONFIRM or REJECT */
-      if (cur != 'review1') {
-        if (this.order.new[cur].picked == false ) {
+
+      /* CONFIRM or REJECT based on whether selection is made */
+      if (cur != 'review1' ) {
+        if (this.order.new[cur].picked == false || cur == 'combo2') {   // combo2 gets CHANGED not PICKED- so this check is irrelevant
           alert('Please pick an option to continue');
-        return;
+          return;
         } else {
           this.order.new[cur].confirmed = true;
         }
       }
 
 
-      /* DEACTIVATE ALL ADD/REMOVE ACTIVATORS */
-      this.addTobaccoBrandActive = false;
-      this.removeTobaccoBrandActive = false;
-      
-      this.addTobaccoFlavorActive = false;
-      this.removeTobaccoFlavorActive = false;
-
-      this.clearTiles();  // TODO: without clearing tiles, marking from previous wizard page appears on new page; coincides with selection spacially
-
-      
+      /* ONLY IF ON STEP 1: MIX TYPE SELECT */
+      if (this.$root.curStep == 1) { 
+       if (this.order.new.mixType.name == 'House') {
+          this.nextStep = 2;
+        } else {
+          this.nextStep = 3;
+        }
+      }
       /* ONLY IF ON STEP 4: FLAVOR SELECT */
       if (this.$root.curStep == 4) {
         /* set the price that will be paid for this mix */
@@ -573,87 +654,111 @@ export default {
         }
       }
 
-      /* HIDE ALL SELECITONS */
-      /* $('.wizard-selection').each(function(i, el) {
-        $(el).hide();
-      }); */
 
       /* DISPLAY APPROPRIATE SELECTION */
+      
+      /* CHECK IF THERE IS ALREADY A DEFINED PATH FOR THE NEXT SLIDE, GIVEN FROM A PREVIOUS SELECTION */
+      let curStep_i = this.$root.stepSequence.indexOf(this.$root.curStep);
+      if (curStep_i != this.$root.stepSequence.length - 1) {
+        if (this.nextStep == this.$root.stepSequence[curStep_i + 1]) {
+          this.$root.curStep = this.$root.stepSequence[curStep_i + 1];
+
+          if (this.nextStep == 0) {
+            this.nextStep = 1;
+          } else if (this.nextStep == 1) {
+          } else if (this.nextStep == 2) {
+            this.nextStep = 7;
+          } else if (this.nextStep == 3) {
+            this.nextStep = 4;
+          } else if (this.nextStep == 4) {
+          } else if (this.nextStep == 5) {
+            this.nextStep = 7;
+          } else if (this.nextStep == 6) {
+            this.nextStep = 7;
+          } else if (this.nextStep == 7) {
+          }  else if (this.nextStep == 8) {
+          }
+          return;
+        } else {
+          this.$root.stepSequence.splice(curStep_i + 1);
+        }
+      }
+      
       /* if next step isn't decided here, it happens dynamically either when next() or add() run */
       if (this.nextStep == 0) {
-        // $('#wizard-selection-fruits').show();
-        // this.curStep = 0;
-        // this.$set(this, 'curStep', 0);
         this.$root.curStep = 0;
         this.nextStep = 1;
       } else if (this.nextStep == 1) {
-        // $('#wizard-selection-mixTypes').show();
-        // this.curStep = 1;
-        // this.$set(this, 'curStep', 1);
         this.$root.curStep = 1;
-        } else if (this.nextStep == 2) {
-        // $('#wizard-selection-houseMixes').show();
-        // this.curStep = 2;
-        // this.$set(this, 'curStep', 2);
+      } else if (this.nextStep == 2) {
         this.$root.curStep = 2;
         this.nextStep = 7;
       } else if (this.nextStep == 3) {
-        // $('#wizard-selection-tobaccoBrands').show();
-        // this.curStep = 3;
-        // this.$set(this, 'curStep', 3);
         this.$root.curStep = 3;
         this.nextStep = 4;
       } else if (this.nextStep == 4) {
-        // $('#wizard-selection-tobaccoFlavors').show();
-        // this.curStep = 4;
-        // this.$set(this, 'curStep', 4);
         this.$root.curStep = 4;
-        } else if (this.nextStep == 5) {
-        // $('#wizard-selection-combo2').show();
-        // this.curStep = 5;
-        // this.$set(this, 'curStep', 5);
+      } else if (this.nextStep == 5) {
         this.$root.curStep = 5;
         this.nextStep = 7;
       } else if (this.nextStep == 6) {
-        // $('#wizard-selection-combo3').show();
-        // this.curStep = 6;
-        // this.$set(this, 'curStep', 6);
         this.$root.curStep = 6;
         this.nextStep = 7;
       } else if (this.nextStep == 7) {
-        // $('#wizard-selection-review1').show();
-        // this.curStep = 7;
-        // this.$set(this, 'curStep', 7);
         this.$root.curStep = 7;
-        }  else if (this.nextStep == 8) {
-        // $('#wizard-selection-review').show();
-        // this.curStep = 8;
-        // this.$set(this, 'curStep', 8);
+      }  else if (this.nextStep == 8) {
         this.$root.curStep = 8;
       }
 
-      // this.$nextTick();
 
-      
+      this.editStepSequence('next');
+
+      this.localSave();
 
     },
+    localSave() {
+      let self = this;
+      sessionStorage.setItem('order', JSON.stringify(self.order));
+      sessionStorage.setItem('stepSequence', JSON.stringify(self.$root.stepSequence));
+      sessionStorage.setItem('curStep', self.$root.curStep);
+      sessionStorage.setItem('nextStep', self.nextStep);
+    },
     back() {
-      this.$router.go(-1);
+      this.editStepSequence('back');
+    },
+    editStepSequence(option) {
+      let root = this.$root;
+
+      if (option == 'next' && root.curStep != root.stepSequence[root.stepSequence.length - 1]) {
+        root.stepSequence.push(root.curStep);
+      } else if (option == 'back') {
+        this.nextStep = root.curStep;
+
+        let curStep_i = root.stepSequence.indexOf(root.curStep) - 1;
+        root.curStep = root.stepSequence[curStep_i];
+      }
     },
     clearTiles () {
       $('.tile').each(function(i, el) {
-        $(el).css('background-color', '');
+        // $(el).css('background-color', '');
+        $(el).removeClass('selected');
       });
     },
 
-    /* FRUIT */
-    selectFruit (i) {
-      this.order.new.fruit.picked = true;
-      this.order.new.fruit.id = this.fruits.list[i].id;
-      this.order.new.fruit.name = this.fruits.list[i].name;
+    checkIfSelected(el) {
+      debugger
+    },
+
+    /* HookahHeadType */
+    selectHookahHeadType (i) {
+      this.order.new.hookahHeadType.picked = true;
+      this.order.new.hookahHeadType.id = this.hookahHeadTypes.list[i]._id;
+      this.order.new.hookahHeadType.name = this.hookahHeadTypes.list[i].name;
 
       this.clearTiles(); 
-      $(event.currentTarget).css('background-color', 'red');
+      // $(event.currentTarget).css('background-color', 'red');
+      $(event.currentTarget).addClass('selected');
+
     },
 
     /* MIX TYPE */
@@ -662,15 +767,9 @@ export default {
       this.order.new.mixType.id = this.mixTypes.list[i].id;
       this.order.new.mixType.name = this.mixTypes.list[i].name;
 
-      if (this.order.new.mixType.name == 'house') {
-        this.nextStep = 2;
-      } else {
-        this.nextStep = 3;
-      }
-
       this.clearTiles();
-      $(event.currentTarget).css('background-color', 'red');
-
+      // $(event.currentTarget).css('background-color', 'red');
+      $(event.currentTarget).addClass('selected');
     },
 
     /* HOUSE MIX TYPE */
@@ -680,54 +779,49 @@ export default {
       this.order.new.houseMix.name = this.houseMixes.list[i].name;
 
       this.clearTiles();
-      $(event.currentTarget).css('background-color', 'red');
-
+      // $(event.currentTarget).css('background-color', 'red');
+      $(event.currentTarget).addClass('selected');
     },
 
     /* TOBACCO BRANDS */
-    addTobaccoBrand () {
-      this.addTobaccoBrandActive = true;
-    },
-    removeTobaccoBrand () {
-      this.removeTobaccoBrandActive = true;
-    },
-    selectTobaccoBrand (i) {
-      if (this.addTobaccoBrandActive) {
-        /* IF ADDING IS ACTIVE */
+    selectTobaccoBrand (b) {
+      debugger
+      if ($(event.currentTarget).parent().data('selected') == false) {
+        /* IF OPTION IS NOT SELECTED */
+        $(event.currentTarget).parent().data('selected', true);
+
         let brand = {};
 
         this.order.new.tobaccoBrands.picked = true;
 
-        brand.id = this.tobaccoBrands.list[i].id;
-        brand.name = this.tobaccoBrands.list[i].name;
-        brand.price = this.tobaccoBrands.list[i].price;
+        brand.id = b.id;
+        brand.name = b.name;
+        brand.price = b.price;
 
         this.order.new.tobaccoBrands.list.push(brand);
 
-        $(event.currentTarget).css('background-color', 'red');
+        // $(event.currentTarget).css('background-color', 'red');
+        $(event.currentTarget).addClass('selected');
 
-        this.addTobaccoBrandActive = false;
-      } else if (this.removeTobaccoBrandActive) {
-        /* IF REMOVAL IS ACTIVE */
-        
-        let toRemove;
-        this.order.new.tobaccoBrands.list.forEach(function(tobacco, index) {
-          if (tobacco.id == i) {
-            toRemove = index;
-          }
+
+      } else {
+        /* IF OPTION IS ALREADY SLECTED */
+        $(event.currentTarget).parent().data('selected', false);
+        // $(event.currentTarget).css('background-color', '');
+        $(event.currentTarget).removeClass('selected');
+      
+        this.order.new.tobaccoBrands.list = this.order.new.tobaccoBrands.list.filter(function(el, i) {
+          return b.id != el.id;
         });
-        this.order.new.tobaccoBrands.list.splice(toRemove, 1);
 
-        $(event.currentTarget).css('background-color', '');
 
         if (this.order.new.tobaccoBrands.list.length == 0) {
           this.order.new.tobaccoBrands.picked = false;
         }
         
-        this.removeTobaccoBrandActive = false;
       }
     },
-    brandIsOrdered(b) {
+    brandIsOrdered(b, opt) {
       let test = false;
 
       this.order.new.tobaccoBrands.list.forEach(function(el) {
@@ -736,71 +830,66 @@ export default {
         }
       });
 
-      return test;
+      if (opt) {
+        return test.toString();
+      } else {
+        return test;
+      }
     },
 
     /* TOBACCO FLAVORS */
-    addTobaccoFlavor () {
-      /* CHECK FOR MAX 3 FLAVORS */
-      if (this.order.new.tobaccoFlavors.list.length < 3) {
-        this.addTobaccoFlavorActive = true;
-      } else {
-        alert('You can only add 3.');
-        return;
-      }
-
-      /* CHECK WHAT NEXT STEP TO DO; 2 OR 3 FLAVOR COMBO PAGE NEXT */
-      /* if (this.order.new.tobaccoFlavors.list.length == 1) {
-        this.nextStep = ;
-      } else if (this.order.new.tobaccoFlavors.list.length == 2) {
-        this.nextStep = ;
-
-      } else  if (this.order.new.tobaccoFlavors.list.length == 3) {
-        this.nextStep = ;
-
-      } */
-
-    },
-    removeTobaccoFlavor () {
-      this.removeTobaccoFlavorActive = true;
-    },
     selectTobaccoFlavor (b, f) {
-      if (this.addTobaccoFlavorActive) {
-        /* IF ADDING IS ACTIVE */
-        let flavor = {};
-
-        this.order.new.tobaccoFlavors.picked = true;
-
-        flavor.id = f.id;
-        flavor.name = f.name;
-        flavor.brandID = b.id;
-        flavor.brandName = b.name;
-        flavor.brandPrice = b.price;
-
-
-        this.order.new.tobaccoFlavors.list.push(flavor);
-
-        $(event.currentTarget).css('background-color', 'red');
-
-        this.addTobaccoFlavorActive = false;
-      } else if (this.removeTobaccoFlavorActive) {
-        /* IF REMOVAL IS ACTIVE */
+      /* IF OPTION IS NOT SELECTED */
+      if ($(event.currentTarget).parent().data('selected') == false) {
         
-        let toRemove;
+        /* IF THERE ARE FEWER THAN 3 SELECTIONS */
+        if (this.order.new.tobaccoFlavors.list.length < 3) {
+          $(event.currentTarget).parent().data('selected', true);
+
+          let flavor = {};
+
+          this.order.new.tobaccoFlavors.picked = true;
+
+          flavor.id = f.id;
+          flavor.name = f.name;
+          flavor.brandID = b.id;
+          flavor.brandName = b.name;
+          flavor.brandPrice = b.price;
+
+
+          this.order.new.tobaccoFlavors.list.push(flavor);
+
+          // $(event.currentTarget).css('background-color', 'red');
+          $(event.currentTarget).addClass('selected');
+
+
+        } else {
+          alert('You can only add 3.');
+          return;
+        }
+  
+      } else {
+        /* IF OPTION IS ALREADY ACTIVE */
+        $(event.currentTarget).parent().data('selected', false);
+        $(event.currentTarget).css('background-color', '');
+        
+        /* let toRemove;
         this.order.new.tobaccoFlavors.list.forEach(function(flavor, index) {
-          if (flavor.id == f) {
+          if (flavor.id == f.id) {
             toRemove = index;
           }
         });
-        this.order.new.tobaccoFlavors.list.splice(toRemove, 1);
+        this.order.new.tobaccoFlavors.list.splice(toRemove, 1); */
 
-        $(event.currentTarget).css('background-color', '');
+
+        this.order.new.tobaccoFlavors.list = this.order.new.tobaccoFlavors.list.filter(function(el, i) {
+          return f.id != el.id;
+        });
 
         if (this.order.new.tobaccoFlavors.list.length == 0) {
           this.order.new.tobaccoFlavors.picked = false;
         }
-        
-        this.removeTobaccoFlavorActive = false;
+      
       }
     },
 
@@ -823,7 +912,6 @@ export default {
 
       this.order.new.comboOptions.mixCode = id;
 
-      this.order.new.comboOptions.picked = true;
     },
 
     /* REVIEW1 */
@@ -832,8 +920,14 @@ export default {
     },
     addAnother() {
       this.order.cart.push(this.order.new);
-      this.order.new = $.extend({}, this.order.newTemp);
+      this.order.new = $.extend(true, {}, this.order.newTemp);
       
+      this.$root.stepSequence = [];
+
+      $('.selected').each(function(i, el) {
+        el.removeClass('selected');
+      });
+
       this.nextStep = 0;
       this.next();
     },
@@ -845,6 +939,13 @@ export default {
     }
   }
 }
+
+
+/* CUSTOM JS */
+
+/* $('.tile').on('clikc', function() {
+  alert(1);
+}); */
 </script>
 
 <style>
