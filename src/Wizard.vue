@@ -2,7 +2,7 @@
 <div id='wizard'>
 
   <!-- HOOKAH HEAD TYPE SELECTION -->
-  <div id="wizard-selection-hookahHeadTypes" class='wizard-selection row' v-if="this.$root.curStep==0">
+  <div id="wizard-selection-hookahHeadTypes" class='wizard-selection row' v-if="this.$root.curStep==this.steps.hookahHeadType">
     
     <div class="col-12">
 
@@ -35,7 +35,7 @@
   </div>
 
   <!-- MIX TYPE SELECTION -->
-  <div id="wizard-selection-mixTypes" class='wizard-selection row' v-if="this.$root.curStep==1">
+  <div id="wizard-selection-mixTypes" class='wizard-selection row' v-if="this.$root.curStep==this.steps.mixType">
 
     <div class="col-12">
 
@@ -58,7 +58,7 @@
   </div>
   
   <!-- HOUSE MIX SELECTION -->
-  <div id="wizard-selection-houseMixes" class='wizard-selection row' v-if="this.$root.curStep==2">
+  <div id="wizard-selection-houseMixes" class='wizard-selection row' v-if="this.$root.curStep==this.steps.houseMix">
 
     <div class="col-12">
 
@@ -82,7 +82,7 @@
   </div>
   
   <!-- TOBACCO BRAND SELECTION -->
-  <div id="wizard-selection-tobaccoBrands" class='wizard-selection row' v-if="this.$root.curStep==3">
+  <div id="wizard-selection-tobaccoBrands" class='wizard-selection row' v-if="this.$root.curStep==this.steps.tobaccoBrands">
 
     <div class="col-12">
 
@@ -91,7 +91,6 @@
         <p class='text-left p-1'>All flavors of the brands you choose will be available to choose from in the next slide. You will be charged the higher cost.</p>
       </div>
 
-          {{order.new.tobaccoBrands.list}}
       <ul class='tile-list row p-0'>
         <li v-for="(el, i) in tobaccoBrands.list" :key="i" class='col-6' 
         :data-selected='brandIsOrdered(el, true)'>
@@ -118,7 +117,7 @@
   </div>
   
   <!-- TOBACCO FLAVOR SELECTION -->
-  <div id="wizard-selection-tobaccoFlavors" class='wizard-selection row' v-if="this.$root.curStep==4">
+  <div id="wizard-selection-tobaccoFlavors" class='wizard-selection row' v-if="this.$root.curStep==this.steps.tobaccoFlavors">
 
     <div class="col-12">
 
@@ -130,8 +129,12 @@
 
           <h5 class='text-center col-12'>{{b.name}} - ${{b.price}}</h5>
 
-          <li v-for="(f, i) in b.flavors.list" :key="i" class='col-6' data-selected='false'>
-            <div class='tile p-1' @click="selectTobaccoFlavor(b, f)">
+          <li v-for="(f, i) in b.flavors.list" :key="i" class='col-6' 
+          :data-selected='flavorIsOrdered(f, true)'>
+            <div class='tile p-1' 
+            @click="selectTobaccoFlavor(b, f)"
+            :class='{selected: flavorIsOrdered(f) }'
+            >
               <h5 class='text-center'>{{f.name}}</h5>
             </div>
           </li>
@@ -143,7 +146,7 @@
   </div>
 
   <!-- COMBO2 -->
-  <div id="wizard-selection-combo2" class='wizard-selection row' v-if="this.$root.curStep==5">
+  <div id="wizard-selection-combo2" class='wizard-selection row' v-if="this.$root.curStep==this.steps.combo2">
 
     <div class="col-12">
 
@@ -156,7 +159,7 @@
       <div class="row">
         <div class="col-12 text-center">
           <h5>{{order.new.tobaccoFlavors.list[0].name}}</h5>
-          <input id="combo2-flavor1" class="combo2-range wp-75" type="range" name="combo2-flavor1" min="25" max="75" value='50' step="25" @change="combo2RangeChange()">
+          <input id="combo2-flavor1" class="combo2-range wp-75" type="range" name="combo2-flavor1" min="25" max="75" :value='this.order.new.comboOptions.combo2.flavor1' step="25" @change="combo2RangeChange()">
         </div>
       </div>
       <div class="wp-75 center">
@@ -173,7 +176,7 @@
 
       <div class="row">
         <div class="col-12 text-center">
-          <input id="combo2-flavor2" class="combo2-range wp-75" type="range" name="combo2-flavor2" min="25" max="75" value="50" step="25" disabled >
+          <input id="combo2-flavor2" class="combo2-range wp-75" type="range" name="combo2-flavor2" min="25" max="75" :value='this.order.new.comboOptions.combo2.flavor2' step="25" disabled >
           <h5>{{order.new.tobaccoFlavors.list[1].name}}</h5>
         </div>
       </div>
@@ -182,7 +185,7 @@
   </div>
 
   <!-- COMBO3 -->
-  <div id="wizard-selection-combo3" class='wizard-selection row' v-if="this.$root.curStep==6">
+  <div id="wizard-selection-combo3" class='wizard-selection row' v-if="this.$root.curStep==this.steps.combo3">
 
     <div class="col-12">
 
@@ -193,23 +196,46 @@
 
       <div class="row">
         <div class="col-6">
-          <input type="radio" name="combo3" id="combo3-thirds" value='thirds' v-model="order.new.comboOptions.combo3Split"> 
+          <input type="radio" name="combo3" id="combo3-thirds" value='thirds' v-model="order.new.comboOptions.combo3.split"> 
           <label for="">1/3 + 1/3 + 1/3</label>
         </div>
       </div>
       
       <div class="row">
         <div class="col-6">
-          <input type="radio" name="combo3" id="combo3-fifths" value='fifths' v-model="order.new.comboOptions.combo3Split"> 
+          <input type="radio" name="combo3" id="combo3-fifths-1/2" value='fifths-1/2' v-model="order.new.comboOptions.combo3.split"> 
           <label for="">1/5 + 2/5 + 2/5</label>
         </div>
         
-        <div class="col-6" v-if="order.new.comboOptions.combo3Split=='fifths'">
+        <div class="col-6" v-if="order.new.comboOptions.combo3.split=='fifths-1/2'">
           <label for="">Which one is 1/5?</label>
-          <select name="" id="" v-model="order.new.comboOptions.whichIsFifth">
+          <select name="" id="" v-model="order.new.comboOptions.combo3.whichIsOdd.id">
             <option value="" disabled>Select</option>
 
-            <option v-for='(f, i) in order.new.tobaccoFlavors.list' :key="i" :value="f.id">{{f.name}}</option>
+            <option v-for='(f, i) in order.new.tobaccoFlavors.list' :key="i" 
+            :value="f.id">
+              {{f.name}}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <input type="radio" name="combo3" id="combo3-fifths-1/3" value='fifths-1/3' v-model="order.new.comboOptions.combo3.split"> 
+          <label for="">1/5 + 1/5 + 3/5</label>
+        </div>
+        
+        <div class="col-6" v-if="order.new.comboOptions.combo3.split=='fifths-1/3'">
+          <label for="">Which one is 3/5?</label>
+          <select name="" id="" v-model="order.new.comboOptions.combo3.whichIsOdd.id">
+            <option value="" disabled>Select</option>
+
+            <option v-for='(f, i) in order.new.tobaccoFlavors.list' :key="i" 
+            :value="f.id" 
+            :data-flavorName='f.name'>
+              {{f.name}}
+            </option>
           </select>
         </div>
       </div>
@@ -219,7 +245,7 @@
   </div>
 
   <!-- REVIEW1 -->
-  <div id="wizard-selection-review1" class='wizard-selection row' v-if="this.$root.curStep==7">
+  <div id="wizard-selection-review1" class='wizard-selection row' v-if="this.$root.curStep==this.steps.review1">
 
     <div class="col-12">
 
@@ -283,13 +309,91 @@
   </div>
   
   <!-- REVIEW -->
-  <div id="wizard-selection-review" class='wizard-selection row' v-if="this.$root.curStep==8">
+  <div id="wizard-selection-review" class='wizard-selection row' v-if="this.$root.curStep==this.steps.reviewTotal">
 
     <div class="col-12">
 
       <div class="text-center row">
         <h3 class='step-title bg-secondary col-12'>Review</h3>
-        <p class='text-left p-1'>All flavors of the brands you choose will be available to choose from; you will be charged the higher cost for all.</p>
+        <p class='text-left p-1'>Please make sure all selections are correct and confirm your order.</p>
+      </div>
+
+      <div id="cart-review">
+        <ul>
+          <li v-for='(item, i) in this.order.cleanCart' :key="i" class='review-item'>
+            <h5>Quantity: {{ item.quantity }}</h5>
+            <h5>Hookah Head Type: {{ item.hookahHeadType.name }}</h5>
+            <h5>Price: {{ item.price }}</h5>
+            <h5>Mix Type: {{ item.mixType.name }}</h5>
+            
+            <span v-if='item.mixType.name == "House"'>
+              <h5>House Mix: {{ item.houseMix.name }}</h5>
+            </span>
+
+            <span v-if='item.mixType.name == "Custom"'>
+              <h5>Number of Flavors: {{ item.comboOptions.numberOfFlavors }}</h5>
+
+              <span v-if='item.comboOptions.numberOfFlavors == 2'>
+                <h5> Mix Code: {{ item.comboOptions.mixCode }} </h5>
+                <h5> Flavor 1: {{ item.comboOptions.flavor1 }} </h5>
+                <h5> Flavor 2: {{ item.comboOptions.flavor2 }} </h5>
+              </span>
+              
+              <span v-if='item.comboOptions.numberOfFlavors == 3'>
+                <h5> Split: {{ item.comboOptions.split }} </h5>
+                <h5> WhichIsOdd: {{ item.comboOptions.whichIsOdd.name }} </h5>
+              </span>
+
+            </span>
+            
+          </li>
+        </ul>
+      </div>
+      
+    </div>
+
+  </div>
+
+  <!-- CONFIRMATION -->
+  <div id="wizard-selection-confirmation" class='wizard-selection row' v-if="this.$root.curStep==this.steps.confirmation">
+
+    <div class="col-12">
+
+      <div class="text-center row">
+        <h3 class='step-title bg-secondary col-12'>Confirmation</h3>
+        <p class='text-left p-1'>Your order is being prepared. You can find details of your order below.</p>
+      </div>
+
+      <div id="confirmation">
+        <ul>
+          <li v-for='(item, i) in this.order.cleanCart' :key="i" class='review-item'>
+            <h5>Quantity: {{ item.quantity }}</h5>
+            <h5>Hookah Head Type: {{ item.hookahHeadType.name }}</h5>
+            <h5>Price: {{ item.price }}</h5>
+            <h5>Mix Type: {{ item.mixType.name }}</h5>
+            
+            <span v-if='item.mixType.name == "House"'>
+              <h5>House Mix: {{ item.houseMix.name }}</h5>
+            </span>
+
+            <span v-if='item.mixType.name == "Custom"'>
+              <h5>Number of Flavors: {{ item.comboOptions.numberOfFlavors }}</h5>
+
+              <span v-if='item.comboOptions.numberOfFlavors == 2'>
+                <h5> Mix Code: {{ item.comboOptions.mixCode }} </h5>
+                <h5> Flavor 1: {{ item.comboOptions.flavor1 }} </h5>
+                <h5> Flavor 2: {{ item.comboOptions.flavor2 }} </h5>
+              </span>
+              
+              <span v-if='item.comboOptions.numberOfFlavors == 3'>
+                <h5> Split: {{ item.comboOptions.split }} </h5>
+                <h5> WhichIsOdd: {{ item.comboOptions.whichIsOdd.name }} </h5>
+              </span>
+
+            </span>
+            
+          </li>
+        </ul>
       </div>
       
     </div>
@@ -300,10 +404,14 @@
     <!-- <div class="col-12">
       <div class="row"> -->
         <div class="col-6 text-center">
-          <button class='btn-danger center wp-100' @click="back()">Back</button>
+          <button class='btn-danger center wp-100' 
+          :class='backButtonClass'
+          @click="back()" >
+            {{backButtonName}}
+          </button>
         </div>
         <div class="col-6 text-center">
-          <button class='btn-success center wp-100' @click="next()">Next</button>
+          <button class='btn-success center wp-100' @click="next()">{{nextButtonName}}</button>
         </div>
       <!-- </div>
     </div> -->
@@ -340,13 +448,25 @@ export default {
       8 - reviewTotal
       */
       myMessage: "Wizard's Message",
-      stepList: ['hookahHeadType', 'mixType', 'houseMix', 'tobaccoBrands', 'tobaccoFlavors', 'combo2', 'combo3', 'review1', 'reviewTotal'],
+      stepList: ['hookahHeadType', 'mixType', 'houseMix', 'tobaccoBrands', 'tobaccoFlavors', 'combo2', 'combo3', 'review1', 'reviewTotal', 'confirmation'],
+      steps: {
+        'hookahHeadType': 0, 
+        'mixType': 1, 
+        'houseMix': 2, 
+        'tobaccoBrands': 3, 
+        'tobaccoFlavors': 4, 
+        'combo2': 5, 
+        'combo3': 6, 
+        'review1': 7, 
+        'reviewTotal': 8,
+        'confirmation': 9
+      },
       nextStep: 1,
-      // curStep: 0,
 
       order: {
         new: {
           quantity: 1,
+          price: '',
           hookahHeadType: {
             picked: false,
             confirmed: false,
@@ -378,15 +498,27 @@ export default {
           comboOptions: {
             confirmed: false,
             numberOfFlavors: '',
-            maxPrice: '',
-            mixCode: '',
-            combo3Split: '',
-            whichIsFifth: ''
+            priceOfMax: '',
+            combo2: {
+              mixCode: '',
+              flavor1: '50',
+              flavor2: '50'
+            },
+            combo3: {
+              split: '',
+              whichIsOdd: {
+                id: '',
+                name: ''
+              }
+
+            }
           }
         },
         cart: [],
+        cleanCart: [],
         newTemp: {
           quantity: 1,
+          price: '',
           hookahHeadType: {
             picked: false,
             confirmed: false,
@@ -418,10 +550,20 @@ export default {
           comboOptions: {
             confirmed: false,
             numberOfFlavors: '',
-            maxPrice: '',
-            mixCode: '',
-            combo3Split: '',
-            whichIsFifth: ''
+            priceOfMax: '',
+            combo2: {
+              mixCode: '',
+              flavor1: '50',
+              flavor2: '50'
+            },
+            combo3: {
+              split: '',
+              whichIsOdd: {
+                id: '',
+                name: ''
+              }
+
+            }
           }
         }
       },
@@ -443,9 +585,9 @@ export default {
       },
       houseMixes: {
         list: [
-          {id: '1', name: 'Mix1', details: 'Sweet'},
-          {id: '2', name: 'Mix2', details: 'Light'},
-          {id: '3', name: 'Mix3', details: 'Fruity'}
+          {id: '1', name: 'Mix1', details: 'Sweet', price: '15'},
+          {id: '2', name: 'Mix2', details: 'Light', price: '15'},
+          {id: '3', name: 'Mix3', details: 'Fruity', price: '15'}
         ]
       },
       tobaccoBrands: {
@@ -518,6 +660,89 @@ export default {
         return self.brandIsOrdered(el);
       });
 
+      return res;
+    },
+    backButtonClass(opt) {
+      let res = '';
+      let cur = this.$root.curStep;
+      let s = this.steps;
+
+      if (cur == s.hookahHeadType) {
+        res = 'd-none';
+      } else if (cur == s.mixType) {
+
+      } else if (cur == s.houseMix) {
+
+      } else if (cur == s.tobaccoBrands) {
+
+      } else if (cur == s.tobaccoFlavors) {
+
+      } else if (cur == s.combo2) {
+
+      } else if (cur == s.combo3) {
+
+      } else if (cur == s.review1) {
+
+      } else if (cur == s.reviewTotal) {
+        res = 'd-none';
+      } else if (cur == s.confirmation) {
+        res = 'd-none';
+      }
+      
+
+      return res;
+    },     
+    backButtonName(opt) {
+      let res = 'Back';
+      let cur = this.$root.curStep;
+      let s = this.steps;
+
+      if (cur == s.hookahHeadType) {
+  
+      } else if (cur == s.mixType) {
+
+      } else if (cur == s.houseMix) {
+
+      } else if (cur == s.tobaccoBrands) {
+
+      } else if (cur == s.tobaccoFlavors) {
+
+      } else if (cur == s.combo2) {
+
+      } else if (cur == s.combo3) {
+
+      } else if (cur == s.review1) {
+
+      } else if (cur == s.reviewTotal) {
+
+      }
+     
+      return res;
+    },
+    nextButtonName() {
+      let res = 'Next>';
+      let cur = this.$root.curStep;
+      let s = this.steps;
+
+      if (cur == s.review1) {
+        res = 'Review >>>'
+      } else if (cur == s.reviewTotal) {
+        res = 'Checkout >>>'
+      } else if (cur == s.confirmation) {
+        res = 'Start Again >>>'
+      }
+
+      return res;
+    },
+    nextButtonClass() {
+      let res = '';
+      let cur = this.$root.curStep;
+      let s = this.steps;
+
+      if (cur == s.reviewTotal) {
+        res = ''
+      }
+      
       return res;
     }
   }, 
@@ -594,126 +819,219 @@ export default {
 
 
   },
-  mounted: function () {
+  mounted () {
 
+  },
+  beforeUpdate () {
+    const cur = this.$root.curStep;
+
+    if ( cur == 9) {
+
+    }
   },
   methods: {
     /* COMMON */
     next () {
-      // /* CHECK IF THERE IS ALREADY A DEFINED PATH FOR THE NEXT SLIDE, GIVEN FROM A PREVIOUS SELECTION */
-      // let curStep_i = this.$root.stepSequence.indexOf(this.$root.curStep);
-      // if (curStep_i != this.$root.stepSequence.length - 1 ) {
-      //   this.$root.curStep = this.$root.stepSequence[curStep_i + 1];
-      //   return;
-      // }
+      if ( this.$root.curStep == this.steps.confirmation) {
+        this.clearOrder();
+        // this.$forceUpdate();
+        location.reload();
 
-      /* INITIALIZATION */
-      let cur = this.stepList[this.$root.curStep];
-      if (cur == 'combo2' || cur == 'combo3') cur = 'comboOptions';
-      
+      } else {
 
-      /* CONFIRM or REJECT based on whether selection is made */
-      if (cur != 'review1' ) {
-        if (this.order.new[cur].picked == false || cur == 'combo2') {   // combo2 gets CHANGED not PICKED- so this check is irrelevant
-          alert('Please pick an option to continue');
-          return;
-        } else {
-          this.order.new[cur].confirmed = true;
-        }
-      }
+          
+        // /* CHECK IF THERE IS ALREADY A DEFINED PATH FOR THE NEXT SLIDE, GIVEN FROM A PREVIOUS SELECTION */
+        // let curStep_i = this.$root.stepSequence.indexOf(this.$root.curStep);
+        // if (curStep_i != this.$root.stepSequence.length - 1 ) {
+        //   this.$root.curStep = this.$root.stepSequence[curStep_i + 1];
+        //   return;
+        // }
 
+        /* INITIALIZATION */
+        let root = this.$root
+        let cur = this.stepList[root.curStep];
+        if (cur == 'combo2' || cur == 'combo3') cur = 'comboOptions';
+        
 
-      /* ONLY IF ON STEP 1: MIX TYPE SELECT */
-      if (this.$root.curStep == 1) { 
-       if (this.order.new.mixType.name == 'House') {
-          this.nextStep = 2;
-        } else {
-          this.nextStep = 3;
-        }
-      }
-      /* ONLY IF ON STEP 4: FLAVOR SELECT */
-      if (this.$root.curStep == 4) {
-        /* set the price that will be paid for this mix */
-        let max = 0;
-
-        this.order.new.tobaccoFlavors.list.forEach(function(el) {
-          if (+max < +el.brandPrice) max = el.brandPrice;
-        });
-
-        this.order.new.comboOptions.maxPrice = max;
-
-        /* decide propper next step based on number of flavors chosen*/
-        this.order.new.comboOptions.numberOfFlavors = this.order.new.tobaccoFlavors.list.length;
-
-        if (this.order.new.comboOptions.numberOfFlavors == 1) {
-          this.nextStep = 7;
-        } else if (this.order.new.comboOptions.numberOfFlavors == 2) {
-          this.nextStep = 5;
-        } else if (this.order.new.comboOptions.numberOfFlavors == 3) {
-          this.nextStep = 6;
-        }
-      }
-
-
-      /* DISPLAY APPROPRIATE SELECTION */
-      
-      /* CHECK IF THERE IS ALREADY A DEFINED PATH FOR THE NEXT SLIDE, GIVEN FROM A PREVIOUS SELECTION */
-      let curStep_i = this.$root.stepSequence.indexOf(this.$root.curStep);
-      if (curStep_i != this.$root.stepSequence.length - 1) {
-        if (this.nextStep == this.$root.stepSequence[curStep_i + 1]) {
-          this.$root.curStep = this.$root.stepSequence[curStep_i + 1];
-
-          if (this.nextStep == 0) {
-            this.nextStep = 1;
-          } else if (this.nextStep == 1) {
-          } else if (this.nextStep == 2) {
-            this.nextStep = 7;
-          } else if (this.nextStep == 3) {
-            this.nextStep = 4;
-          } else if (this.nextStep == 4) {
-          } else if (this.nextStep == 5) {
-            this.nextStep = 7;
-          } else if (this.nextStep == 6) {
-            this.nextStep = 7;
-          } else if (this.nextStep == 7) {
-          }  else if (this.nextStep == 8) {
+        /* CONFIRM or REJECT based on whether selection is made */
+        if (cur != 'review1' && cur != 'reviewTotal' ) {
+          if (this.order.new[cur].picked == false || cur == 'combo2') {   // combo2 gets CHANGED not PICKED- so this check is irrelevant
+            alert('Please pick an option to continue');
+            return;
+          } else {
+            this.order.new[cur].confirmed = true;
           }
-          return;
-        } else {
-          this.$root.stepSequence.splice(curStep_i + 1);
         }
+
+
+        /* ONLY IF ON STEP 1: MIX TYPE SELECT */
+        if (root.curStep == this.steps.mixType) { 
+        if (this.order.new.mixType.name == 'House') {
+            this.nextStep = this.steps.houseMix;
+          } else {
+            this.nextStep = this.steps.tobaccoBrands;
+          }
+        }
+        /* ONLY IF ON STEP 4: FLAVOR SELECT */
+        if (root.curStep == this.steps.tobaccoFlavors) {
+          /* set the price that will be paid for this mix */
+          let max = 0;
+
+          this.order.new.tobaccoFlavors.list.forEach(function(el) {
+            if (+max < +el.brandPrice) max = el.brandPrice;
+          });
+
+          this.order.new.comboOptions.priceOfMax = +max;
+
+          /* decide propper next step based on number of flavors chosen*/
+          this.order.new.comboOptions.numberOfFlavors = this.order.new.tobaccoFlavors.list.length;
+
+          if (this.order.new.comboOptions.numberOfFlavors == this.steps.mixType) {
+            this.nextStep = this.steps.review1;
+          } else if (this.order.new.comboOptions.numberOfFlavors == 2) {
+            this.nextStep = this.steps.combo2;
+          } else if (this.order.new.comboOptions.numberOfFlavors == 3) {
+            this.nextStep = this.steps.combo3;
+          }
+        }
+
+
+        /* DISPLAY APPROPRIATE SELECTION */
+        
+        /* CHECK IF THERE IS ALREADY A DEFINED PATH FOR THE NEXT SLIDE, GIVEN FROM A PREVIOUS SELECTION */
+        let curStep_i = root.stepSequence.indexOf(root.curStep);
+        if (curStep_i != root.stepSequence.length - 1 && root.curStep != this.steps.review1) {
+          if (this.nextStep == root.stepSequence[curStep_i + 1]) {
+            root.curStep = root.stepSequence[curStep_i + 1];
+
+            if (this.nextStep == this.steps.hookahHeadType) {
+              this.nextStep = this.steps.mixType;
+            } else if (this.nextStep == this.steps.mixType) {
+            } else if (this.nextStep == this.steps.houseMix) {
+              this.nextStep = this.steps.review1;
+            } else if (this.nextStep == this.steps.tobaccoBrands) {
+              this.nextStep = this.steps.tobaccoFlavors;
+            } else if (this.nextStep == this.steps.tobaccoFlavors) {
+            } else if (this.nextStep == this.steps.combo2) {
+              this.nextStep = this.steps.review1;
+            } else if (this.nextStep == this.steps.combo3) {
+              this.nextStep = this.steps.review1;
+            } else if (this.nextStep == this.steps.review1) {
+            }  else if (this.nextStep == this.steps.reviewTotal) {
+            }
+            return;
+          } else {
+            root.stepSequence.splice(curStep_i + 1);
+          }
+        }
+        
+        /* if next step isn't decided here, it happens dynamically either when next() or add() run */
+        if (this.nextStep == this.steps.hookahHeadType) {
+          root.curStep = this.nextStep;
+          this.nextStep = this.steps.mixType;
+        } else if (this.nextStep == this.steps.mixType) {
+          root.curStep = this.nextStep;
+        } else if (this.nextStep == this.steps.houseMix) {
+          root.curStep = this.nextStep;
+          this.nextStep = this.steps.review1;
+        } else if (this.nextStep == this.steps.tobaccoBrands) {
+          root.curStep = this.nextStep;
+          this.nextStep = this.steps.tobaccoFlavors;
+        } else if (this.nextStep == this.steps.tobaccoFlavors) {
+          root.curStep = this.nextStep;
+        } else if (this.nextStep == this.steps.combo2) {
+          root.curStep = this.nextStep;
+          this.nextStep = this.steps.review1;
+        } else if (this.nextStep == this.steps.combo3) {
+          root.curStep = this.nextStep;
+          this.nextStep = this.steps.review1;
+        } else if (this.nextStep == this.steps.review1) {
+          root.curStep = this.nextStep;
+          this.nextStep = this.steps.reviewTotal;
+        }  else if (this.nextStep == this.steps.reviewTotal) {
+          root.curStep = this.nextStep;
+          this.createCleanCart();
+          this.nextStep = this.steps.confirmation;
+        } else if (this.nextStep == this.steps.confirmation) {
+          root.curStep = this.nextStep;
+          alert('Yay! You made your first purchase :\) \n Please find the confirmation below.' );
+        }
+
+
+        this.editStepSequence('next');
+
+        this.localSave();
       }
+    },
+    createCleanCart() {
+      /* ADD FINAL 'NEW' ORDER TO CART */
+      this.order.cart.push(this.order.new);
+      this.order.new = $.extend(true, {}, this.order.newTemp);
       
-      /* if next step isn't decided here, it happens dynamically either when next() or add() run */
-      if (this.nextStep == 0) {
-        this.$root.curStep = 0;
-        this.nextStep = 1;
-      } else if (this.nextStep == 1) {
-        this.$root.curStep = 1;
-      } else if (this.nextStep == 2) {
-        this.$root.curStep = 2;
-        this.nextStep = 7;
-      } else if (this.nextStep == 3) {
-        this.$root.curStep = 3;
-        this.nextStep = 4;
-      } else if (this.nextStep == 4) {
-        this.$root.curStep = 4;
-      } else if (this.nextStep == 5) {
-        this.$root.curStep = 5;
-        this.nextStep = 7;
-      } else if (this.nextStep == 6) {
-        this.$root.curStep = 6;
-        this.nextStep = 7;
-      } else if (this.nextStep == 7) {
-        this.$root.curStep = 7;
-      }  else if (this.nextStep == 8) {
-        this.$root.curStep = 8;
-      }
+      this.$root.stepSequence = [];
 
+      $('.selected').each(function(i, el) {
+        el.removeClass('selected');
+      });
 
-      this.editStepSequence('next');
+      /* SANITIZE CART CONTENT TO MAKE SEND OBJ */
+      const cleanCart = [];
 
-      this.localSave();
+      this.order.cart.forEach( el => {
+        let cleanItem = {
+          hookahHeadType: {},
+          price: 0,
+          quantity: 0,
+          mixType: {}
+        };
+
+          flavors: []
+        
+        /* STATIC ADDITIONS - won't change depending on chosen options */
+        cleanItem.quantity = el.quantity;
+        cleanItem.mixType.id = el.mixType.id;
+        cleanItem.mixType.name = el.mixType.name;
+        cleanItem.numberOfFlavors = el.comboOptions.numberOfFlavors;
+
+        cleanItem.hookahHeadType.id = el.hookahHeadType.id;
+        cleanItem.hookahHeadType.name = el.hookahHeadType.name;
+
+        cleanItem.price += +el.hookahHeadType.price;
+
+        /* DYNAMIC ADDITIONS - will change depending on chosen options */
+        if (el.mixType.name == 'House') {    
+          cleanItem.houseMix = {};      
+          cleanItem.houseMix.id = el.houseMix.id;
+          cleanItem.houseMix.name = el.houseMix.name;
+          
+          cleanItem.price += +el.houseMix.price;
+        } else if (el.mixType.name == 'Custom') {
+          cleanItem.price += +el.comboOptions.priceOfMax;
+          cleanItem.tobaccoFlavors = el.tobaccoFlavors.list;
+          cleanItem.comboOptions = {};
+          cleanItem.comboOptions.numberOfFlavors = el.comboOptions.numberOfFlavors;
+
+          if (el.comboOptions.numberOfFlavors == 2) {
+            cleanItem.comboOptions.mixCode = el.comboOptions.combo2.mixCode;
+            cleanItem.comboOptions.flavor1 = el.comboOptions.combo2.flavor1;
+            cleanItem.comboOptions.flavor2 = el.comboOptions.combo2.flavor2;
+          } else if ( el.comboOptions.numberOfFlavors == 3 ) {
+            cleanItem.comboOptions.split = el.comboOptions.combo3.split;
+            cleanItem.comboOptions.whichIsOdd = el.comboOptions.combo3.whichIsOdd;
+
+            cleanItem.tobaccoFlavors.forEach( el => {
+              if (el.id == cleanItem.comboOptions.whichIsOdd.id) {
+                cleanItem.comboOptions.whichIsOdd.name = el.name;
+              }
+            });
+          }
+        }
+      
+        cleanCart.push(cleanItem);
+
+      });
+
+      this.order.cleanCart = cleanCart;
 
     },
     localSave() {
@@ -754,6 +1072,7 @@ export default {
       this.order.new.hookahHeadType.picked = true;
       this.order.new.hookahHeadType.id = this.hookahHeadTypes.list[i]._id;
       this.order.new.hookahHeadType.name = this.hookahHeadTypes.list[i].name;
+      this.order.new.hookahHeadType.price = this.hookahHeadTypes.list[i].price;
 
       this.clearTiles(); 
       // $(event.currentTarget).css('background-color', 'red');
@@ -768,7 +1087,6 @@ export default {
       this.order.new.mixType.name = this.mixTypes.list[i].name;
 
       this.clearTiles();
-      // $(event.currentTarget).css('background-color', 'red');
       $(event.currentTarget).addClass('selected');
     },
 
@@ -777,15 +1095,14 @@ export default {
       this.order.new.houseMix.picked = true;
       this.order.new.houseMix.id = this.houseMixes.list[i].id;
       this.order.new.houseMix.name = this.houseMixes.list[i].name;
+      this.order.new.houseMix.price = +this.houseMixes.list[i].price;
 
       this.clearTiles();
-      // $(event.currentTarget).css('background-color', 'red');
       $(event.currentTarget).addClass('selected');
     },
 
     /* TOBACCO BRANDS */
     selectTobaccoBrand (b) {
-      debugger
       if ($(event.currentTarget).parent().data('selected') == false) {
         /* IF OPTION IS NOT SELECTED */
         $(event.currentTarget).parent().data('selected', true);
@@ -810,7 +1127,7 @@ export default {
         // $(event.currentTarget).css('background-color', '');
         $(event.currentTarget).removeClass('selected');
       
-        this.order.new.tobaccoBrands.list = this.order.new.tobaccoBrands.list.filter(function(el, i) {
+        this.order.new.tobaccoBrands.list = this.order.new.tobaccoBrands.list.filter( (el, i) => {
           return b.id != el.id;
         });
 
@@ -824,11 +1141,45 @@ export default {
     brandIsOrdered(b, opt) {
       let test = false;
 
-      this.order.new.tobaccoBrands.list.forEach(function(el) {
+      this.order.new.tobaccoBrands.list.forEach( el =>{
         if (b.id == el.id) {
           test = true;
         }
       });
+
+      if (opt) {
+        return test.toString();
+      } else {
+        return test;
+      }
+    },
+    flavorIsOrdered(f, opt) {
+      let test = false;
+
+      this.order.new.tobaccoFlavors.list.forEach( el => {
+        if (f.id == el.id) {
+          test = true;
+        }
+      });
+
+      /* let brands = [];
+      let flavors = [];
+
+      this.order.new.tobaccoBrands.list.forEach( (el) => {
+        brands.push(el.id);
+      });
+
+      this.tobaccoBrands.list.forEach( (el) => {
+        if ( brands.indexOf(el.id) != -1 ) {
+          flavors = flavors.concat( el.flavors.list );
+        }
+      });
+
+      flavors.forEach(function(el) {
+        if (f.id == el.id) {
+          test = true;
+        }
+      }); */
 
       if (opt) {
         return test.toString();
@@ -895,8 +1246,8 @@ export default {
 
     /* COMBO2 */
     combo2RangeChange() {
-      let f1 = event.target.value;
-      let reverse = 100 - f1;
+      let f1 = +event.target.value;
+      let f2 = 100 - f1;
       let id = f1/25;
 
       /* 
@@ -908,9 +1259,11 @@ export default {
       4 ==> 100 of 1st : 0   of 2nd
       */
 
-      $('#combo2-flavor2').val(reverse);
+      $('#combo2-flavor2').val(f2);
 
-      this.order.new.comboOptions.mixCode = id;
+      this.order.new.comboOptions.combo2.mixCode = id;
+      this.order.new.comboOptions.combo2.flavor1 = f1;
+      this.order.new.comboOptions.combo2.flavor2 = f2;
 
     },
 
@@ -930,6 +1283,9 @@ export default {
 
       this.nextStep = 0;
       this.next();
+    },
+    clearOrder() {
+      sessionStorage.removeItem('order');
     },
     hookahs() {
 
