@@ -318,33 +318,65 @@
         <p class='text-left p-1'>Please make sure all selections are correct and confirm your order.</p>
       </div>
 
-      <div id="cart-review">
-        <ul>
+      <div id="cart-review" class='row'>
+        <ul class='col'>
           <li v-for='(item, i) in this.order.cleanCart' :key="i" class='review-item'>
-            <h5>Quantity: {{ item.quantity }}</h5>
-            <h5>Hookah Head Type: {{ item.hookahHeadType.name }}</h5>
-            <h5>Price: {{ item.price }}</h5>
-            <h5>Mix Type: {{ item.mixType.name }}</h5>
             
-            <span v-if='item.mixType.name == "House"'>
-              <h5>House Mix: {{ item.houseMix.name }}</h5>
-            </span>
+            <div class="row">
+              <div class="col-4">
+                <img :src="'img/fruits/fruit-head/' + item.hookahHeadType.name + '.jpg'" alt="">
+              </div>
+              <div class="col-8">
+                <div>Quantity: {{ item.quantity }}</div>
+                <div>Hookah Head Type: {{ item.hookahHeadType.name }}</div>
+                <div>Price: ${{ item.price }}</div>
+                <div>
+                  Type: {{ item.mixType.name }} Mix
+                  
+                  <span v-if='item.mixType.name == "Custom"'>
+                    of {{ item.comboOptions.numberOfFlavors }} flavors:
+                  </span>
+                </div>
 
-            <span v-if='item.mixType.name == "Custom"'>
-              <h5>Number of Flavors: {{ item.comboOptions.numberOfFlavors }}</h5>
+                
+                <span v-if='item.mixType.name == "House"'>
+                  <div>House Mix: {{ item.houseMix.name }}</div>
+                </span>
 
-              <span v-if='item.comboOptions.numberOfFlavors == 2'>
-                <h5> Mix Code: {{ item.comboOptions.mixCode }} </h5>
-                <h5> Flavor 1: {{ item.comboOptions.flavor1 }} </h5>
-                <h5> Flavor 2: {{ item.comboOptions.flavor2 }} </h5>
-              </span>
-              
-              <span v-if='item.comboOptions.numberOfFlavors == 3'>
-                <h5> Split: {{ item.comboOptions.split }} </h5>
-                <h5> WhichIsOdd: {{ item.comboOptions.whichIsOdd.name }} </h5>
-              </span>
+                <span v-if='item.mixType.name == "Custom"'>
 
-            </span>
+                  <span v-if='item.comboOptions.numberOfFlavors == 2'>
+                    <div> {{ item.tobaccoFlavors[0].name }}: {{ item.comboOptions.flavor1 }} || {{ item.tobaccoFlavors[1].name }}: {{ item.comboOptions.flavor2 }}</div>
+                  </span>
+                  
+                  <span v-if='item.comboOptions.numberOfFlavors == 3'>
+                    <div>
+                      <span v-for="(f, i) in item.tobaccoFlavors" :key="i">
+                        {{f.name}} <span v-if="i != item.tobaccoFlavors.length - 1">,</span>
+                      </span>
+                    </div>
+
+                    <div> 
+                      Split: 
+                      
+                      <span v-if="item.comboOptions.split"></span>
+
+                    </div>
+                    <div> WhichIsOdd: {{ item.comboOptions.whichIsOdd.name }} </div>
+                  </span>
+
+                </span>
+              </div>
+            </div>
+            
+            <br>
+
+            <div class="row">
+              <button class="col-6" @click='editItem(i)'>Edit</button>
+              <button class="col-6" @click='removeItem(i)'>Remove</button>
+            </div>
+            
+            
             
           </li>
         </ul>
@@ -377,12 +409,12 @@
             </span>
 
             <span v-if='item.mixType.name == "Custom"'>
-              <h5>Number of Flavors: {{ item.comboOptions.numberOfFlavors }}</h5>
+              <!-- <h5>Number of Flavors: {{ item.comboOptions.numberOfFlavors }}</h5> -->
 
               <span v-if='item.comboOptions.numberOfFlavors == 2'>
                 <h5> Mix Code: {{ item.comboOptions.mixCode }} </h5>
-                <h5> Flavor 1: {{ item.comboOptions.flavor1 }} </h5>
-                <h5> Flavor 2: {{ item.comboOptions.flavor2 }} </h5>
+                <h5> {{ item.tobaccoFlavors.list[1] }}: {{ item.comboOptions.flavor1 }} </h5>
+                <h5> {{ item.tobaccoFlavors.list[2] }}: {{ item.comboOptions.flavor2 }} </h5>
               </span>
               
               <span v-if='item.comboOptions.numberOfFlavors == 3'>
@@ -720,7 +752,7 @@ export default {
       return res;
     },
     nextButtonName() {
-      let res = 'Next>';
+      let res = 'Next >';
       let cur = this.$root.curStep;
       let s = this.steps;
 
@@ -828,6 +860,11 @@ export default {
     if ( cur == 9) {
 
     }
+  },
+  updated() {
+    $('html, body').animate({
+      scrollTop: $("div#wizard").offset().top
+    }, 50);
   },
   methods: {
     /* COMMON */
@@ -1284,6 +1321,17 @@ export default {
       this.nextStep = 0;
       this.next();
     },
+    editItem(i) {
+      this.order.new = this.order.cart[i];
+      this.order.cart.splice(i, 1);
+      this.$root.curStep = this.steps.hookahHeadType;
+      this.nextStep = this.steps.mixType;
+      
+    },
+    removeItem(i) {
+      this.order.cleanCart.splice(i, 1);
+      this.order.cart.splice(i, 1);
+    },
     clearOrder() {
       sessionStorage.removeItem('order');
     },
@@ -1352,5 +1400,24 @@ export default {
     border-left: solid black 1px;
   } */
 
+  #cart-review > ul {
+    list-style-type: none;
+  }
+
+  .review-item {
+    border: .5px solid gray;
+    margin: 10px 0;
+    padding: 10px;
+  }
+
+  .review-item > .row {
+    margin: 0 -10px -10px;
+  }
   
+  .review-item img {
+    width: 100%;
+    border-radius: 10px;
+    margin: 10px 0;
+  }
+
 </style>
