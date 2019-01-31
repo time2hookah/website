@@ -11,7 +11,10 @@ function resolve (dir) {
 module.exports = {
     mode: 'development',
     context: path.resolve(__dirname),
-    entry: './src/main.js',
+    entry: {
+        home: './src/homeMain.js',
+        wizard: './src/main.js'
+    },
     output: {
         path: path.resolve(__dirname, 'public', 'dist'),
         publicPath: './public/dist',
