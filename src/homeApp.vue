@@ -4,7 +4,7 @@
     <div id="home"> 
   
         <!-- Hero Section -->
-        <div class="d-lg-flex position-relative">
+        <div class="d-lg-flex position-relative col-lg-6 col-md-6">
             <div class="container ">
                 <!-- Content -->
                 <div class="row">
@@ -15,13 +15,11 @@
                     </div> -->
                     <article class="card border-0 bg-primary text-white shadow-primary-lg transition-3d-hover mb-7 mb-md-0">
                         <div class="card-body p-6">
-                        <span class="btn btn-lg btn-icon btn-soft-light rounded-circle mb-9">
-                            <!-- <span class="fab fa-audible font-size-5 btn-icon__inner btn-icon__inner-bottom-minus"></span> -->
-                            <!-- <img src="img/logo.jpg" width="100" height="100" class="img-fluid" > -->
+                        <!-- <span class="btn btn-lg btn-icon btn-soft-light rounded-circle mb-9">
                             <img class="img-fluid rounded-circle" src="/img/logo.jpg" alt="Image Description">
-                        </span> 
+                        </span>  -->
                         <small class="d-block text-white-70 text-uppercase mb-1">Hookah Order</small>
-                        <h3 class="h5 mb-3">Ordering process is as simple as 1 2 3</h3>
+                        <h3 class="h5 mb-3">Please enter your zip code to check shipping availability.</h3>
                         <!-- Form Group -->
                         <div class="js-form-message form-group">
                             <label class="form-label" for="signinSrEmail">Zip Code</label>
@@ -36,7 +34,7 @@
                         </div>
                         <div id="error_zipcode" class="alert alert-danger d-none"> </div>
                         <!-- End Form Group -->
-                        <a class="btn btn-sm btn-soft-white btn-pill transition-3d-hover" @click='onZipChange' id="btn_continue" href="wizard">Continue</a>
+                        <a class="btn btn-sm btn-soft-white btn-pill pull-right transition-3d-hover" @click='onZipChange' id="btn_continue" href="#">Continue</a>
                         </div>
                     </article>
                     </div>
@@ -72,12 +70,15 @@ export default {
                 $("#btn_continue").prop('disabled', false);
                 $("#error_zipcode").addClass("d-none")
                 $("#error_zipcode").text("");
+                window.location.href = "wizard";
+            }else{
+                $("#error_zipcode").removeClass("d-none");
+                $("#btn_continue").prop('disabled', true);
+                $("#error_zipcode").text("Sorry! the Zip Code you provided is not valid for shippment.");
+                return false;
             }
 
-            $("#error_zipcode").removeClass("d-none");
-            $("#btn_continue").prop('disabled', true);
-            $("#error_zipcode").text("Sorry! the Zip Code you provided is not valid for shippment.");
-            return;
+            
         
         
         }
@@ -89,4 +90,6 @@ export default {
 #vueApp {
   padding: 10px 0;
 }
+
+ 
 </style>
