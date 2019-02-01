@@ -88,7 +88,7 @@
 
       <div class="text-center row">
         <h3 class='step-title bg-secondary col-12'>Please select the brands.</h3>
-        <p class='text-left p-1'>All flavors of the brands you choose will be available to choose from in the next slide. You will be charged the higher cost.</p>
+        <p class='text-left step-subtitle'>All flavors of the brands you choose will be available to choose from in the next slide. You will be charged the higher cost.</p>
       </div>
 
       <ul class='tile-list row p-0'>
@@ -152,7 +152,7 @@
 
       <div class="text-center row">
         <h3 class='step-title bg-secondary col-12'>2 Flavor Combo</h3>
-        <p class='text-left p-1'>Please choose the proportion of each flavor you'd like.</p>
+        <p class='text-left step-subtitle'>Please choose the proportion of each flavor you'd like.</p>
       </div>
 
 
@@ -191,7 +191,7 @@
 
       <div class="text-center row">
         <h3 class='step-title bg-secondary col-12'>3 Flavor Combo</h3>
-        <p class='text-left p-1'>All flavors of the brands you choose will be available to choose from; you will be charged the higher cost for all.</p>
+        <p class='text-left step-subtitle'>All flavors of the brands you choose will be available to choose from; you will be charged the higher cost for all.</p>
       </div>
 
       <div class="row">
@@ -251,7 +251,7 @@
 
       <div class="text-center row">
         <h3 class='step-title bg-secondary col-12'>Review Selection</h3>
-        <p class='text-left p-1'>All flavors of the brands you choose will be available to choose from; you will be charged the higher cost for all.</p>
+        <p class='text-left step-subtitle'>All flavors of the brands you choose will be available to choose from; you will be charged the higher cost for all.</p>
       </div>
       
       <!-- <ul class='tile-list row p-0'>
@@ -286,20 +286,20 @@
       
       <div id="review1-options" class='col-12'>
         <div class="row">
-          <div class="col col-6" >
+          <div class="col-6" >
             <h5>How many of this selection?</h5>
             <input id='selectionQuantity-input' class='p-1' type="number" min=1 :value="order.new.quantity" @change="selectionQuantityChanged()">
           </div>
           
-          <div class="col col-6 cursor-pointer markOnHover" @click='addAnother()'>
+          <div class="col-6 cursor-pointer markOnHover" @click='addAnother()'>
             <h5>Add another selection... Pick something totally different!</h5>
           </div>
         
-          <div class="col col-6 cursor-pointer markOnHover" @click="hookahs()">
+          <div class="col-6 cursor-pointer markOnHover" @click="hookahs()">
             <h5>Need a hookah? We got you covered.</h5>
           </div>
           
-          <div class="col col-6 cursor-pointer markOnHover" @click="addons()">
+          <div class="col-6 cursor-pointer markOnHover" @click="addons()">
             <h5>Find all accessories you might need here.</h5>
           </div>
         </div>
@@ -315,10 +315,114 @@
 
       <div class="text-center row">
         <h3 class='step-title bg-secondary col-12'>Review</h3>
-        <p class='text-left p-1'>Please make sure all selections are correct and confirm your order.</p>
+        <p class='text-left step-subtitle'>Please make sure all selections are correct and confirm your order.</p>
       </div>
 
       <div id="cart-review" class='row'>
+        <div class="container">
+
+          <div id="cart-review-items" class='row'>
+            <ul class='col'>
+              <li v-for='(item, i) in this.order.cleanCart' :key="i" class='review-item'>
+                
+                <div class="row">
+                  <div class="col-4">
+                    <img :src="'img/fruits/fruit-head/' + item.hookahHeadType.name + '.jpg'" alt="">
+                  </div>
+                  <div class="col-8">
+                    <div>Quantity: {{ item.quantity }}</div>
+                    <div>Hookah Head Type: {{ item.hookahHeadType.name }}</div>
+                    <div>Price: ${{ item.price }}</div>
+                    <div>
+                      Type: {{ item.mixType.name }} Mix
+                      
+                      <span v-if='item.mixType.name == "Custom"'>
+                        of {{ item.comboOptions.numberOfFlavors }} flavors:
+                      </span>
+                    </div>
+
+                    
+                    <span v-if='item.mixType.name == "House"'>
+                      <div>House Mix: {{ item.houseMix.name }}</div>
+                    </span>
+
+                    <span v-if='item.mixType.name == "Custom"'>
+
+                      <span v-if='item.comboOptions.numberOfFlavors == 2'>
+                        <div> {{ item.tobaccoFlavors[0].name }}: {{ item.comboOptions.flavor1 }} || {{ item.tobaccoFlavors[1].name }}: {{ item.comboOptions.flavor2 }}</div>
+                      </span>
+                      
+                      <span v-if='item.comboOptions.numberOfFlavors == 3'>
+                        <div>
+                          <span v-for="(f, i) in item.tobaccoFlavors" :key="i">
+                            {{f.name}} <span v-if="i != item.tobaccoFlavors.length - 1">,</span>
+                          </span>
+                        </div>
+
+                        <div> 
+                          Split: 
+                          
+                          <span v-if="item.comboOptions.split"></span>
+
+                        </div>
+                        <div> WhichIsOdd: {{ item.comboOptions.whichIsOdd.name }} </div>
+                      </span>
+
+                    </span>
+                  </div>
+                </div>
+                
+                <br>
+
+                <div class="row">
+                  <button class="col-6 btn-secondary" @click='editItem(i)'>Edit</button>
+                  <button class="col-6 btn-danger" @click='removeItem(i)'>Remove</button>
+                </div>
+                
+                
+                
+              </li>
+            </ul>
+          </div>
+
+          <div id="cart-review-summary" class='row'>
+            <div class='col'>
+              <table class='float-right'>
+                <tr>
+                  <td>Subtotal:</td>
+                  <td>${{ subtotalPrice }}</td>
+                </tr>
+                <tr>
+                  <td>Tax (10%):</td>
+                  <td>${{(subtotalPrice * .1).toFixed(2)}}</td>
+                </tr>
+                <tr>
+                  <td>Total:</td>
+                  <td>${{ totalPrice }}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+      
+    </div>
+
+  </div>
+
+  <!-- CONFIRMATION -->
+  <div id="wizard-selection-confirmation" class='wizard-selection row' v-if="this.$root.curStep==this.steps.confirmation">
+
+    <div class="col-12">
+
+      <div class="text-center row">
+        <h3 class='step-title bg-secondary col-12'>Confirmation</h3>
+        <p class='text-left step-subtitle'>Your order is being prepared. You can find details of your order below.</p>
+      </div>
+
+      <div id="confirmation">
         <ul class='col'>
           <li v-for='(item, i) in this.order.cleanCart' :key="i" class='review-item'>
             
@@ -367,62 +471,8 @@
 
                 </span>
               </div>
-            </div>
+            </div>          
             
-            <br>
-
-            <div class="row">
-              <button class="col-6" @click='editItem(i)'>Edit</button>
-              <button class="col-6" @click='removeItem(i)'>Remove</button>
-            </div>
-            
-            
-            
-          </li>
-        </ul>
-      </div>
-      
-    </div>
-
-  </div>
-
-  <!-- CONFIRMATION -->
-  <div id="wizard-selection-confirmation" class='wizard-selection row' v-if="this.$root.curStep==this.steps.confirmation">
-
-    <div class="col-12">
-
-      <div class="text-center row">
-        <h3 class='step-title bg-secondary col-12'>Confirmation</h3>
-        <p class='text-left p-1'>Your order is being prepared. You can find details of your order below.</p>
-      </div>
-
-      <div id="confirmation">
-        <ul>
-          <li v-for='(item, i) in this.order.cleanCart' :key="i" class='review-item'>
-            <h5>Quantity: {{ item.quantity }}</h5>
-            <h5>Hookah Head Type: {{ item.hookahHeadType.name }}</h5>
-            <h5>Price: {{ item.price }}</h5>
-            <h5>Mix Type: {{ item.mixType.name }}</h5>
-            
-            <span v-if='item.mixType.name == "House"'>
-              <h5>House Mix: {{ item.houseMix.name }}</h5>
-            </span>
-
-            <span v-if='item.mixType.name == "Custom"'>
-              <!-- <h5>Number of Flavors: {{ item.comboOptions.numberOfFlavors }}</h5> -->
-
-              <span v-if='item.comboOptions.numberOfFlavors == 2'>
-                <h5> Mix Code: {{ item.comboOptions.mixCode }} </h5>
-                <h5> {{ item.tobaccoFlavors.list[1] }}: {{ item.comboOptions.flavor1 }} </h5>
-                <h5> {{ item.tobaccoFlavors.list[2] }}: {{ item.comboOptions.flavor2 }} </h5>
-              </span>
-              
-              <span v-if='item.comboOptions.numberOfFlavors == 3'>
-                <h5> Split: {{ item.comboOptions.split }} </h5>
-                <h5> WhichIsOdd: {{ item.comboOptions.whichIsOdd.name }} </h5>
-              </span>
-
-            </span>
             
           </li>
         </ul>
@@ -776,6 +826,24 @@ export default {
       }
       
       return res;
+    },
+    subtotalPrice() {
+      let res = 0;
+
+      this.order.cleanCart.forEach( (el) => {
+        res += el.price;
+      });
+
+      return res.toFixed(2);
+    },
+    totalPrice() {
+      let sub = +this.subtotalPrice;
+      let tax = 0.1;
+
+      let res = sub + (sub * tax);
+
+      return res.toFixed(2);
+
     }
   }, 
   created () {
@@ -862,9 +930,11 @@ export default {
     }
   },
   updated() {
-    $('html, body').animate({
-      scrollTop: $("div#wizard").offset().top
-    }, 50);
+    if (this.$root.curStep != this.steps.tobaccoFlavors) {
+      $('html, body').animate({
+        scrollTop: $("div#wizard-html").offset().top
+      }, 50);
+    }
   },
   methods: {
     /* COMMON */
@@ -1374,6 +1444,10 @@ export default {
     list-style-type: none;
   }
 
+  .step-subtitle {
+    padding: 0 15px;
+  }
+
   .combo2-range {
     margin: 10px 20px;
   }
@@ -1400,7 +1474,7 @@ export default {
     border-left: solid black 1px;
   } */
 
-  #cart-review > ul {
+  #cart-review ul, #confirmation ul {
     list-style-type: none;
   }
 
@@ -1418,6 +1492,21 @@ export default {
     width: 100%;
     border-radius: 10px;
     margin: 10px 0;
+  }
+
+  #cart-review-summary table {
+    margin: 0 0 30px;
+    border-bottom: solid 1px grey;
+    font-family: monospace;
+  }
+
+  #cart-review-summary table td:nth-child(1) {
+    text-align: right;
+  }
+  
+  #cart-review-summary table td:nth-child(2) {
+    text-align: right;
+    padding-left: 10px;
   }
 
 </style>
