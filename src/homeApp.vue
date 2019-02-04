@@ -51,6 +51,7 @@
 
 
 <script>
+import router from "./router";
 export default {
   name: 'homeApp',
   data () {
@@ -63,17 +64,17 @@ export default {
   },
   methods: {
       onZipChange (e) {
-            var zipCode = ["90039", "91011", "91020", "91046", "91201", "91202", "91203", "91204", "91205", "91206", "91207", "91208", "91210", "91214"];
+            var zipCode = ["90039", "91011", "91020", "91046", "91201", "91202", 
+            "91203", "91204", "91205", "91206", "91207", "91208", "91210", "91214"];
              
             var zipCodeContain = zipCode.includes(e.target.value);     
-            if(zipCodeContain){
-                $("#btn_continue").prop('disabled', false);
-                $("#error_zipcode").addClass("d-none")
+            if(zipCodeContain){ 
                 $("#error_zipcode").text("");
-                window.location.href = "wizard";
+                $("#error_zipcode").addClass("d-none");
+                router.push('wizard');
+                 
             }else{
-                $("#error_zipcode").removeClass("d-none");
-                $("#btn_continue").prop('disabled', true);
+                $("#error_zipcode").removeClass("d-none"); 
                 $("#error_zipcode").text("Sorry! the Zip Code you provided is not valid for shippment.");
                 return false;
             }

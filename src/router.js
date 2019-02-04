@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 
 import Wizard from './Wizard.vue';
 import Test1 from './Test1.vue';
+import signup from './signup';
 
 /* import VueApp       from './components/VueApp.vue';
 import SignUp       from './components/forms/tables/auth/SignUp.vue';
@@ -30,7 +31,8 @@ var signedUp = true;
 const routes = [
   { name: 'notFound', path: '*', component: NotFound },
   // { name: 'home',     path: '/', component: Home },
-  { name: 'wizard',   path: '/', component: Wizard },
+  { name: 'wizard',   path: '/wizard', component: Wizard },
+  { name: 'signup',   path: '/signup', component: signup },
   { name: 'test',   path: '/test1', component: Test1 },
   // { name: 'services', path: '/services', component: Services },
   // { name: 'checkout', path: '/checkout', component: Checkout },
