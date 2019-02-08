@@ -1,110 +1,131 @@
 <template>
-<div id='wizard' class='container'>
+  <div id="wizard" class="container">
+    <!-- HOOKAH HEAD TYPE SELECTION -->
+    <div
+      id="wizard-selection-hookahHeadTypes"
+      class="wizard-selection row"
+      v-if="this.$root.curStep == this.steps.hookahHeadType"
+    >
+      <div class="col-12">
+        <div class="text-center row">
+          <h3 class="step-title bg-secondary col-12">
+            Please select the hookah head type.
+          </h3>
+        </div>
 
-            <!-- HOOKAH HEAD TYPE SELECTION -->
-  <div id="wizard-selection-hookahHeadTypes" class='wizard-selection row' v-if="this.$root.curStep==this.steps.hookahHeadType">
-    
-    <div class="col-12">
+        <ul class="tile-list row p-0">
+          <li v-for="(el, i) in hookahHeadTypes.list" :key="i" class="col-6">
+            <div
+              class="tile p-1"
+              @click="selectHookahHeadType(i)"
+              :class="{ selected: el._id == order.new.hookahHeadType.id }"
+            >
+              <!-- (el._id == order.new.hookahHeadType.id) -->
+              <!-- checkIfSelected(el) -->
 
-    
-      <div class="text-center row">
-        <h3 class='step-title bg-secondary col-12'>Please select the hookah head type.</h3>
-      </div>
-
-      <ul class='tile-list row p-0'>
-        <li v-for="(el, i) in hookahHeadTypes.list" :key="i" class='col-6'>
-          <div class='tile p-1' 
-          @click="selectHookahHeadType(i)"
-          :class="{selected : (el._id == order.new.hookahHeadType.id) }"
-          >
-          <!-- (el._id == order.new.hookahHeadType.id) -->
-          <!-- checkIfSelected(el) -->
-          
-
-            <h5 class='text-center'>{{el.name}}</h5>
-            <div class="row">
-              <div class="col-2"> ${{el.price}} </div>
-              <div class="col-10"> {{el.description}} </div>
+              <h5 class="text-center">{{ el.name }}</h5>
+              <div class="row">
+                <div class="col-2">${{ el.price }}</div>
+                <div class="col-10">{{ el.description }}</div>
+              </div>
+              <!-- <div class="row"> {{el._id}} </div> -->
             </div>
-                        <!-- <div class="row"> {{el._id}} </div> -->
-          </div>
-        </li>
-      </ul>
-
+          </li>
+        </ul>
       </div>
-  </div>
-
-            <!-- MIX TYPE SELECTION -->
-  <div id="wizard-selection-mixTypes" class='wizard-selection row' v-if="this.$root.curStep==this.steps.mixType">
-
-    <div class="col-12">
-
-      <div class="text-center row">
-        <h3 class='step-title bg-secondary col-12'>Please select the mix type.</h3>
-      </div>
-
-      <ul class='tile-list row p-0'>
-        <li v-for="(el, i) in mixTypes.list" :key="i" class='col-6' >
-          <div class='tile p-1' 
-          @click="selectMixType(i)" 
-          :class="{selected : (el.id == order.new.mixType.id) }"
-          >
-            <h5 class='text-center'>{{el.name}}</h5>
-          </div>
-        </li>
-      </ul>
-
     </div>
-  </div>
-  
-            <!-- HOUSE MIX SELECTION -->
-  <div id="wizard-selection-houseMixes" class='wizard-selection row' v-if="this.$root.curStep==this.steps.houseMix">
 
-    <div class="col-12">
+    <!-- MIX TYPE SELECTION -->
+    <div
+      id="wizard-selection-mixTypes"
+      class="wizard-selection row"
+      v-if="this.$root.curStep == this.steps.mixType"
+    >
+      <div class="col-12">
+        <div class="text-center row">
+          <h3 class="step-title bg-secondary col-12">
+            Please select the mix type.
+          </h3>
+        </div>
 
-      <div class="text-center row">
-        <h3 class='step-title bg-secondary col-12'>Please select the House mix.</h3>
+        <ul class="tile-list row p-0">
+          <li v-for="(el, i) in mixTypes.list" :key="i" class="col-6">
+            <div
+              class="tile p-1"
+              @click="selectMixType(i)"
+              :class="{ selected: el.id == order.new.mixType.id }"
+            >
+              <h5 class="text-center">{{ el.name }}</h5>
+            </div>
+          </li>
+        </ul>
       </div>
-
-      <ul class='tile-list row p-0'>
-        <li v-for="(el, i) in houseMixes.list" :key="i" class='col-6' >
-          <div class='tile p-1' 
-          @click="selectHouseMix(i)"
-          :class="{selected : (el.id == order.new.houseMix.id) }"
-          >
-            <h5 class='text-center'>{{el.name}}</h5>
-            <span>${{el.price}}</span>
-          </div>
-        </li>
-      </ul>
-
     </div>
-  </div>
-  
-            <!-- TOBACCO BRAND SELECTION -->
-  <div id="wizard-selection-tobaccoBrands" class='wizard-selection row' v-if="this.$root.curStep==this.steps.tobaccoBrands">
 
-    <div class="col-12">
+    <!-- HOUSE MIX SELECTION -->
+    <div
+      id="wizard-selection-houseMixes"
+      class="wizard-selection row"
+      v-if="this.$root.curStep == this.steps.houseMix"
+    >
+      <div class="col-12">
+        <div class="text-center row">
+          <h3 class="step-title bg-secondary col-12">
+            Please select the House mix.
+          </h3>
+        </div>
 
-      <div class="text-center row">
-        <h3 class='step-title bg-secondary col-12'>Please select the brands.</h3>
-        <p class='text-left step-subtitle'>All flavors of the brands you choose will be available to choose from in the next slide. You will be charged the higher cost.</p>
+        <ul class="tile-list row p-0">
+          <li v-for="(el, i) in houseMixes.list" :key="i" class="col-6">
+            <div
+              class="tile p-1"
+              @click="selectHouseMix(i)"
+              :class="{ selected: el.id == order.new.houseMix.id }"
+            >
+              <h5 class="text-center">{{ el.name }}</h5>
+              <span>${{ el.price }}</span>
+            </div>
+          </li>
+        </ul>
       </div>
+    </div>
 
-      <ul class='tile-list row p-0'>
-        <li v-for="(el, i) in tobaccoBrands.list" :key="i" class='col-6' 
-        :data-selected='brandIsOrdered(el, true)'>
-          <div class='tile p-1' 
-          @click="selectTobaccoBrand(el)"
-          :class="{selected : brandIsOrdered(el) }"
+    <!-- TOBACCO BRAND SELECTION -->
+    <div
+      id="wizard-selection-tobaccoBrands"
+      class="wizard-selection row"
+      v-if="this.$root.curStep == this.steps.tobaccoBrands"
+    >
+      <div class="col-12">
+        <div class="text-center row">
+          <h3 class="step-title bg-secondary col-12">
+            Please select the brands.
+          </h3>
+          <p class="text-left step-subtitle">
+            All flavors of the brands you choose will be available to choose
+            from in the next slide. You will be charged the higher cost.
+          </p>
+        </div>
+
+        <ul class="tile-list row p-0">
+          <li
+            v-for="(el, i) in tobaccoBrands.list"
+            :key="i"
+            class="col-6"
+            :data-selected="brandIsOrdered(el, true)"
           >
-            <h5 class='text-center'>{{el.name}}</h5>
-            <span>${{el.price}}</span>
-          </div>
-        </li>
-      </ul>
+            <div
+              class="tile p-1"
+              @click="selectTobaccoBrand(el)"
+              :class="{ selected: brandIsOrdered(el) }"
+            >
+              <h5 class="text-center">{{ el.name }}</h5>
+              <span>${{ el.price }}</span>
+            </div>
+          </li>
+        </ul>
 
-                <!-- <div class="row">
+        <!-- <div class="row">
         <div class="col-6 text-center">
           <button class='btn-secondary center wp-100' @click="removeTobaccoBrand()">Remove</button>
         </div>
@@ -112,149 +133,223 @@
           <button class='btn- primary wp-100' @click="addTobaccoBrand()">Add</button>
         </div>
       </div> -->
+      </div>
     </div>
 
-  </div>
-  
-            <!-- TOBACCO FLAVOR SELECTION -->
-  <div id="wizard-selection-tobaccoFlavors" class='wizard-selection row' v-if="this.$root.curStep==this.steps.tobaccoFlavors">
+    <!-- TOBACCO FLAVOR SELECTION -->
+    <div
+      id="wizard-selection-tobaccoFlavors"
+      class="wizard-selection row"
+      v-if="this.$root.curStep == this.steps.tobaccoFlavors"
+    >
+      <div class="col-12">
+        <div class="text-center row">
+          <h3 class="step-title bg-secondary col-12">
+            Please select up to 3 flavors.
+          </h3>
+        </div>
 
-    <div class="col-12">
+        <ul
+          v-for="(b, i) in orderedTobaccoBrands"
+          :key="i"
+          class="tile-list row p-0 text-center"
+        >
+          <h5 class="text-center col-12">{{ b.name }} - ${{ b.price }}</h5>
 
-      <div class="text-center row">
-        <h3 class='step-title bg-secondary col-12'>Please select up to 3 flavors.</h3>
-      </div>
-
-      <ul v-for="(b, i) in orderedTobaccoBrands" :key="i" class='tile-list row p-0 text-center'>
-
-          <h5 class='text-center col-12'>{{b.name}} - ${{b.price}}</h5>
-
-          <li v-for="(f, i) in b.flavors.list" :key="i" class='col-6' 
-          :data-selected='flavorIsOrdered(f, true)'>
-            <div class='tile p-1' 
-            @click="selectTobaccoFlavor(b, f)"
-            :class='{selected: flavorIsOrdered(f) }'
+          <li
+            v-for="(f, i) in b.flavors.list"
+            :key="i"
+            class="col-6"
+            :data-selected="flavorIsOrdered(f, true)"
+          >
+            <div
+              class="tile p-1"
+              @click="selectTobaccoFlavor(b, f)"
+              :class="{ selected: flavorIsOrdered(f) }"
             >
-              <h5 class='text-center'>{{f.name}}</h5>
+              <h5 class="text-center">{{ f.name }}</h5>
             </div>
           </li>
-
-      </ul>
-
+        </ul>
+      </div>
     </div>
 
-  </div>
-
-            <!-- COMBO2 -->
-  <div id="wizard-selection-combo2" class='wizard-selection row' v-if="this.$root.curStep==this.steps.combo2">
-
-    <div class="col-12">
-
-      <div class="text-center row">
-        <h3 class='step-title bg-secondary col-12'>2 Flavor Combo</h3>
-        <p class='text-left step-subtitle'>Please choose the proportion of each flavor you'd like.</p>
-      </div>
-
-
-      <div class="row">
-        <div class="col-12 text-center">
-          <h5>{{order.new.tobaccoFlavors.list[0].name}}</h5>
-          <input id="combo2-flavor1" class="combo2-range wp-75" type="range" name="combo2-flavor1" min="25" max="75" :value='this.order.new.comboOptions.combo2.flavor1' step="25" @change="combo2RangeChange()">
+    <!-- COMBO2 -->
+    <div
+      id="wizard-selection-combo2"
+      class="wizard-selection row"
+      v-if="this.$root.curStep == this.steps.combo2"
+    >
+      <div class="col-12">
+        <div class="text-center row">
+          <h3 class="step-title bg-secondary col-12">2 Flavor Combo</h3>
+          <p class="text-left step-subtitle">
+            Please choose the proportion of each flavor you'd like.
+          </p>
         </div>
-      </div>
-      <div class="wp-75 center">
-    
+
         <div class="row">
-          <span class="col-2 text-left">25%</span>
-          <span class="col-2 text-center"></span>
-          <span class="col-4 text-center">50%</span>
-          <span class="col-2 text-center"></span>
-          <span class="col-2 text-right">75%</span>
+          <div class="col-12 text-center">
+            <h5>{{ order.new.tobaccoFlavors.list[0].name }}</h5>
+            <input
+              id="combo2-flavor1"
+              class="combo2-range wp-75"
+              type="range"
+              name="combo2-flavor1"
+              min="25"
+              max="75"
+              :value="this.order.new.comboOptions.combo2.flavor1"
+              step="25"
+              @change="combo2RangeChange()"
+            />
+          </div>
+        </div>
+        <div class="wp-75 center">
+          <div class="row">
+            <span class="col-2 text-left">25%</span>
+            <span class="col-2 text-center"></span>
+            <span class="col-4 text-center">50%</span>
+            <span class="col-2 text-center"></span>
+            <span class="col-2 text-right">75%</span>
+          </div>
         </div>
 
-      </div>
-
-      <div class="row">
-        <div class="col-12 text-center">
-          <input id="combo2-flavor2" class="combo2-range wp-75" type="range" name="combo2-flavor2" min="25" max="75" :value='this.order.new.comboOptions.combo2.flavor2' step="25" disabled >
-          <h5>{{order.new.tobaccoFlavors.list[1].name}}</h5>
+        <div class="row">
+          <div class="col-12 text-center">
+            <input
+              id="combo2-flavor2"
+              class="combo2-range wp-75"
+              type="range"
+              name="combo2-flavor2"
+              min="25"
+              max="75"
+              :value="this.order.new.comboOptions.combo2.flavor2"
+              step="25"
+              disabled
+            />
+            <h5>{{ order.new.tobaccoFlavors.list[1].name }}</h5>
+          </div>
         </div>
       </div>
     </div>
 
-  </div>
+    <!-- COMBO3 -->
+    <div
+      id="wizard-selection-combo3"
+      class="wizard-selection row"
+      v-if="this.$root.curStep == this.steps.combo3"
+    >
+      <div class="col-12">
+        <div class="text-center row">
+          <h3 class="step-title bg-secondary col-12">3 Flavor Combo</h3>
+          <p class="text-left step-subtitle">
+            All flavors of the brands you choose will be available to choose
+            from; you will be charged the higher cost for all.
+          </p>
+        </div>
 
-            <!-- COMBO3 -->
-  <div id="wizard-selection-combo3" class='wizard-selection row' v-if="this.$root.curStep==this.steps.combo3">
+        <div class="row">
+          <div class="col-6">
+            <input
+              type="radio"
+              name="combo3"
+              id="combo3-thirds"
+              value="thirds"
+              v-model="order.new.comboOptions.combo3.split"
+            />
+            <label for="">1/3 + 1/3 + 1/3</label>
+          </div>
+        </div>
 
-    <div class="col-12">
+        <div class="row">
+          <div class="col-6">
+            <input
+              type="radio"
+              name="combo3"
+              id="combo3-fifths-1/2"
+              value="fifths-1/2"
+              v-model="order.new.comboOptions.combo3.split"
+            />
+            <label for="">1/5 + 2/5 + 2/5</label>
+          </div>
 
-      <div class="text-center row">
-        <h3 class='step-title bg-secondary col-12'>3 Flavor Combo</h3>
-        <p class='text-left step-subtitle'>All flavors of the brands you choose will be available to choose from; you will be charged the higher cost for all.</p>
-      </div>
+          <div
+            class="col-6"
+            v-if="order.new.comboOptions.combo3.split == 'fifths-1/2'"
+          >
+            <label for="">Which one is 1/5?</label>
+            <select
+              name=""
+              id=""
+              v-model="order.new.comboOptions.combo3.whichIsOdd.id"
+            >
+              <option value="" disabled>Select</option>
 
-      <div class="row">
-        <div class="col-6">
-          <input type="radio" name="combo3" id="combo3-thirds" value='thirds' v-model="order.new.comboOptions.combo3.split"> 
-          <label for="">1/3 + 1/3 + 1/3</label>
+              <option
+                v-for="(f, i) in order.new.tobaccoFlavors.list"
+                :key="i"
+                :value="f.id"
+              >
+                {{ f.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-6">
+            <input
+              type="radio"
+              name="combo3"
+              id="combo3-fifths-1/3"
+              value="fifths-1/3"
+              v-model="order.new.comboOptions.combo3.split"
+            />
+            <label for="">1/5 + 1/5 + 3/5</label>
+          </div>
+
+          <div
+            class="col-6"
+            v-if="order.new.comboOptions.combo3.split == 'fifths-1/3'"
+          >
+            <label for="">Which one is 3/5?</label>
+            <select
+              name=""
+              id=""
+              v-model="order.new.comboOptions.combo3.whichIsOdd.id"
+            >
+              <option value="" disabled>Select</option>
+
+              <option
+                v-for="(f, i) in order.new.tobaccoFlavors.list"
+                :key="i"
+                :value="f.id"
+                :data-flavorName="f.name"
+              >
+                {{ f.name }}
+              </option>
+            </select>
+          </div>
         </div>
       </div>
-      
-      <div class="row">
-        <div class="col-6">
-          <input type="radio" name="combo3" id="combo3-fifths-1/2" value='fifths-1/2' v-model="order.new.comboOptions.combo3.split"> 
-          <label for="">1/5 + 2/5 + 2/5</label>
-        </div>
-        
-        <div class="col-6" v-if="order.new.comboOptions.combo3.split=='fifths-1/2'">
-          <label for="">Which one is 1/5?</label>
-          <select name="" id="" v-model="order.new.comboOptions.combo3.whichIsOdd.id">
-            <option value="" disabled>Select</option>
-
-            <option v-for='(f, i) in order.new.tobaccoFlavors.list' :key="i" 
-            :value="f.id">
-              {{f.name}}
-            </option>
-          </select>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-6">
-          <input type="radio" name="combo3" id="combo3-fifths-1/3" value='fifths-1/3' v-model="order.new.comboOptions.combo3.split"> 
-          <label for="">1/5 + 1/5 + 3/5</label>
-        </div>
-        
-        <div class="col-6" v-if="order.new.comboOptions.combo3.split=='fifths-1/3'">
-          <label for="">Which one is 3/5?</label>
-          <select name="" id="" v-model="order.new.comboOptions.combo3.whichIsOdd.id">
-            <option value="" disabled>Select</option>
-
-            <option v-for='(f, i) in order.new.tobaccoFlavors.list' :key="i" 
-            :value="f.id" 
-            :data-flavorName='f.name'>
-              {{f.name}}
-            </option>
-          </select>
-        </div>
-      </div>
-
     </div>
 
-  </div>
+    <!-- REVIEW1 -->
+    <div
+      id="wizard-selection-review1"
+      class="wizard-selection row"
+      v-if="this.$root.curStep == this.steps.review1"
+    >
+      <div class="col-12">
+        <div class="text-center row">
+          <h3 class="step-title bg-secondary col-12">Review Selection</h3>
+          <p class="text-left step-subtitle">
+            All flavors of the brands you choose will be available to choose
+            from; you will be charged the higher cost for all.
+          </p>
+        </div>
 
-            <!-- REVIEW1 -->
-  <div id="wizard-selection-review1" class='wizard-selection row' v-if="this.$root.curStep==this.steps.review1">
-
-    <div class="col-12">
-
-      <div class="text-center row">
-        <h3 class='step-title bg-secondary col-12'>Review Selection</h3>
-        <p class='text-left step-subtitle'>All flavors of the brands you choose will be available to choose from; you will be charged the higher cost for all.</p>
-      </div>
-      
-                <!-- <ul class='tile-list row p-0'>
+        <!-- <ul class='tile-list row p-0'>
         <li class='col-6' >
           <div class='tile p-1' @click="selectReview1Option('')">
             <h5 class='text-center'></h5>
@@ -283,238 +378,286 @@
           </div>
         </li>
       </ul> -->
-      
-      <div id="review1-options" class='col-12'>
-        <div class="row">
-          <div class="col-6" >
-            <h5>How many of this selection?</h5>
-            <input id='selectionQuantity-input' class='p-1' type="number" min=1 :value="order.new.quantity" @change="selectionQuantityChanged()">
-          </div>
-          
-          <div class="col-6 cursor-pointer markOnHover" @click='addAnother()'>
-            <h5>Add another selection... Pick something totally different!</h5>
-          </div>
-        
-          <div class="col-6 cursor-pointer markOnHover" @click="hookahs()">
-            <h5>Need a hookah? We got you covered.</h5>
-          </div>
-          
-          <div class="col-6 cursor-pointer markOnHover" @click="addons()">
-            <h5>Find all accessories you might need here.</h5>
-          </div>
-        </div>
-      </div>
 
-    </div>
-  </div>
-  
-            <!-- REVIEW -->
-  <div id="wizard-selection-review" class='wizard-selection row' v-if="this.$root.curStep==this.steps.reviewTotal">
+        <div id="review1-options" class="col-12">
+          <div class="row">
+            <div class="col-6">
+              <h5>How many of this selection?</h5>
+              <input
+                id="selectionQuantity-input"
+                class="p-1"
+                type="number"
+                min="1"
+                :value="order.new.quantity"
+                @change="selectionQuantityChanged()"
+              />
+            </div>
 
-    <div class="col-12">
+            <div class="col-6 cursor-pointer markOnHover" @click="addAnother()">
+              <h5>
+                Add another selection... Pick something totally different!
+              </h5>
+            </div>
 
-      <div class="text-center row">
-        <h3 class='step-title bg-secondary col-12'>Review</h3>
-        <p class='text-left step-subtitle'>Please make sure all selections are correct and confirm your order.</p>
-      </div>
+            <div class="col-6 cursor-pointer markOnHover" @click="hookahs()">
+              <h5>Need a hookah? We got you covered.</h5>
+            </div>
 
-      <div id="cart-review" class='row'>
-        <div class="container">
-
-          <div id="cart-review-items" class='row'>
-            <ul class='col'>
-              <li v-for='(item, i) in this.order.cleanCart' :key="i" class='review-item'>
-                
-                <div class="row">
-                  <div class="col-4">
-                    <img :src="'img/fruits/fruit-head/' + item.hookahHeadType.name + '.jpg'" alt="">
-                  </div>
-                  <div class="col-8">
-                    <div>Quantity: {{ item.quantity }}</div>
-                    <div>Hookah Head Type: {{ item.hookahHeadType.name }}</div>
-                    <div>Price: ${{ item.price }}</div>
-                    <div>
-                      Type: {{ item.mixType.name }} Mix
-                      
-                      <span v-if='item.mixType.name == "Custom"'>
-                        of {{ item.comboOptions.numberOfFlavors }} flavors:
-                      </span>
-                    </div>
-
-                    
-                    <span v-if='item.mixType.name == "House"'>
-                      <div>House Mix: {{ item.houseMix.name }}</div>
-                    </span>
-
-                    <span v-if='item.mixType.name == "Custom"'>
-
-                      <span v-if='item.comboOptions.numberOfFlavors == 2'>
-                        <div> {{ item.tobaccoFlavors[0].name }}: {{ item.comboOptions.flavor1 }} || {{ item.tobaccoFlavors[1].name }}: {{ item.comboOptions.flavor2 }}</div>
-                      </span>
-                      
-                      <span v-if='item.comboOptions.numberOfFlavors == 3'>
-                        <div>
-                          <span v-for="(f, i) in item.tobaccoFlavors" :key="i">
-                            {{f.name}} <span v-if="i != item.tobaccoFlavors.length - 1">,</span>
-                          </span>
-                        </div>
-
-                        <div> 
-                          Split: 
-                          
-                          <span v-if="item.comboOptions.split"></span>
-
-                        </div>
-                        <div> WhichIsOdd: {{ item.comboOptions.whichIsOdd.name }} </div>
-                      </span>
-
-                    </span>
-                  </div>
-                </div>
-                
-                <br>
-
-                <div class="row">
-                  <button class="col-6 btn-secondary" @click='editItem(i)'>Edit</button>
-                  <button class="col-6 btn-danger" @click='removeItem(i)'>Remove</button>
-                </div>
-                
-                
-                
-              </li>
-            </ul>
-          </div>
-
-          <div id="cart-review-summary" class='row'>
-            <div class='col'>
-              <table class='float-right'>
-                <tr>
-                  <td>Subtotal:</td>
-                  <td>${{ subtotalPrice }}</td>
-                </tr>
-                <tr>
-                  <td>Tax (10%):</td>
-                  <td>${{(subtotalPrice * .1).toFixed(2)}}</td>
-                </tr>
-                <tr>
-                  <td>Total:</td>
-                  <td>${{ totalPrice }}</td>
-                </tr>
-              </table>
+            <div class="col-6 cursor-pointer markOnHover" @click="addons()">
+              <h5>Find all accessories you might need here.</h5>
             </div>
           </div>
-
         </div>
-
       </div>
-      
     </div>
 
-  </div>
+    <!-- REVIEW -->
+    <div
+      id="wizard-selection-review"
+      class="wizard-selection row"
+      v-if="this.$root.curStep == this.steps.reviewTotal"
+    >
+      <div class="col-12">
+        <div class="text-center row">
+          <h3 class="step-title bg-secondary col-12">Review</h3>
+          <p class="text-left step-subtitle">
+            Please make sure all selections are correct and confirm your order.
+          </p>
+        </div>
 
-            <!-- CONFIRMATION -->
-  <div id="wizard-selection-confirmation" class='wizard-selection row' v-if="this.$root.curStep==this.steps.confirmation">
+        <div id="cart-review" class="row">
+          <div class="container">
+            <div id="cart-review-items" class="row">
+              <ul class="col">
+                <li
+                  v-for="(item, i) in this.order.cleanCart"
+                  :key="i"
+                  class="review-item"
+                >
+                  <div class="row">
+                    <div class="col-4">
+                      <img
+                        :src="
+                          'img/fruits/fruit-head/' +
+                            item.hookahHeadType.name +
+                            '.jpg'
+                        "
+                        alt=""
+                      />
+                    </div>
+                    <div class="col-8">
+                      <div>Quantity: {{ item.quantity }}</div>
+                      <div>
+                        Hookah Head Type: {{ item.hookahHeadType.name }}
+                      </div>
+                      <div>Price: ${{ item.price }}</div>
+                      <div>
+                        Type: {{ item.mixType.name }} Mix
 
-    <div class="col-12">
+                        <span v-if="item.mixType.name == 'Custom'">
+                          of {{ item.comboOptions.numberOfFlavors }} flavors:
+                        </span>
+                      </div>
 
-      <div class="text-center row">
-        <h3 class='step-title bg-secondary col-12'>Confirmation</h3>
-        <p class='text-left step-subtitle'>Your order is being prepared. You can find details of your order below.</p>
-      </div>
+                      <span v-if="item.mixType.name == 'House'">
+                        <div>House Mix: {{ item.houseMix.name }}</div>
+                      </span>
 
-      <div id="confirmation">
-        <ul class='col'>
-          <li v-for='(item, i) in this.order.cleanCart' :key="i" class='review-item'>
-            
-            <div class="row">
-              <div class="col-4">
-                <img :src="'img/fruits/fruit-head/' + item.hookahHeadType.name + '.jpg'" alt="">
-              </div>
-              <div class="col-8">
-                <div>Quantity: {{ item.quantity }}</div>
-                <div>Hookah Head Type: {{ item.hookahHeadType.name }}</div>
-                <div>Price: ${{ item.price }}</div>
-                <div>
-                  Type: {{ item.mixType.name }} Mix
-                  
-                  <span v-if='item.mixType.name == "Custom"'>
-                    of {{ item.comboOptions.numberOfFlavors }} flavors:
-                  </span>
-                </div>
+                      <span v-if="item.mixType.name == 'Custom'">
+                        <span v-if="item.comboOptions.numberOfFlavors == 2">
+                          <div>
+                            {{ item.tobaccoFlavors[0].name }}:
+                            {{ item.comboOptions.flavor1 }} ||
+                            {{ item.tobaccoFlavors[1].name }}:
+                            {{ item.comboOptions.flavor2 }}
+                          </div>
+                        </span>
 
-                
-                <span v-if='item.mixType.name == "House"'>
-                  <div>House Mix: {{ item.houseMix.name }}</div>
-                </span>
+                        <span v-if="item.comboOptions.numberOfFlavors == 3">
+                          <div>
+                            <span
+                              v-for="(f, i) in item.tobaccoFlavors"
+                              :key="i"
+                            >
+                              {{ f.name }}
+                              <span v-if="i != item.tobaccoFlavors.length - 1"
+                                >,</span
+                              >
+                            </span>
+                          </div>
 
-                <span v-if='item.mixType.name == "Custom"'>
+                          <div>
+                            Split:
 
-                  <span v-if='item.comboOptions.numberOfFlavors == 2'>
-                    <div> {{ item.tobaccoFlavors[0].name }}: {{ item.comboOptions.flavor1 }} || {{ item.tobaccoFlavors[1].name }}: {{ item.comboOptions.flavor2 }}</div>
-                  </span>
-                  
-                  <span v-if='item.comboOptions.numberOfFlavors == 3'>
-                    <div>
-                      <span v-for="(f, i) in item.tobaccoFlavors" :key="i">
-                        {{f.name}} <span v-if="i != item.tobaccoFlavors.length - 1">,</span>
+                            <span v-if="item.comboOptions.split"></span>
+                          </div>
+                          <div>
+                            WhichIsOdd: {{ item.comboOptions.whichIsOdd.name }}
+                          </div>
+                        </span>
                       </span>
                     </div>
+                  </div>
 
-                    <div> 
-                      Split: 
-                      
-                      <span v-if="item.comboOptions.split"></span>
+                  <br />
 
-                    </div>
-                    <div> WhichIsOdd: {{ item.comboOptions.whichIsOdd.name }} </div>
-                  </span>
+                  <div class="row">
+                    <button class="col-6 btn-secondary" @click="editItem(i)">
+                      Edit
+                    </button>
+                    <button class="col-6 btn-danger" @click="removeItem(i)">
+                      Remove
+                    </button>
+                  </div>
+                </li>
+              </ul>
+            </div>
 
-                </span>
+            <div id="cart-review-summary" class="row">
+              <div class="col">
+                <table class="float-right">
+                  <tr>
+                    <td>Subtotal:</td>
+                    <td>${{ subtotalPrice }}</td>
+                  </tr>
+                  <tr>
+                    <td>Tax (10%):</td>
+                    <td>${{ (subtotalPrice * 0.1).toFixed(2) }}</td>
+                  </tr>
+                  <tr>
+                    <td>Total:</td>
+                    <td>${{ totalPrice }}</td>
+                  </tr>
+                </table>
               </div>
-            </div>          
-            
-            
-          </li>
-        </ul>
+            </div>
+          </div>
+        </div>
       </div>
-      
     </div>
 
-  </div>
+    <!-- CONFIRMATION -->
+    <div
+      id="wizard-selection-confirmation"
+      class="wizard-selection row"
+      v-if="this.$root.curStep == this.steps.confirmation"
+    >
+      <div class="col-12">
+        <div class="text-center row">
+          <h3 class="step-title bg-secondary col-12">Confirmation</h3>
+          <p class="text-left step-subtitle">
+            Your order is being prepared. You can find details of your order
+            below.
+          </p>
+        </div>
 
-  <div class="row mt-1">
-              <!-- <div class="col-12">
+        <div id="confirmation">
+          <ul class="col">
+            <li
+              v-for="(item, i) in this.order.cleanCart"
+              :key="i"
+              class="review-item"
+            >
+              <div class="row">
+                <div class="col-4">
+                  <img
+                    :src="
+                      'img/fruits/fruit-head/' +
+                        item.hookahHeadType.name +
+                        '.jpg'
+                    "
+                    alt=""
+                  />
+                </div>
+                <div class="col-8">
+                  <div>Quantity: {{ item.quantity }}</div>
+                  <div>Hookah Head Type: {{ item.hookahHeadType.name }}</div>
+                  <div>Price: ${{ item.price }}</div>
+                  <div>
+                    Type: {{ item.mixType.name }} Mix
+
+                    <span v-if="item.mixType.name == 'Custom'">
+                      of {{ item.comboOptions.numberOfFlavors }} flavors:
+                    </span>
+                  </div>
+
+                  <span v-if="item.mixType.name == 'House'">
+                    <div>House Mix: {{ item.houseMix.name }}</div>
+                  </span>
+
+                  <span v-if="item.mixType.name == 'Custom'">
+                    <span v-if="item.comboOptions.numberOfFlavors == 2">
+                      <div>
+                        {{ item.tobaccoFlavors[0].name }}:
+                        {{ item.comboOptions.flavor1 }} ||
+                        {{ item.tobaccoFlavors[1].name }}:
+                        {{ item.comboOptions.flavor2 }}
+                      </div>
+                    </span>
+
+                    <span v-if="item.comboOptions.numberOfFlavors == 3">
+                      <div>
+                        <span v-for="(f, i) in item.tobaccoFlavors" :key="i">
+                          {{ f.name }}
+                          <span v-if="i != item.tobaccoFlavors.length - 1"
+                            >,</span
+                          >
+                        </span>
+                      </div>
+
+                      <div>
+                        Split:
+
+                        <span v-if="item.comboOptions.split"></span>
+                      </div>
+                      <div>
+                        WhichIsOdd: {{ item.comboOptions.whichIsOdd.name }}
+                      </div>
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-1">
+      <!-- <div class="col-12">
       <div class="row"> -->
-        <div class="col-6 text-center">
-          <button class='btn-danger center wp-100' 
-          :class='backButtonClass'
-          @click="back()" >
-            {{backButtonName}}
-          </button>
-        </div>
-        <div class="col-6 text-center">
-          <button class='btn-success center wp-100' @click="next()">{{nextButtonName}}</button>
-        </div>
-                <!-- </div>
+      <div class="col-6 text-center">
+        <button
+          class="btn-danger center wp-100"
+          :class="backButtonClass"
+          @click="back()"
+        >
+          {{ backButtonName }}
+        </button>
+      </div>
+      <div class="col-6 text-center">
+        <button class="btn-success center wp-100" @click="next()">
+          {{ nextButtonName }}
+        </button>
+      </div>
+      <!-- </div>
     </div> -->
-  </div>
+    </div>
 
-            <!-- <button>
+    <!-- <button>
     <a href="test1">TEST1 - aTag</a>
   </button>
 
   <button>
     <router-link to='test1'>TEST1 - routerlink</router-link>
   </button> -->
-</div>
+  </div>
 </template>
 
-
 <script>
-
 export default {
-  name: 'wizard',
-  data () {
+  name: "wizard",
+  data() {
     return {
       /* 
       WIZARD SELECTION PAGES
@@ -530,42 +673,53 @@ export default {
       8 - reviewTotal
       */
       myMessage: "Wizard's Message",
-      stepList: ['hookahHeadType', 'mixType', 'houseMix', 'tobaccoBrands', 'tobaccoFlavors', 'combo2', 'combo3', 'review1', 'reviewTotal', 'confirmation'],
+      stepList: [
+        "hookahHeadType",
+        "mixType",
+        "houseMix",
+        "tobaccoBrands",
+        "tobaccoFlavors",
+        "combo2",
+        "combo3",
+        "review1",
+        "reviewTotal",
+        "confirmation"
+      ],
       steps: {
-        'hookahHeadType': 0, 
-        'mixType': 1, 
-        'houseMix': 2, 
-        'tobaccoBrands': 3, 
-        'tobaccoFlavors': 4, 
-        'combo2': 5, 
-        'combo3': 6, 
-        'review1': 7, 
-        'reviewTotal': 8,
-        'confirmation': 9
+        hookahHeadType: 0,
+        mixType: 1,
+        houseMix: 2,
+        tobaccoBrands: 3,
+        tobaccoFlavors: 4,
+        combo2: 5,
+        combo3: 6,
+        review1: 7,
+        reviewTotal: 8,
+        confirmation: 9
       },
       nextStep: 1,
 
       order: {
         new: {
           quantity: 1,
-          price: '',
+          price: "",
           hookahHeadType: {
             picked: false,
             confirmed: false,
-            name: '',
-            id: ''
+            name: "",
+            id: ""
           },
           mixType: {
             picked: false,
             confirmed: false,
-            name: '',
-            id: ''
+            name: "",
+            id: ""
           },
           houseMix: {
             picked: false,
             confirmed: false,
-            name: '',
-            id: ''
+            name: "",
+            id: ""
           },
           tobaccoBrands: {
             picked: false,
@@ -579,20 +733,19 @@ export default {
           },
           comboOptions: {
             confirmed: false,
-            numberOfFlavors: '',
-            priceOfMax: '',
+            numberOfFlavors: "",
+            priceOfMax: "",
             combo2: {
-              mixCode: '',
-              flavor1: '50',
-              flavor2: '50'
+              mixCode: "",
+              flavor1: "50",
+              flavor2: "50"
             },
             combo3: {
-              split: '',
+              split: "",
               whichIsOdd: {
-                id: '',
-                name: ''
+                id: "",
+                name: ""
               }
-
             }
           }
         },
@@ -600,24 +753,24 @@ export default {
         cleanCart: [],
         newTemp: {
           quantity: 1,
-          price: '',
+          price: "",
           hookahHeadType: {
             picked: false,
             confirmed: false,
-            name: '',
-            id: ''
+            name: "",
+            id: ""
           },
           mixType: {
             picked: false,
             confirmed: false,
-            name: '',
-            id: ''
+            name: "",
+            id: ""
           },
           houseMix: {
             picked: false,
             confirmed: false,
-            name: '',
-            id: ''
+            name: "",
+            id: ""
           },
           tobaccoBrands: {
             picked: false,
@@ -631,20 +784,19 @@ export default {
           },
           comboOptions: {
             confirmed: false,
-            numberOfFlavors: '',
-            priceOfMax: '',
+            numberOfFlavors: "",
+            priceOfMax: "",
             combo2: {
-              mixCode: '',
-              flavor1: '50',
-              flavor2: '50'
+              mixCode: "",
+              flavor1: "50",
+              flavor2: "50"
             },
             combo3: {
-              split: '',
+              split: "",
               whichIsOdd: {
-                id: '',
-                name: ''
+                id: "",
+                name: ""
               }
-
             }
           }
         }
@@ -658,179 +810,172 @@ export default {
           {id: '4', name: 'watermelon', price: '15'},
           {id: '5', name: 'pineapple', price: '20'} */
         ]
-      }, 
+      },
       mixTypes: {
         list: [
-          {id: '1', name: 'Custom', details: 'Create your own mix of 2 or 3 flavors.'},
-          {id: '2', name: 'House', details: 'Pick from a selection of House Mixes'}
+          {
+            id: "1",
+            name: "Custom",
+            details: "Create your own mix of 2 or 3 flavors."
+          },
+          {
+            id: "2",
+            name: "House",
+            details: "Pick from a selection of House Mixes"
+          }
         ]
       },
       houseMixes: {
         list: [
-          {id: '1', name: 'Mix1', details: 'Sweet', price: '15'},
-          {id: '2', name: 'Mix2', details: 'Light', price: '15'},
-          {id: '3', name: 'Mix3', details: 'Fruity', price: '15'}
+          { id: "1", name: "Mix1", details: "Sweet", price: "15" },
+          { id: "2", name: "Mix2", details: "Light", price: "15" },
+          { id: "3", name: "Mix3", details: "Fruity", price: "15" }
         ]
       },
       tobaccoBrands: {
         list: [
           {
             id: 0,
-            name: 'Starbuzz', 
-            price: '5', 
+            name: "Starbuzz",
+            price: "5",
             flavors: {
               list: [
-                {id: '1', name: 'type1', description: 'description1'},
-                {id: '2', name: 'type2', description: 'description2'},
-                {id: '3', name: 'type3', description: 'description3'},
-                {id: '4', name: 'type4', description: 'description4'},
-                {id: '5', name: 'type5', description: 'description5'}
+                { id: "1", name: "type1", description: "description1" },
+                { id: "2", name: "type2", description: "description2" },
+                { id: "3", name: "type3", description: "description3" },
+                { id: "4", name: "type4", description: "description4" },
+                { id: "5", name: "type5", description: "description5" }
               ]
             }
           },
           {
             id: 1,
-            name: 'Fumari', 
-            price: '7', 
+            name: "Fumari",
+            price: "7",
             flavors: {
               list: [
-                {id: '6', name: 'type1', description: 'description1'},
-                {id: '7', name: 'type2', description: 'description2'},
-                {id: '8', name: 'type3', description: 'description3'},
-                {id: '9', name: 'type4', description: 'description4'},
-                {id: '10', name: 'type5', description: 'description5'}
+                { id: "6", name: "type1", description: "description1" },
+                { id: "7", name: "type2", description: "description2" },
+                { id: "8", name: "type3", description: "description3" },
+                { id: "9", name: "type4", description: "description4" },
+                { id: "10", name: "type5", description: "description5" }
               ]
             }
           },
           {
             id: 2,
-            name: 'Al-Fakhr', 
-            price: '10', 
+            name: "Al-Fakhr",
+            price: "10",
             flavors: {
               list: [
-                {id: '11', name: 'type1', description: 'description1'},
-                {id: '12', name: 'type2', description: 'description2'},
-                {id: '13', name: 'type3', description: 'description3'},
-                {id: '14', name: 'type4', description: 'description4'},
-                {id: '15', name: 'type5', description: 'description5'}
+                { id: "11", name: "type1", description: "description1" },
+                { id: "12", name: "type2", description: "description2" },
+                { id: "13", name: "type3", description: "description3" },
+                { id: "14", name: "type4", description: "description4" },
+                { id: "15", name: "type5", description: "description5" }
               ]
             }
           },
           {
             id: 3,
-            name: 'House', 
-            price: '13', 
+            name: "House",
+            price: "13",
             flavors: {
               list: [
-                {id: '16', name: 'type1', description: 'description1'},
-                {id: '17', name: 'type2', description: 'description2'},
-                {id: '18', name: 'type3', description: 'description3'},
-                {id: '19', name: 'type4', description: 'description4'},
-                {id: '20', name: 'type5', description: 'description5'}
+                { id: "16", name: "type1", description: "description1" },
+                { id: "17", name: "type2", description: "description2" },
+                { id: "18", name: "type3", description: "description3" },
+                { id: "19", name: "type4", description: "description4" },
+                { id: "20", name: "type5", description: "description5" }
               ]
             }
           }
         ]
       }
-      
-    }
+    };
   },
   computed: {
-    orderedTobaccoBrands () {
+    orderedTobaccoBrands() {
       let self = this;
-      let res = this.tobaccoBrands.list.filter(function(el, i) {
-        return self.brandIsOrdered(el);
+      let res = this.tobaccoBrands.list.filter(el => {
+        self.brandIsOrdered(el);
       });
 
       return res;
     },
-    backButtonClass(opt) {
-      let res = '';
+    backButtonClass() {
+      let res = "";
       let cur = this.$root.curStep;
       let s = this.steps;
 
       if (cur == s.hookahHeadType) {
-        res = 'd-none';
-      } else if (cur == s.mixType) {
-
+        res = "d-none";
+        /* } else if (cur == s.mixType) {
       } else if (cur == s.houseMix) {
-
       } else if (cur == s.tobaccoBrands) {
-
       } else if (cur == s.tobaccoFlavors) {
-
       } else if (cur == s.combo2) {
-
       } else if (cur == s.combo3) {
-
-      } else if (cur == s.review1) {
-
+      } else if (cur == s.review1) { */
       } else if (cur == s.reviewTotal) {
-        res = 'd-none';
+        res = "d-none";
       } else if (cur == s.confirmation) {
-        res = 'd-none';
+        res = "d-none";
       }
-      
 
-      return res;
-    },     
-    backButtonName(opt) {
-      let res = 'Back';
-      let cur = this.$root.curStep;
-      let s = this.steps;
-
-      if (cur == s.hookahHeadType) {
-  
-      } else if (cur == s.mixType) {
-
-      } else if (cur == s.houseMix) {
-
-      } else if (cur == s.tobaccoBrands) {
-
-      } else if (cur == s.tobaccoFlavors) {
-
-      } else if (cur == s.combo2) {
-
-      } else if (cur == s.combo3) {
-
-      } else if (cur == s.review1) {
-
-      } else if (cur == s.reviewTotal) {
-
-      }
-     
       return res;
     },
+    /* eslint-disable */
+    backButtonName() {
+      let res = "Back";
+      let cur = this.$root.curStep;
+      let s = this.steps;
+
+      if (cur == s.hookahHeadType) {
+      } else if (cur == s.mixType) {
+      } else if (cur == s.houseMix) {
+      } else if (cur == s.tobaccoBrands) {
+      } else if (cur == s.tobaccoFlavors) {
+      } else if (cur == s.combo2) {
+      } else if (cur == s.combo3) {
+      } else if (cur == s.review1) {
+      } else if (cur == s.reviewTotal) {
+      } 
+
+      return res;
+
+      /* eslint-enable */
+    },
     nextButtonName() {
-      let res = 'Next >';
+      let res = "Next >";
       let cur = this.$root.curStep;
       let s = this.steps;
 
       if (cur == s.review1) {
-        res = 'Review >>>'
+        res = "Review >>>";
       } else if (cur == s.reviewTotal) {
-        res = 'Checkout >>>'
+        res = "Checkout >>>";
       } else if (cur == s.confirmation) {
-        res = 'Start Again >>>'
+        res = "Start Again >>>";
       }
 
       return res;
     },
     nextButtonClass() {
-      let res = '';
+      let res = "";
       let cur = this.$root.curStep;
       let s = this.steps;
 
       if (cur == s.reviewTotal) {
-        res = ''
+        res = "";
       }
-      
+
       return res;
     },
     subtotalPrice() {
       let res = 0;
 
-      this.order.cleanCart.forEach( (el) => {
+      this.order.cleanCart.forEach(el => {
         res += el.price;
       });
 
@@ -840,43 +985,42 @@ export default {
       let sub = +this.subtotalPrice;
       let tax = 0.1;
 
-      let res = sub + (sub * tax);
+      let res = sub + sub * tax;
 
       return res.toFixed(2);
-
     }
-  }, 
-  created () {
+  },
+  created() {
     let self = this;
 
     // Get saved order info if it exists
-    if (sessionStorage.getItem('order')) {
-      this.order = JSON.parse(sessionStorage.getItem('order'));
-      this.$root.stepSequence = JSON.parse(sessionStorage.getItem('stepSequence'));
-      this.$root.curStep = +sessionStorage.getItem('curStep');
-      this.nextStep = +sessionStorage.getItem('nextStep');
+    if (sessionStorage.getItem("order")) {
+      this.order = JSON.parse(sessionStorage.getItem("order"));
+      this.$root.stepSequence = JSON.parse(
+        sessionStorage.getItem("stepSequence")
+      );
+      this.$root.curStep = +sessionStorage.getItem("curStep");
+      this.nextStep = +sessionStorage.getItem("nextStep");
     }
-    
+
     // Get hookahHeadTypes
     this.$http({
-      method: 'get',
-      url: 'http://localhost:3001/api/hookahHeadTypes/',
+      method: "get",
+      url: "http://localhost:3001/api/hookahHeadTypes/"
+    })
+      .then(function(response) {
+        // handle success
+        console.log("hookahHeadTypes: ", response);
+
+        self.hookahHeadTypes.list = response.data;
       })
-    .then(function (response) {
-      // handle success
-      console.log('hookahHeadTypes: ', response);
-
-      self.hookahHeadTypes.list = response.data;
-    })
-    .catch(function (error) {
-      // handle error
-      console.log(error);
-    })
-    .then(function () {
-      // always executed
-    });
-
-
+      .catch(function(error) {
+        // handle error
+        console.log(error);
+      })
+      .then(function() {
+        // always executed
+      });
 
     /* // Get houseMixes
     this.$http({
@@ -916,18 +1060,15 @@ export default {
     .then(function () {
       // always executed
     }); */
-
-
   },
-  mounted () {
-
-  },
-  beforeUpdate () {
+  mounted() {},
+  beforeUpdate() {
+    /* eslint-disable */
     const cur = this.$root.curStep;
 
-    if ( cur == 9) {
-
-    }
+    if (cur == 9) {
+      }
+    /* eslint-enable */
   },
   updated() {
     /* if (this.$root.curStep != this.steps.tobaccoFlavors) {
@@ -938,19 +1079,19 @@ export default {
   },
   methods: {
     /* COMMON */
-    next () {
-      $('html, body').animate({
-        scrollTop: $("div#wizard").offset().top
-      }, 50);
-      
-      if ( this.$root.curStep == this.steps.confirmation) {
+    next() {
+      $("html, body").animate(
+        {
+          scrollTop: $("div#wizard").offset().top
+        },
+        50
+      );
+
+      if (this.$root.curStep == this.steps.confirmation) {
         this.clearOrder();
         // this.$forceUpdate();
         location.reload();
-
       } else {
-
-          
         // /* CHECK IF THERE IS ALREADY A DEFINED PATH FOR THE NEXT SLIDE, GIVEN FROM A PREVIOUS SELECTION */
         // let curStep_i = this.$root.stepSequence.indexOf(this.$root.curStep);
         // if (curStep_i != this.$root.stepSequence.length - 1 ) {
@@ -959,25 +1100,24 @@ export default {
         // }
 
         /* INITIALIZATION */
-        let root = this.$root
+        let root = this.$root;
         let cur = this.stepList[root.curStep];
-        if (cur == 'combo2' || cur == 'combo3') cur = 'comboOptions';
-        
+        if (cur == "combo2" || cur == "combo3") cur = "comboOptions";
 
         /* CONFIRM or REJECT based on whether selection is made */
-        if (cur != 'review1' && cur != 'reviewTotal' ) {
-          if (this.order.new[cur].picked == false || cur == 'combo2') {   // combo2 gets CHANGED not PICKED- so this check is irrelevant
-            alert('Please pick an option to continue');
+        if (cur != "review1" && cur != "reviewTotal") {
+          if (this.order.new[cur].picked == false || cur == "combo2") {
+            // combo2 gets CHANGED not PICKED- so this check is irrelevant
+            alert("Please pick an option to continue");
             return;
           } else {
             this.order.new[cur].confirmed = true;
           }
         }
 
-
         /* ONLY IF ON STEP 1: MIX TYPE SELECT */
-        if (root.curStep == this.steps.mixType) { 
-        if (this.order.new.mixType.name == 'House') {
+        if (root.curStep == this.steps.mixType) {
+          if (this.order.new.mixType.name == "House") {
             this.nextStep = this.steps.houseMix;
           } else {
             this.nextStep = this.steps.tobaccoBrands;
@@ -997,7 +1137,9 @@ export default {
           /* decide propper next step based on number of flavors chosen*/
           this.order.new.comboOptions.numberOfFlavors = this.order.new.tobaccoFlavors.list.length;
 
-          if (this.order.new.comboOptions.numberOfFlavors == this.steps.mixType) {
+          if (
+            this.order.new.comboOptions.numberOfFlavors == this.steps.mixType
+          ) {
             this.nextStep = this.steps.review1;
           } else if (this.order.new.comboOptions.numberOfFlavors == 2) {
             this.nextStep = this.steps.combo2;
@@ -1006,36 +1148,38 @@ export default {
           }
         }
 
-
         /* DISPLAY APPROPRIATE SELECTION */
-        
+
         /* CHECK IF THERE IS ALREADY A DEFINED PATH FOR THE NEXT SLIDE, GIVEN FROM A PREVIOUS SELECTION */
         let curStep_i = root.stepSequence.indexOf(root.curStep);
-        if (curStep_i != root.stepSequence.length - 1 && root.curStep != this.steps.review1) {
+        if (
+          curStep_i != root.stepSequence.length - 1 &&
+          root.curStep != this.steps.review1
+        ) {
           if (this.nextStep == root.stepSequence[curStep_i + 1]) {
             root.curStep = root.stepSequence[curStep_i + 1];
 
             if (this.nextStep == this.steps.hookahHeadType) {
               this.nextStep = this.steps.mixType;
-            } else if (this.nextStep == this.steps.mixType) {
+              // } else if (this.nextStep == this.steps.mixType) {
             } else if (this.nextStep == this.steps.houseMix) {
               this.nextStep = this.steps.review1;
             } else if (this.nextStep == this.steps.tobaccoBrands) {
               this.nextStep = this.steps.tobaccoFlavors;
-            } else if (this.nextStep == this.steps.tobaccoFlavors) {
+              // } else if (this.nextStep == this.steps.tobaccoFlavors) {
             } else if (this.nextStep == this.steps.combo2) {
               this.nextStep = this.steps.review1;
             } else if (this.nextStep == this.steps.combo3) {
               this.nextStep = this.steps.review1;
-            } else if (this.nextStep == this.steps.review1) {
-            }  else if (this.nextStep == this.steps.reviewTotal) {
+              // } else if (this.nextStep == this.steps.review1) {
+              // } else if (this.nextStep == this.steps.reviewTotal) {
             }
             return;
           } else {
             root.stepSequence.splice(curStep_i + 1);
           }
         }
-        
+
         /* if next step isn't decided here, it happens dynamically either when next() or add() run */
         if (this.nextStep == this.steps.hookahHeadType) {
           root.curStep = this.nextStep;
@@ -1059,17 +1203,18 @@ export default {
         } else if (this.nextStep == this.steps.review1) {
           root.curStep = this.nextStep;
           this.nextStep = this.steps.reviewTotal;
-        }  else if (this.nextStep == this.steps.reviewTotal) {
+        } else if (this.nextStep == this.steps.reviewTotal) {
           root.curStep = this.nextStep;
           this.createCleanCart();
           this.nextStep = this.steps.confirmation;
         } else if (this.nextStep == this.steps.confirmation) {
           root.curStep = this.nextStep;
-          alert('Yay! You made your first purchase :\) \n Please find the confirmation below.' );
+          alert(
+            "Yay! You made your first purchase : \n Please find the confirmation below."
+          );
         }
 
-
-        this.editStepSequence('next');
+        this.editStepSequence("next");
 
         this.localSave();
       }
@@ -1078,17 +1223,17 @@ export default {
       /* ADD FINAL 'NEW' ORDER TO CART */
       this.order.cart.push(this.order.new);
       this.order.new = $.extend(true, {}, this.order.newTemp);
-      
+
       this.$root.stepSequence = [];
 
-      $('.selected').each(function(i, el) {
-        el.removeClass('selected');
+      $(".selected").each(function(i, el) {
+        el.removeClass("selected");
       });
 
       /* SANITIZE CART CONTENT TO MAKE SEND OBJ */
       const cleanCart = [];
 
-      this.order.cart.forEach( el => {
+      this.order.cart.forEach(el => {
         let cleanItem = {
           hookahHeadType: {},
           price: 0,
@@ -1096,8 +1241,8 @@ export default {
           mixType: {}
         };
 
-          flavors: []
-        
+        [];
+
         /* STATIC ADDITIONS - won't change depending on chosen options */
         cleanItem.quantity = el.quantity;
         cleanItem.mixType.id = el.mixType.id;
@@ -1110,113 +1255,124 @@ export default {
         cleanItem.price += +el.hookahHeadType.price;
 
         /* DYNAMIC ADDITIONS - will change depending on chosen options */
-        if (el.mixType.name == 'House') {    
-          cleanItem.houseMix = {};      
+        if (el.mixType.name == "House") {
+          cleanItem.houseMix = {};
           cleanItem.houseMix.id = el.houseMix.id;
           cleanItem.houseMix.name = el.houseMix.name;
-          
+
           cleanItem.price += +el.houseMix.price;
-        } else if (el.mixType.name == 'Custom') {
+        } else if (el.mixType.name == "Custom") {
           cleanItem.price += +el.comboOptions.priceOfMax;
           cleanItem.tobaccoFlavors = el.tobaccoFlavors.list;
           cleanItem.comboOptions = {};
-          cleanItem.comboOptions.numberOfFlavors = el.comboOptions.numberOfFlavors;
+          cleanItem.comboOptions.numberOfFlavors =
+            el.comboOptions.numberOfFlavors;
 
           if (el.comboOptions.numberOfFlavors == 2) {
             cleanItem.comboOptions.mixCode = el.comboOptions.combo2.mixCode;
             cleanItem.comboOptions.flavor1 = el.comboOptions.combo2.flavor1;
             cleanItem.comboOptions.flavor2 = el.comboOptions.combo2.flavor2;
-          } else if ( el.comboOptions.numberOfFlavors == 3 ) {
+          } else if (el.comboOptions.numberOfFlavors == 3) {
             cleanItem.comboOptions.split = el.comboOptions.combo3.split;
-            cleanItem.comboOptions.whichIsOdd = el.comboOptions.combo3.whichIsOdd;
+            cleanItem.comboOptions.whichIsOdd =
+              el.comboOptions.combo3.whichIsOdd;
 
-            cleanItem.tobaccoFlavors.forEach( el => {
+            cleanItem.tobaccoFlavors.forEach(el => {
               if (el.id == cleanItem.comboOptions.whichIsOdd.id) {
                 cleanItem.comboOptions.whichIsOdd.name = el.name;
               }
             });
           }
         }
-      
-        cleanCart.push(cleanItem);
 
+        cleanCart.push(cleanItem);
       });
 
       this.order.cleanCart = cleanCart;
-
     },
     localSave() {
       let self = this;
-      sessionStorage.setItem('order', JSON.stringify(self.order));
-      sessionStorage.setItem('stepSequence', JSON.stringify(self.$root.stepSequence));
-      sessionStorage.setItem('curStep', self.$root.curStep);
-      sessionStorage.setItem('nextStep', self.nextStep);
+      sessionStorage.setItem("order", JSON.stringify(self.order));
+      sessionStorage.setItem(
+        "stepSequence",
+        JSON.stringify(self.$root.stepSequence)
+      );
+      sessionStorage.setItem("curStep", self.$root.curStep);
+      sessionStorage.setItem("nextStep", self.nextStep);
     },
     back() {
-      this.editStepSequence('back');
+      this.editStepSequence("back");
     },
     editStepSequence(option) {
       let root = this.$root;
 
-      if (option == 'next' && root.curStep != root.stepSequence[root.stepSequence.length - 1]) {
+      if (
+        option == "next" &&
+        root.curStep != root.stepSequence[root.stepSequence.length - 1]
+      ) {
         root.stepSequence.push(root.curStep);
-      } else if (option == 'back') {
+      } else if (option == "back") {
         this.nextStep = root.curStep;
 
         let curStep_i = root.stepSequence.indexOf(root.curStep) - 1;
         root.curStep = root.stepSequence[curStep_i];
       }
     },
-    clearTiles () {
-      $('.tile').each(function(i, el) {
+    clearTiles() {
+      $(".tile").each(function(i, el) {
         // $(el).css('background-color', '');
-        $(el).removeClass('selected');
+        $(el).removeClass("selected");
       });
     },
 
-    checkIfSelected(el) {
-      debugger
+    checkIfSelected() {
+      debugger;
     },
 
     /* HookahHeadType */
-    selectHookahHeadType (i) {
+    selectHookahHeadType(i) {
       this.order.new.hookahHeadType.picked = true;
       this.order.new.hookahHeadType.id = this.hookahHeadTypes.list[i]._id;
       this.order.new.hookahHeadType.name = this.hookahHeadTypes.list[i].name;
       this.order.new.hookahHeadType.price = this.hookahHeadTypes.list[i].price;
 
-      this.clearTiles(); 
+      this.clearTiles();
       // $(event.currentTarget).css('background-color', 'red');
-      $(event.currentTarget).addClass('selected');
-
+      $(event.currentTarget).addClass("selected");
     },
 
     /* MIX TYPE */
-    selectMixType (i) {
+    selectMixType(i) {
       this.order.new.mixType.picked = true;
       this.order.new.mixType.id = this.mixTypes.list[i].id;
       this.order.new.mixType.name = this.mixTypes.list[i].name;
 
       this.clearTiles();
-      $(event.currentTarget).addClass('selected');
+      $(event.currentTarget).addClass("selected");
     },
 
     /* HOUSE MIX TYPE */
-    selectHouseMix (i) {
+    selectHouseMix(i) {
       this.order.new.houseMix.picked = true;
       this.order.new.houseMix.id = this.houseMixes.list[i].id;
       this.order.new.houseMix.name = this.houseMixes.list[i].name;
       this.order.new.houseMix.price = +this.houseMixes.list[i].price;
 
       this.clearTiles();
-      $(event.currentTarget).addClass('selected');
+      $(event.currentTarget).addClass("selected");
     },
 
     /* TOBACCO BRANDS */
-    selectTobaccoBrand (b) {
-      if ($(event.currentTarget).parent().data('selected') == false) {
+    selectTobaccoBrand(b) {
+      if (
+        $(event.currentTarget)
+          .parent()
+          .data("selected") == false
+      ) {
         /* IF OPTION IS NOT SELECTED */
-        $(event.currentTarget).parent().data('selected', true);
+        $(event.currentTarget)
+          .parent()
+          .data("selected", true);
 
         let brand = {};
 
@@ -1229,30 +1385,30 @@ export default {
         this.order.new.tobaccoBrands.list.push(brand);
 
         // $(event.currentTarget).css('background-color', 'red');
-        $(event.currentTarget).addClass('selected');
-
-
+        $(event.currentTarget).addClass("selected");
       } else {
         /* IF OPTION IS ALREADY SLECTED */
-        $(event.currentTarget).parent().data('selected', false);
+        $(event.currentTarget)
+          .parent()
+          .data("selected", false);
         // $(event.currentTarget).css('background-color', '');
-        $(event.currentTarget).removeClass('selected');
-      
-        this.order.new.tobaccoBrands.list = this.order.new.tobaccoBrands.list.filter( (el, i) => {
-          return b.id != el.id;
-        });
+        $(event.currentTarget).removeClass("selected");
 
+        this.order.new.tobaccoBrands.list = this.order.new.tobaccoBrands.list.filter(
+          el => {
+            b.id != el.id;
+          }
+        );
 
         if (this.order.new.tobaccoBrands.list.length == 0) {
           this.order.new.tobaccoBrands.picked = false;
         }
-        
       }
     },
     brandIsOrdered(b, opt) {
       let test = false;
 
-      this.order.new.tobaccoBrands.list.forEach( el =>{
+      this.order.new.tobaccoBrands.list.forEach(el => {
         if (b.id == el.id) {
           test = true;
         }
@@ -1267,7 +1423,7 @@ export default {
     flavorIsOrdered(f, opt) {
       let test = false;
 
-      this.order.new.tobaccoFlavors.list.forEach( el => {
+      this.order.new.tobaccoFlavors.list.forEach(el => {
         if (f.id == el.id) {
           test = true;
         }
@@ -1300,13 +1456,18 @@ export default {
     },
 
     /* TOBACCO FLAVORS */
-    selectTobaccoFlavor (b, f) {
+    selectTobaccoFlavor(b, f) {
       /* IF OPTION IS NOT SELECTED */
-      if ($(event.currentTarget).parent().data('selected') == false) {
-        
+      if (
+        $(event.currentTarget)
+          .parent()
+          .data("selected") == false
+      ) {
         /* IF THERE ARE FEWER THAN 3 SELECTIONS */
         if (this.order.new.tobaccoFlavors.list.length < 3) {
-          $(event.currentTarget).parent().data('selected', true);
+          $(event.currentTarget)
+            .parent()
+            .data("selected", true);
 
           let flavor = {};
 
@@ -1318,23 +1479,21 @@ export default {
           flavor.brandName = b.name;
           flavor.brandPrice = b.price;
 
-
           this.order.new.tobaccoFlavors.list.push(flavor);
 
           // $(event.currentTarget).css('background-color', 'red');
-          $(event.currentTarget).addClass('selected');
-
-
+          $(event.currentTarget).addClass("selected");
         } else {
-          alert('You can only add 3.');
+          alert("You can only add 3.");
           return;
         }
-  
       } else {
         /* IF OPTION IS ALREADY ACTIVE */
-        $(event.currentTarget).parent().data('selected', false);
-        $(event.currentTarget).css('background-color', '');
-        
+        $(event.currentTarget)
+          .parent()
+          .data("selected", false);
+        $(event.currentTarget).css("background-color", "");
+
         /* let toRemove;
         this.order.new.tobaccoFlavors.list.forEach(function(flavor, index) {
           if (flavor.id == f.id) {
@@ -1343,15 +1502,15 @@ export default {
         });
         this.order.new.tobaccoFlavors.list.splice(toRemove, 1); */
 
-
-        this.order.new.tobaccoFlavors.list = this.order.new.tobaccoFlavors.list.filter(function(el, i) {
-          return f.id != el.id;
-        });
+        this.order.new.tobaccoFlavors.list = this.order.new.tobaccoFlavors.list.filter(
+          el => {
+            f.id != el.id;
+          }
+        );
 
         if (this.order.new.tobaccoFlavors.list.length == 0) {
           this.order.new.tobaccoFlavors.picked = false;
         }
-      
       }
     },
 
@@ -1359,7 +1518,7 @@ export default {
     combo2RangeChange() {
       let f1 = +event.target.value;
       let f2 = 100 - f1;
-      let id = f1/25;
+      let id = f1 / 25;
 
       /* 
       id will represent structure/mix of hookah flavors
@@ -1370,12 +1529,11 @@ export default {
       4 ==> 100 of 1st : 0   of 2nd
       */
 
-      $('#combo2-flavor2').val(f2);
+      $("#combo2-flavor2").val(f2);
 
       this.order.new.comboOptions.combo2.mixCode = id;
       this.order.new.comboOptions.combo2.flavor1 = f1;
       this.order.new.comboOptions.combo2.flavor2 = f2;
-
     },
 
     /* REVIEW1 */
@@ -1385,11 +1543,11 @@ export default {
     addAnother() {
       this.order.cart.push(this.order.new);
       this.order.new = $.extend(true, {}, this.order.newTemp);
-      
+
       this.$root.stepSequence = [];
 
-      $('.selected').each(function(i, el) {
-        el.removeClass('selected');
+      $(".selected").each(function(i, el) {
+        el.removeClass("selected");
       });
 
       this.nextStep = 0;
@@ -1400,24 +1558,18 @@ export default {
       this.order.cart.splice(i, 1);
       this.$root.curStep = this.steps.hookahHeadType;
       this.nextStep = this.steps.mixType;
-      
     },
     removeItem(i) {
       this.order.cleanCart.splice(i, 1);
       this.order.cart.splice(i, 1);
     },
     clearOrder() {
-      sessionStorage.removeItem('order');
+      sessionStorage.removeItem("order");
     },
-    hookahs() {
-
-    }, 
-    addons() {
-
-    }
+    hookahs() {},
+    addons() {}
   }
-}
-
+};
 
 /* CUSTOM JS */
 
@@ -1427,90 +1579,90 @@ export default {
 </script>
 
 <style>
-  #wizard {
-    width: 100%;
-    min-height: 100px;
-  }
+#wizard {
+  width: 100%;
+  min-height: 100px;
+}
 
-  /* .wizard-selection {
+/* .wizard-selection {
     display: none;
   } */
 
-  .tile {
-    border: black solid 1px;
-    /* padding: 10px; */
-    margin: 5px;
-    cursor: pointer;
-    min-height: 100px;
-  }
+.tile {
+  border: black solid 1px;
+  /* padding: 10px; */
+  margin: 5px;
+  cursor: pointer;
+  min-height: 100px;
+}
 
-  .tile-list {
-    list-style-type: none;
-  }
+.tile-list {
+  list-style-type: none;
+}
 
-  .step-subtitle {
-    padding: 0 15px;
-  }
+.step-subtitle {
+  padding: 0 15px;
+}
 
-  .combo2-range {
-    margin: 10px 20px;
-  }
+.combo2-range {
+  margin: 10px 20px;
+}
 
-  #review1-options .col {
-    min-height: 100px;
-    padding: 15px;
-  }
+#review1-options .col {
+  min-height: 100px;
+  padding: 15px;
+}
 
-  #review1-options .col:nth-of-type(1) {
-    border-bottom: solid black 1px;
-    border-right: solid black 1px;
-  }
-  #review1-options .col:nth-of-type(2) {
-    border-bottom: solid black 1px;
-    /* border-left: solid black 1px; */
-  }
-  #review1-options .col:nth-of-type(3) {
-    /* border-top: solid black 1px; */
-    border-right: solid black 1px;
-  }
-  /* #review1-options .col:nth-of-type(4) {
+#review1-options .col:nth-of-type(1) {
+  border-bottom: solid black 1px;
+  border-right: solid black 1px;
+}
+#review1-options .col:nth-of-type(2) {
+  border-bottom: solid black 1px;
+  /* border-left: solid black 1px; */
+}
+#review1-options .col:nth-of-type(3) {
+  /* border-top: solid black 1px; */
+  border-right: solid black 1px;
+}
+/* #review1-options .col:nth-of-type(4) {
     border-top: solid black 1px;
     border-left: solid black 1px;
   } */
 
-  #cart-review ul, #confirmation ul {
-    list-style-type: none;
-  }
+#cart-review ul,
+#confirmation ul {
+  list-style-type: none;
+}
 
-  .review-item {
-    border: .5px solid gray;
-    margin: 10px 0;
-    padding: 10px;
-  }
+.review-item {
+  border: 0.5px solid gray;
+  margin: 10px 0;
+  padding: 10px;
+}
 
-  .review-item > .row {
-    margin: 0 -10px -10px;
-  }
-  
-  .review-item img {
-    width: 100%;
-    border-radius: 10px;
-    margin: 10px 0;
-  }
+.review-item > .row {
+  margin: 0 -10px -10px;
+}
 
-  #cart-review-summary table {
-    margin: 0 0 30px;
-    border-bottom: solid 1px grey;
-    font-family: monospace;
-  }
+.review-item img {
+  width: 100%;
+  border-radius: 10px;
+  margin: 10px 0;
+}
 
-  #cart-review-summary table td:nth-child(1) {
-    text-align: right;
-  }
-  
-  #cart-review-summary table td:nth-child(2) {
-    text-align: right;
-    padding-left: 10px;
-  }
+#cart-review-summary table {
+  margin: 0 0 30px;
+  border-bottom: solid 1px grey;
+  font-family: monospace;
+}
 
+#cart-review-summary table td:nth-child(1) {
+  text-align: right;
+}
+
+#cart-review-summary table td:nth-child(2) {
+  text-align: right;
+  padding-left: 10px;
+}
 </style>

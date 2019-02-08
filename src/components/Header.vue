@@ -36,7 +36,7 @@
                 class="dropdown-item-icon"
                 src="assets/vendor/flag-icon-css/flags/4x3/us.svg"
                 alt="SVG"
-              >
+              />
               <span class="d-inline-block d-sm-none">US</span>
               <span class="d-none d-sm-inline-block">United States</span>
             </a>
@@ -71,7 +71,8 @@
                 data-unfold-hide-on-scroll="true"
                 data-unfold-animation-in="slideInUp"
                 data-unfold-animation-out="fadeOut"
-              >Jump to</a>
+                >Jump to</a
+              >
 
               <div
                 id="jumpToDropdown"
@@ -79,7 +80,9 @@
                 aria-labelledby="jumpToDropdownInvoker"
               >
                 <a class="dropdown-item" href="html/pages/help.html">Help</a>
-                <a class="dropdown-item" href="html/pages/contacts-agency.html">Contacts</a>
+                <a class="dropdown-item" href="html/pages/contacts-agency.html"
+                  >Contacts</a
+                >
               </div>
             </div>
             <!-- End Jump To -->
@@ -87,10 +90,16 @@
             <div class="d-none d-sm-inline-block ml-sm-auto">
               <ul class="list-inline mb-0">
                 <li class="list-inline-item mr-0">
-                  <a class="u-header__navbar-link" href="html/pages/help.html">Help</a>
+                  <a class="u-header__navbar-link" href="html/pages/help.html"
+                    >Help</a
+                  >
                 </li>
                 <li class="list-inline-item mr-0">
-                  <a class="u-header__navbar-link" href="html/pages/contacts-agency.html">Contacts</a>
+                  <a
+                    class="u-header__navbar-link"
+                    href="html/pages/contacts-agency.html"
+                    >Contacts</a
+                  >
                 </li>
               </ul>
             </div>
@@ -168,7 +177,9 @@
                 data-unfold-animation-out="fadeOutRight"
                 data-unfold-duration="500"
               >
-                <span class="fas fa-user-circle btn-icon__inner font-size-1"></span>
+                <span
+                  class="fas fa-user-circle btn-icon__inner font-size-1"
+                ></span>
               </a>
               <!-- End Account Sidebar Toggle Button -->
             </li>
@@ -214,7 +225,10 @@
                 opacity=".7"
                 d="M18,46L18,46C8,46,0,38,0,28v0c0-9.9,8-18,18-18h11.3c3.7,0,6.6,3,6.6,6.6V28C35.9,38,27.9,46,18,46z"
               ></path>
-              <path class="fill-white" d="M17.4,34V18.3h10.2v2.9h-6.4v3.4h4.8v2.9h-4.8V34H17.4z"></path>
+              <path
+                class="fill-white"
+                d="M17.4,34V18.3h10.2v2.9h-6.4v3.4h4.8v2.9h-4.8V34H17.4z"
+              ></path>
             </svg>
             <span class="u-header__navbar-brand-text">Front</span>
           </a>
@@ -235,7 +249,10 @@
           </button>
           <!-- End Responsive Toggle Button -->
           <!-- Navigation -->
-          <div id="navBar" class="col-md-6 collapse navbar-collapse u-header__navbar-collapse">
+          <div
+            id="navBar"
+            class="col-md-6 collapse navbar-collapse u-header__navbar-collapse"
+          >
             <ul class="navbar-nav u-header__navbar-nav">
               <li
                 class="nav-item hs-has-mega-menu"
@@ -245,7 +262,9 @@
                 data-max-width="600px"
                 data-position="right"
               >
-                <router-link to="/" class="nav-link u-header__nav-link">Home</router-link>
+                <router-link to="/" class="nav-link u-header__nav-link"
+                  >Home</router-link
+                >
               </li>
 
               <li
@@ -256,7 +275,9 @@
                 data-max-width="600px"
                 data-position="right"
               >
-                <router-link to="/about" class="nav-link u-header__nav-link">About</router-link>
+                <router-link to="/about" class="nav-link u-header__nav-link"
+                  >About</router-link
+                >
               </li>
 
               <li
@@ -267,7 +288,9 @@
                 data-max-width="600px"
                 data-position="right"
               >
-                <router-link to="/signup" class="nav-link u-header__nav-link">Sign Up</router-link>
+                <router-link to="/signup" class="nav-link u-header__nav-link"
+                  >Sign Up</router-link
+                >
               </li>
               <li
                 class="nav-item hs-has-mega-menu"
@@ -277,7 +300,9 @@
                 data-max-width="600px"
                 data-position="right"
               >
-                <router-link to="/wizard" class="nav-link u-header__nav-link">Wizard</router-link>
+                <router-link to="/wizard" class="nav-link u-header__nav-link"
+                  >Wizard</router-link
+                >
               </li>
             </ul>
           </div>
@@ -289,7 +314,6 @@
   </header>
   <!-- ========== END HEADER ========== -->
 </template>
-
 
 <script>
 export default {

@@ -1,21 +1,19 @@
 <template>
   <div id="app">
     <Header />
- 
-    <router-view id='left-content' name='left' class='col-sm-2'></router-view>
-      <div id='main-content' class='col-sm'>
-        <!-- <button id='goBack' @click='goBack' v-if='pageDepth > 0'>Back {{ pageDepth }} </button> -->
-        <router-view ></router-view>
-      </div>
-    <router-view id='right-content' name='right' class='col-sm-2'></router-view>
-     
+
+    <router-view id="left-content" name="left" class="col-sm-2"></router-view>
+    <div id="main-content" class="col-sm">
+      <!-- <button id='goBack' @click='goBack' v-if='pageDepth > 0'>Back {{ pageDepth }} </button> -->
+      <router-view></router-view>
+    </div>
+    <router-view id="right-content" name="right" class="col-sm-2"></router-view>
+
     <Footer />
     <SecondaryContents />
     <GoToTop />
-
   </div>
 </template>
-
 
 <script>
 import Header from "@/components/Header.vue";
@@ -24,22 +22,21 @@ import SecondaryContents from "@/components/SecondaryContents.vue";
 import GoToTop from "@/components/GoToTop.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     Header,
     Footer,
     SecondaryContents,
     GoToTop
   },
-  data () {
+  data() {
     return {
-      title: 'App'
-    }
+      title: "App",
+      publicPath: process.env.BASE_URL
+    };
   }
-   
-}
+};
 </script>
-
 
 <style>
 #app {

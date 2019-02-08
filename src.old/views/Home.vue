@@ -1,7 +1,7 @@
 <template>
   <div class="home">  
     
-    <ZipCodeCard/>
+    <EligibilityCard/>
     
     
   </div>
@@ -10,7 +10,7 @@
 <script>
 // @ is an alias to /src
 // import HelloWorld from "@/components/HelloWorld.vue";
-import ZipCodeCard from "@/components/ZipCodeCard.vue"; 
+import EligibilityCard from "@/components/EligibilityCard.vue"; 
 
 export default {
   name: "home",
@@ -20,7 +20,7 @@ export default {
      }
   },
   components: {
-    ZipCodeCard
+    EligibilityCard
   }
 };
 </script>
