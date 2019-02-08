@@ -8,9 +8,7 @@ import About from "./views/About.vue";
 Vue.use(Router);
 
 const NotFound = {
-  template: '<h1 class="text-center">Page not found</h1>',
-  created: function () {
-  }
+  template: '<h1 class="text-center">Page not found</h1>'
 };
 
 let routes = [

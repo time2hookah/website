@@ -1,7 +1,7 @@
 <template>
 <!-- ========== SECONDARY CONTENTS ========== -->
 	<!-- Account Sidebar Navigation -->
-	<aside id="sidebarContent" class="u-sidebar" aria-labelledby="sidebarNavToggler">
+	<aside id="sidebarContent" class="u-sidebar d-none" aria-labelledby="sidebarNavToggler">
 		<div class="u-sidebar__scroller">
 			<div class="u-sidebar__container">
 				<div class="u-header-sidebar__footer-offset">

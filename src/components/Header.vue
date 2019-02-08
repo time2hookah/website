@@ -185,7 +185,7 @@
           <!-- Logo -->
           <a
             class="navbar-brand u-header__navbar-brand u-header__navbar-brand-center"
-            href="index.html"
+            href="/"
             aria-label="Front"
           >
             <svg
@@ -293,19 +293,12 @@
 
 <script>
 export default {
-  name: "Header",
-  data() {
-    return {
-      title: "APP"
-    };
-  },
-  created() {},
-  methods: {}
+  name: "Header"
 };
 </script>
 
 <style>
-#vueApp {
-  padding: 10px 0;
+#navBar {
+  margin-left: auto;
 }
 </style>

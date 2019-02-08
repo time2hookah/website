@@ -3,7 +3,7 @@
     <Header />
  
     <router-view id='left-content' name='left' class='col-sm-2'></router-view>
-      <div id='main-content' class='col-sm' style='background-image:url("assets/img/shisha/background2.jpg"); background-size: cover; width: 100%; height: 100%; '>
+      <div id='main-content' class='col-sm'>
         <!-- <button id='goBack' @click='goBack' v-if='pageDepth > 0'>Back {{ pageDepth }} </button> -->
         <router-view ></router-view>
       </div>

@@ -41,7 +41,7 @@
 						<!-- End List Group -->
 					</div>
 
-					<div class="col-md-6 col-lg-4">
+					<div class="m-auto col-lg-6">
 						<h4 class="h6 font-weight-semi-bold mb-4">We are driven to deliver results for all your businesses.</h4>
 
 						<!-- Button -->
@@ -97,19 +97,10 @@
 
 <script>
 export default {
-  name: 'Footer',
-  data () {
-    return {
-      title: 'Footer'
-    }
-  } 
+  name: 'Footer'
 }
 </script>
 
 <style>
-#vueApp {
-  padding: 10px 0;
-}
-
  
 </style>

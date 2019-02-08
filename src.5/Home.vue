@@ -82,7 +82,7 @@ export default {
     };
   },
   mounted() {
-    $("#content").css("background-image", "url(/img/shisha/background2.jpg)");
+    $("#content").css("background-image", "url(/img/hookahs/background2.jpg)");
     $("#content").css("background-size", "cover");
     $("#content").css("background-position", "50% 0");
   },

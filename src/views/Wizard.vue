@@ -1,7 +1,7 @@
 <template>
 <div id='wizard' class='container'>
 
-  <!-- HOOKAH HEAD TYPE SELECTION -->
+            <!-- HOOKAH HEAD TYPE SELECTION -->
   <div id="wizard-selection-hookahHeadTypes" class='wizard-selection row' v-if="this.$root.curStep==this.steps.hookahHeadType">
     
     <div class="col-12">
@@ -17,8 +17,8 @@
           @click="selectHookahHeadType(i)"
           :class="{selected : (el._id == order.new.hookahHeadType.id) }"
           >
-<!-- (el._id == order.new.hookahHeadType.id) -->
-<!-- checkIfSelected(el) -->
+          <!-- (el._id == order.new.hookahHeadType.id) -->
+          <!-- checkIfSelected(el) -->
           
 
             <h5 class='text-center'>{{el.name}}</h5>
@@ -26,7 +26,7 @@
               <div class="col-2"> ${{el.price}} </div>
               <div class="col-10"> {{el.description}} </div>
             </div>
-              <!-- <div class="row"> {{el._id}} </div> -->
+                        <!-- <div class="row"> {{el._id}} </div> -->
           </div>
         </li>
       </ul>
@@ -34,7 +34,7 @@
       </div>
   </div>
 
-  <!-- MIX TYPE SELECTION -->
+            <!-- MIX TYPE SELECTION -->
   <div id="wizard-selection-mixTypes" class='wizard-selection row' v-if="this.$root.curStep==this.steps.mixType">
 
     <div class="col-12">
@@ -57,7 +57,7 @@
     </div>
   </div>
   
-  <!-- HOUSE MIX SELECTION -->
+            <!-- HOUSE MIX SELECTION -->
   <div id="wizard-selection-houseMixes" class='wizard-selection row' v-if="this.$root.curStep==this.steps.houseMix">
 
     <div class="col-12">
@@ -81,7 +81,7 @@
     </div>
   </div>
   
-  <!-- TOBACCO BRAND SELECTION -->
+            <!-- TOBACCO BRAND SELECTION -->
   <div id="wizard-selection-tobaccoBrands" class='wizard-selection row' v-if="this.$root.curStep==this.steps.tobaccoBrands">
 
     <div class="col-12">
@@ -104,7 +104,7 @@
         </li>
       </ul>
 
-      <!-- <div class="row">
+                <!-- <div class="row">
         <div class="col-6 text-center">
           <button class='btn-secondary center wp-100' @click="removeTobaccoBrand()">Remove</button>
         </div>
@@ -116,7 +116,7 @@
 
   </div>
   
-  <!-- TOBACCO FLAVOR SELECTION -->
+            <!-- TOBACCO FLAVOR SELECTION -->
   <div id="wizard-selection-tobaccoFlavors" class='wizard-selection row' v-if="this.$root.curStep==this.steps.tobaccoFlavors">
 
     <div class="col-12">
@@ -145,7 +145,7 @@
 
   </div>
 
-  <!-- COMBO2 -->
+            <!-- COMBO2 -->
   <div id="wizard-selection-combo2" class='wizard-selection row' v-if="this.$root.curStep==this.steps.combo2">
 
     <div class="col-12">
@@ -184,7 +184,7 @@
 
   </div>
 
-  <!-- COMBO3 -->
+            <!-- COMBO3 -->
   <div id="wizard-selection-combo3" class='wizard-selection row' v-if="this.$root.curStep==this.steps.combo3">
 
     <div class="col-12">
@@ -244,7 +244,7 @@
 
   </div>
 
-  <!-- REVIEW1 -->
+            <!-- REVIEW1 -->
   <div id="wizard-selection-review1" class='wizard-selection row' v-if="this.$root.curStep==this.steps.review1">
 
     <div class="col-12">
@@ -254,7 +254,7 @@
         <p class='text-left step-subtitle'>All flavors of the brands you choose will be available to choose from; you will be charged the higher cost for all.</p>
       </div>
       
-      <!-- <ul class='tile-list row p-0'>
+                <!-- <ul class='tile-list row p-0'>
         <li class='col-6' >
           <div class='tile p-1' @click="selectReview1Option('')">
             <h5 class='text-center'></h5>
@@ -308,7 +308,7 @@
     </div>
   </div>
   
-  <!-- REVIEW -->
+            <!-- REVIEW -->
   <div id="wizard-selection-review" class='wizard-selection row' v-if="this.$root.curStep==this.steps.reviewTotal">
 
     <div class="col-12">
@@ -412,7 +412,7 @@
 
   </div>
 
-  <!-- CONFIRMATION -->
+            <!-- CONFIRMATION -->
   <div id="wizard-selection-confirmation" class='wizard-selection row' v-if="this.$root.curStep==this.steps.confirmation">
 
     <div class="col-12">
@@ -483,7 +483,7 @@
   </div>
 
   <div class="row mt-1">
-    <!-- <div class="col-12">
+              <!-- <div class="col-12">
       <div class="row"> -->
         <div class="col-6 text-center">
           <button class='btn-danger center wp-100' 
@@ -495,11 +495,11 @@
         <div class="col-6 text-center">
           <button class='btn-success center wp-100' @click="next()">{{nextButtonName}}</button>
         </div>
-      <!-- </div>
+                <!-- </div>
     </div> -->
   </div>
 
-  <!-- <button>
+            <!-- <button>
     <a href="test1">TEST1 - aTag</a>
   </button>
 
@@ -930,15 +930,19 @@ export default {
     }
   },
   updated() {
-    if (this.$root.curStep != this.steps.tobaccoFlavors) {
+    /* if (this.$root.curStep != this.steps.tobaccoFlavors) {
       $('html, body').animate({
-        scrollTop: $("div#wizard-html").offset().top
+        scrollTop: $("div#wizard").offset().top
       }, 50);
-    }
+    } */
   },
   methods: {
     /* COMMON */
     next () {
+      $('html, body').animate({
+        scrollTop: $("div#wizard").offset().top
+      }, 50);
+      
       if ( this.$root.curStep == this.steps.confirmation) {
         this.clearOrder();
         // this.$forceUpdate();

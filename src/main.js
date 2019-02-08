@@ -18,7 +18,6 @@ toastr.options.positionClass = 'toast-top-center';
 window.$ = require('jquery');
                     /* INITIALIZE */
 
-Vue.use(axios);
 Vue.use(VeeValidate);
 Vue.use(VueTheMask);
 Vue.use(VueToastr2);
@@ -31,6 +30,12 @@ Vue.config.productionTip = false;
 const vm = new Vue({
   router,
   store,
+  data: {
+    message: 'Hello Vue!',
+    curStep: 0,
+    stepSequence: [0]
+
+  },
   render: h => h(App)
 }).$mount("#app");
 
