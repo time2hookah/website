@@ -897,9 +897,7 @@ export default {
   computed: {
     orderedTobaccoBrands() {
       let self = this;
-      let res = this.tobaccoBrands.list.filter(el => {
-        self.brandIsOrdered(el);
-      });
+      let res = this.tobaccoBrands.list.filter(el => self.brandIsOrdered(el));
 
       return res;
     },
@@ -975,9 +973,7 @@ export default {
     subtotalPrice() {
       let res = 0;
 
-      this.order.cleanCart.forEach(el => {
-        res += el.price;
-      });
+      this.order.cleanCart.forEach(el => (res += el.price));
 
       return res.toFixed(2);
     },
@@ -1395,9 +1391,7 @@ export default {
         $(event.currentTarget).removeClass("selected");
 
         this.order.new.tobaccoBrands.list = this.order.new.tobaccoBrands.list.filter(
-          el => {
-            b.id != el.id;
-          }
+          el => b.id != el.id
         );
 
         if (this.order.new.tobaccoBrands.list.length == 0) {
