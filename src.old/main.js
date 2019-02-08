@@ -28,11 +28,8 @@ var $axios = axios;
 
 Vue.config.productionTip = false;
 
-const vm = new Vue({
+new Vue({
   router,
   store,
   render: h => h(App)
 }).$mount("#app");
-
-
-window.vmAccess = vm;

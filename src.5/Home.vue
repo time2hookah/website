@@ -73,12 +73,12 @@
 
 
 <script>
-import router from "../router";
+import router from "./router";
 export default {
-  name: "ZipCodeCard",
+  name: "home",
   data() {
     return {
-      title: "ZipCodeCard"
+      title: "App"
     };
   },
   mounted() {

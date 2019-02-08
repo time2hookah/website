@@ -12,7 +12,8 @@ module.exports = {
     mode: 'development',
     context: path.resolve(__dirname),
     entry: {
-        home: './src/Main.js', 
+        main: './src/main.js'
+        // home: './src/Main.js', 
         // wizard: './src/main.js'
     },
     output: {

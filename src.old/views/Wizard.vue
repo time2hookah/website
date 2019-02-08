@@ -1,512 +1,513 @@
 <template>
-<div id='wizard' class='container'>
+  <div id='wizard'>
 
-  <!-- HOOKAH HEAD TYPE SELECTION -->
-  <div id="wizard-selection-hookahHeadTypes" class='wizard-selection row' v-if="this.$root.curStep==this.steps.hookahHeadType">
-    
-    <div class="col-12">
+    <!-- HOOKAH HEAD TYPE SELECTION -->
+    <div id="wizard-selection-hookahHeadTypes" class='wizard-selection row' v-if="this.$root.curStep==this.steps.hookahHeadType">
+      
+      <div class="col-12">
 
-    
-      <div class="text-center row">
-        <h3 class='step-title bg-secondary col-12'>Please select the hookah head type.</h3>
-      </div>
+      
+        <div class="text-center row">
+          <h3 class='step-title bg-secondary col-12'>Please select the hookah head type.</h3>
+        </div>
 
-      <ul class='tile-list row p-0'>
-        <li v-for="(el, i) in hookahHeadTypes.list" :key="i" class='col-6'>
-          <div class='tile p-1' 
-          @click="selectHookahHeadType(i)"
-          :class="{selected : (el._id == order.new.hookahHeadType.id) }"
-          >
-<!-- (el._id == order.new.hookahHeadType.id) -->
-<!-- checkIfSelected(el) -->
-          
+        <ul class='tile-list row p-0'>
+          <li v-for="(el, i) in hookahHeadTypes.list" :key="i" class='col-6'>
+            <div class='tile p-1' 
+            @click="selectHookahHeadType(i)"
+            :class="{selected : (el._id == order.new.hookahHeadType.id) }"
+            >
+            <!-- (el._id == order.new.hookahHeadType.id) -->
+            <!-- checkIfSelected(el) -->
+            
 
-            <h5 class='text-center'>{{el.name}}</h5>
-            <div class="row">
-              <div class="col-2"> ${{el.price}} </div>
-              <div class="col-10"> {{el.description}} </div>
+              <h5 class='text-center'>{{el.name}}</h5>
+              <div class="row">
+                <div class="col-2"> ${{el.price}} </div>
+                <div class="col-10"> {{el.description}} </div>
+              </div>
+                <!-- <div class="row"> {{el._id}} </div> -->
             </div>
-              <!-- <div class="row"> {{el._id}} </div> -->
-          </div>
-        </li>
-      </ul>
+          </li>
+        </ul>
+
+        </div>
+    </div>
+
+    <!-- MIX TYPE SELECTION -->
+    <div id="wizard-selection-mixTypes" class='wizard-selection row' v-if="this.$root.curStep==this.steps.mixType">
+
+      <div class="col-12">
+
+        <div class="text-center row">
+          <h3 class='step-title bg-secondary col-12'>Please select the mix type.</h3>
+        </div>
+
+        <ul class='tile-list row p-0'>
+          <li v-for="(el, i) in mixTypes.list" :key="i" class='col-6' >
+            <div class='tile p-1' 
+            @click="selectMixType(i)" 
+            :class="{selected : (el.id == order.new.mixType.id) }"
+            >
+              <h5 class='text-center'>{{el.name}}</h5>
+            </div>
+          </li>
+        </ul>
 
       </div>
-  </div>
+    </div>
+    
+    <!-- HOUSE MIX SELECTION -->
+    <div id="wizard-selection-houseMixes" class='wizard-selection row' v-if="this.$root.curStep==this.steps.houseMix">
 
-  <!-- MIX TYPE SELECTION -->
-  <div id="wizard-selection-mixTypes" class='wizard-selection row' v-if="this.$root.curStep==this.steps.mixType">
+      <div class="col-12">
 
-    <div class="col-12">
+        <div class="text-center row">
+          <h3 class='step-title bg-secondary col-12'>Please select the House mix.</h3>
+        </div>
 
-      <div class="text-center row">
-        <h3 class='step-title bg-secondary col-12'>Please select the mix type.</h3>
+        <ul class='tile-list row p-0'>
+          <li v-for="(el, i) in houseMixes.list" :key="i" class='col-6' >
+            <div class='tile p-1' 
+            @click="selectHouseMix(i)"
+            :class="{selected : (el.id == order.new.houseMix.id) }"
+            >
+              <h5 class='text-center'>{{el.name}}</h5>
+              <span>${{el.price}}</span>
+            </div>
+          </li>
+        </ul>
+
       </div>
+    </div>
+    
+    <!-- TOBACCO BRAND SELECTION -->
+    <div id="wizard-selection-tobaccoBrands" class='wizard-selection row' v-if="this.$root.curStep==this.steps.tobaccoBrands">
 
-      <ul class='tile-list row p-0'>
-        <li v-for="(el, i) in mixTypes.list" :key="i" class='col-6' >
-          <div class='tile p-1' 
-          @click="selectMixType(i)" 
-          :class="{selected : (el.id == order.new.mixType.id) }"
-          >
-            <h5 class='text-center'>{{el.name}}</h5>
+      <div class="col-12">
+
+        <div class="text-center row">
+          <h3 class='step-title bg-secondary col-12'>Please select the brands.</h3>
+          <p class='text-left step-subtitle'>All flavors of the brands you choose will be available to choose from in the next slide. You will be charged the higher cost.</p>
+        </div>
+
+        <ul class='tile-list row p-0'>
+          <li v-for="(el, i) in tobaccoBrands.list" :key="i" class='col-6' 
+          :data-selected='brandIsOrdered(el, true)'>
+            <div class='tile p-1' 
+            @click="selectTobaccoBrand(el)"
+            :class="{selected : brandIsOrdered(el) }"
+            >
+              <h5 class='text-center'>{{el.name}}</h5>
+              <span>${{el.price}}</span>
+            </div>
+          </li>
+        </ul>
+
+        <!-- <div class="row">
+          <div class="col-6 text-center">
+            <button class='btn-secondary center wp-100' @click="removeTobaccoBrand()">Remove</button>
           </div>
-        </li>
-      </ul>
+          <div class="col-6 text-center">
+            <button class='btn- primary wp-100' @click="addTobaccoBrand()">Add</button>
+          </div>
+        </div> -->
+      </div>
 
     </div>
-  </div>
-  
-  <!-- HOUSE MIX SELECTION -->
-  <div id="wizard-selection-houseMixes" class='wizard-selection row' v-if="this.$root.curStep==this.steps.houseMix">
+    
+    <!-- TOBACCO FLAVOR SELECTION -->
+    <div id="wizard-selection-tobaccoFlavors" class='wizard-selection row' v-if="this.$root.curStep==this.steps.tobaccoFlavors">
 
-    <div class="col-12">
+      <div class="col-12">
 
-      <div class="text-center row">
-        <h3 class='step-title bg-secondary col-12'>Please select the House mix.</h3>
+        <div class="text-center row">
+          <h3 class='step-title bg-secondary col-12'>Please select up to 3 flavors.</h3>
+        </div>
+
+        <ul v-for="(b, i) in orderedTobaccoBrands" :key="i" class='tile-list row p-0 text-center'>
+
+            <h5 class='text-center col-12'>{{b.name}} - ${{b.price}}</h5>
+
+            <li v-for="(f, i) in b.flavors.list" :key="i" class='col-6' 
+            :data-selected='flavorIsOrdered(f, true)'>
+              <div class='tile p-1' 
+              @click="selectTobaccoFlavor(b, f)"
+              :class='{selected: flavorIsOrdered(f) }'
+              >
+                <h5 class='text-center'>{{f.name}}</h5>
+              </div>
+            </li>
+
+        </ul>
+
       </div>
-
-      <ul class='tile-list row p-0'>
-        <li v-for="(el, i) in houseMixes.list" :key="i" class='col-6' >
-          <div class='tile p-1' 
-          @click="selectHouseMix(i)"
-          :class="{selected : (el.id == order.new.houseMix.id) }"
-          >
-            <h5 class='text-center'>{{el.name}}</h5>
-            <span>${{el.price}}</span>
-          </div>
-        </li>
-      </ul>
 
     </div>
-  </div>
-  
-  <!-- TOBACCO BRAND SELECTION -->
-  <div id="wizard-selection-tobaccoBrands" class='wizard-selection row' v-if="this.$root.curStep==this.steps.tobaccoBrands">
 
-    <div class="col-12">
+    <!-- COMBO2 -->
+    <div id="wizard-selection-combo2" class='wizard-selection row' v-if="this.$root.curStep==this.steps.combo2">
 
-      <div class="text-center row">
-        <h3 class='step-title bg-secondary col-12'>Please select the brands.</h3>
-        <p class='text-left step-subtitle'>All flavors of the brands you choose will be available to choose from in the next slide. You will be charged the higher cost.</p>
+      <div class="col-12">
+
+        <div class="text-center row">
+          <h3 class='step-title bg-secondary col-12'>2 Flavor Combo</h3>
+          <p class='text-left step-subtitle'>Please choose the proportion of each flavor you'd like.</p>
+        </div>
+
+
+        <div class="row">
+          <div class="col-12 text-center">
+            <h5>{{order.new.tobaccoFlavors.list[0].name}}</h5>
+            <input id="combo2-flavor1" class="combo2-range wp-75" type="range" name="combo2-flavor1" min="25" max="75" :value='this.order.new.comboOptions.combo2.flavor1' step="25" @change="combo2RangeChange()">
+          </div>
+        </div>
+        <div class="wp-75 center">
+      
+          <div class="row">
+            <span class="col-2 text-left">25%</span>
+            <span class="col-2 text-center"></span>
+            <span class="col-4 text-center">50%</span>
+            <span class="col-2 text-center"></span>
+            <span class="col-2 text-right">75%</span>
+          </div>
+
+        </div>
+
+        <div class="row">
+          <div class="col-12 text-center">
+            <input id="combo2-flavor2" class="combo2-range wp-75" type="range" name="combo2-flavor2" min="25" max="75" :value='this.order.new.comboOptions.combo2.flavor2' step="25" disabled >
+            <h5>{{order.new.tobaccoFlavors.list[1].name}}</h5>
+          </div>
+        </div>
       </div>
 
-      <ul class='tile-list row p-0'>
-        <li v-for="(el, i) in tobaccoBrands.list" :key="i" class='col-6' 
-        :data-selected='brandIsOrdered(el, true)'>
-          <div class='tile p-1' 
-          @click="selectTobaccoBrand(el)"
-          :class="{selected : brandIsOrdered(el) }"
-          >
-            <h5 class='text-center'>{{el.name}}</h5>
-            <span>${{el.price}}</span>
-          </div>
-        </li>
-      </ul>
+    </div>
 
-      <!-- <div class="row">
-        <div class="col-6 text-center">
-          <button class='btn-secondary center wp-100' @click="removeTobaccoBrand()">Remove</button>
+    <!-- COMBO3 -->
+    <div id="wizard-selection-combo3" class='wizard-selection row' v-if="this.$root.curStep==this.steps.combo3">
+
+      <div class="col-12">
+
+        <div class="text-center row">
+          <h3 class='step-title bg-secondary col-12'>3 Flavor Combo</h3>
+          <p class='text-left step-subtitle'>All flavors of the brands you choose will be available to choose from; you will be charged the higher cost for all.</p>
         </div>
-        <div class="col-6 text-center">
-          <button class='btn- primary wp-100' @click="addTobaccoBrand()">Add</button>
+
+        <div class="row">
+          <div class="col-6">
+            <input type="radio" name="combo3" id="combo3-thirds" value='thirds' v-model="order.new.comboOptions.combo3.split"> 
+            <label for="">1/3 + 1/3 + 1/3</label>
+          </div>
         </div>
+        
+        <div class="row">
+          <div class="col-6">
+            <input type="radio" name="combo3" id="combo3-fifths-1/2" value='fifths-1/2' v-model="order.new.comboOptions.combo3.split"> 
+            <label for="">1/5 + 2/5 + 2/5</label>
+          </div>
+          
+          <div class="col-6" v-if="order.new.comboOptions.combo3.split=='fifths-1/2'">
+            <label for="">Which one is 1/5?</label>
+            <select name="" id="" v-model="order.new.comboOptions.combo3.whichIsOdd.id">
+              <option value="" disabled>Select</option>
+
+              <option v-for='(f, i) in order.new.tobaccoFlavors.list' :key="i" 
+              :value="f.id">
+                {{f.name}}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-6">
+            <input type="radio" name="combo3" id="combo3-fifths-1/3" value='fifths-1/3' v-model="order.new.comboOptions.combo3.split"> 
+            <label for="">1/5 + 1/5 + 3/5</label>
+          </div>
+          
+          <div class="col-6" v-if="order.new.comboOptions.combo3.split=='fifths-1/3'">
+            <label for="">Which one is 3/5?</label>
+            <select name="" id="" v-model="order.new.comboOptions.combo3.whichIsOdd.id">
+              <option value="" disabled>Select</option>
+
+              <option v-for='(f, i) in order.new.tobaccoFlavors.list' :key="i" 
+              :value="f.id" 
+              :data-flavorName='f.name'>
+                {{f.name}}
+              </option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- REVIEW1 -->
+    <div id="wizard-selection-review1" class='wizard-selection row' v-if="this.$root.curStep==this.steps.review1">
+
+      <div class="col-12">
+
+        <div class="text-center row">
+          <h3 class='step-title bg-secondary col-12'>Review Selection</h3>
+          <p class='text-left step-subtitle'>All flavors of the brands you choose will be available to choose from; you will be charged the higher cost for all.</p>
+        </div>
+        
+        <!-- <ul class='tile-list row p-0'>
+          <li class='col-6' >
+            <div class='tile p-1' @click="selectReview1Option('')">
+              <h5 class='text-center'></h5>
+              <span></span>
+            </div>
+          </li>
+          
+          <li class='col-6' >
+            <div class='tile p-1' @click="selectReview1Option('')">
+              <h5 class='text-center'></h5>
+              <span></span>
+            </div>
+          </li>
+          
+          <li class='col-6' >
+            <div class='tile p-1' @click="selectReview1Option('')">
+              <h5 class='text-center'></h5>
+              <span></span>
+            </div>
+          </li>
+          
+          <li class='col-6' >
+            <div class='tile p-1' @click="selectReview1Option('')">
+              <h5 class='text-center'></h5>
+              <span></span>
+            </div>
+          </li>
+        </ul> -->
+        
+        <div id="review1-options" class='col-12'>
+          <div class="row">
+            <div class="col-6" >
+              <h5>How many of this selection?</h5>
+              <input id='selectionQuantity-input' class='p-1' type="number" min=1 :value="order.new.quantity" @change="selectionQuantityChanged()">
+            </div>
+            
+            <div class="col-6 cursor-pointer markOnHover" @click='addAnother()'>
+              <h5>Add another selection... Pick something totally different!</h5>
+            </div>
+          
+            <div class="col-6 cursor-pointer markOnHover" @click="hookahs()">
+              <h5>Need a hookah? We got you covered.</h5>
+            </div>
+            
+            <div class="col-6 cursor-pointer markOnHover" @click="addons()">
+              <h5>Find all accessories you might need here.</h5>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    
+    <!-- REVIEW -->
+    <div id="wizard-selection-review" class='wizard-selection row' v-if="this.$root.curStep==this.steps.reviewTotal">
+
+      <div class="col-12">
+
+        <div class="text-center row">
+          <h3 class='step-title bg-secondary col-12'>Review</h3>
+          <p class='text-left step-subtitle'>Please make sure all selections are correct and confirm your order.</p>
+        </div>
+
+        <div id="cart-review" class='row'>
+          <div class="container">
+
+            <div id="cart-review-items" class='row'>
+              <ul class='col'>
+                <li v-for='(item, i) in this.order.cleanCart' :key="i" class='review-item'>
+                  
+                  <div class="row">
+                    <div class="col-4">
+                      <img src="../assets/img/fruits/fruit-head/Apple.jpg" alt="">
+                    </div>
+                    <div class="col-8">
+                      <div>Quantity: {{ item.quantity }}</div>
+                      <div>Hookah Head Type: {{ item.hookahHeadType.name }}</div>
+                      <div>Price: ${{ item.price }}</div>
+                      <div>
+                        Type: {{ item.mixType.name }} Mix
+                        
+                        <span v-if='item.mixType.name == "Custom"'>
+                          of {{ item.comboOptions.numberOfFlavors }} flavors:
+                        </span>
+                      </div>
+
+                      
+                      <span v-if='item.mixType.name == "House"'>
+                        <div>House Mix: {{ item.houseMix.name }}</div>
+                      </span>
+
+                      <span v-if='item.mixType.name == "Custom"'>
+
+                        <span v-if='item.comboOptions.numberOfFlavors == 2'>
+                          <div> {{ item.tobaccoFlavors[0].name }}: {{ item.comboOptions.flavor1 }} || {{ item.tobaccoFlavors[1].name }}: {{ item.comboOptions.flavor2 }}</div>
+                        </span>
+                        
+                        <span v-if='item.comboOptions.numberOfFlavors == 3'>
+                          <div>
+                            <span v-for="(f, i) in item.tobaccoFlavors" :key="i">
+                              {{f.name}} <span v-if="i != item.tobaccoFlavors.length - 1">,</span>
+                            </span>
+                          </div>
+
+                          <div> 
+                            Split: 
+                            
+                            <span v-if="item.comboOptions.split"></span>
+
+                          </div>
+                          <div> WhichIsOdd: {{ item.comboOptions.whichIsOdd.name }} </div>
+                        </span>
+
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <br>
+
+                  <div class="row">
+                    <button class="col-6 btn-secondary" @click='editItem(i)'>Edit</button>
+                    <button class="col-6 btn-danger" @click='removeItem(i)'>Remove</button>
+                  </div>
+                  
+                  
+                  
+                </li>
+              </ul>
+            </div>
+
+            <div id="cart-review-summary" class='row'>
+              <div class='col'>
+                <table class='float-right'>
+                  <tr>
+                    <td>Subtotal:</td>
+                    <td>${{ subtotalPrice }}</td>
+                  </tr>
+                  <tr>
+                    <td>Tax (10%):</td>
+                    <td>${{(subtotalPrice * .1).toFixed(2)}}</td>
+                  </tr>
+                  <tr>
+                    <td>Total:</td>
+                    <td>${{ totalPrice }}</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+        
+      </div>
+
+    </div>
+
+    <!-- CONFIRMATION -->
+    <div id="wizard-selection-confirmation" class='wizard-selection row' v-if="this.$root.curStep==this.steps.confirmation">
+
+      <div class="col-12">
+
+        <div class="text-center row">
+          <h3 class='step-title bg-secondary col-12'>Confirmation</h3>
+          <p class='text-left step-subtitle'>Your order is being prepared. You can find details of your order below.</p>
+        </div>
+
+        <div id="confirmation">
+          <ul class='col'>
+            <li v-for='(item, i) in this.order.cleanCart' :key="i" class='review-item'>
+              
+              <div class="row">
+                <div class="col-4">
+                  <img src="../assets/img/fruits/fruit-head/Apple.jpg" alt="">
+                </div>
+                <div class="col-8">
+                  <div>Quantity: {{ item.quantity }}</div>
+                  <div>Hookah Head Type: {{ item.hookahHeadType.name }}</div>
+                  <div>Price: ${{ item.price }}</div>
+                  <div>
+                    Type: {{ item.mixType.name }} Mix
+                    
+                    <span v-if='item.mixType.name == "Custom"'>
+                      of {{ item.comboOptions.numberOfFlavors }} flavors:
+                    </span>
+                  </div>
+
+                  
+                  <span v-if='item.mixType.name == "House"'>
+                    <div>House Mix: {{ item.houseMix.name }}</div>
+                  </span>
+
+                  <span v-if='item.mixType.name == "Custom"'>
+
+                    <span v-if='item.comboOptions.numberOfFlavors == 2'>
+                      <div> {{ item.tobaccoFlavors[0].name }}: {{ item.comboOptions.flavor1 }} || {{ item.tobaccoFlavors[1].name }}: {{ item.comboOptions.flavor2 }}</div>
+                    </span>
+                    
+                    <span v-if='item.comboOptions.numberOfFlavors == 3'>
+                      <div>
+                        <span v-for="(f, i) in item.tobaccoFlavors" :key="i">
+                          {{f.name}} <span v-if="i != item.tobaccoFlavors.length - 1">,</span>
+                        </span>
+                      </div>
+
+                      <div> 
+                        Split: 
+                        
+                        <span v-if="item.comboOptions.split"></span>
+
+                      </div>
+                      <div> WhichIsOdd: {{ item.comboOptions.whichIsOdd.name }} </div>
+                    </span>
+
+                  </span>
+                </div>
+              </div>          
+              
+              
+            </li>
+          </ul>
+        </div>
+        
+      </div>
+
+    </div>
+
+    <div class="row mt-1">
+      <!-- <div class="col-12">
+        <div class="row"> -->
+          <div class="col-6 text-center">
+            <button class='btn-danger center wp-100' 
+            :class='backButtonClass'
+            @click="back()" >
+              {{backButtonName}}
+            </button>
+          </div>
+          <div class="col-6 text-center">
+            <button class='btn-success center wp-100' @click="next()">{{nextButtonName}}</button>
+          </div>
+        <!-- </div>
       </div> -->
     </div>
 
-  </div>
-  
-  <!-- TOBACCO FLAVOR SELECTION -->
-  <div id="wizard-selection-tobaccoFlavors" class='wizard-selection row' v-if="this.$root.curStep==this.steps.tobaccoFlavors">
+    <!-- <button>
+      <a href="test1">TEST1 - aTag</a>
+    </button>
 
-    <div class="col-12">
-
-      <div class="text-center row">
-        <h3 class='step-title bg-secondary col-12'>Please select up to 3 flavors.</h3>
-      </div>
-
-      <ul v-for="(b, i) in orderedTobaccoBrands" :key="i" class='tile-list row p-0 text-center'>
-
-          <h5 class='text-center col-12'>{{b.name}} - ${{b.price}}</h5>
-
-          <li v-for="(f, i) in b.flavors.list" :key="i" class='col-6' 
-          :data-selected='flavorIsOrdered(f, true)'>
-            <div class='tile p-1' 
-            @click="selectTobaccoFlavor(b, f)"
-            :class='{selected: flavorIsOrdered(f) }'
-            >
-              <h5 class='text-center'>{{f.name}}</h5>
-            </div>
-          </li>
-
-      </ul>
-
-    </div>
+    <button>
+      <router-link to='test1'>TEST1 - routerlink</router-link>
+    </button> -->
 
   </div>
-
-  <!-- COMBO2 -->
-  <div id="wizard-selection-combo2" class='wizard-selection row' v-if="this.$root.curStep==this.steps.combo2">
-
-    <div class="col-12">
-
-      <div class="text-center row">
-        <h3 class='step-title bg-secondary col-12'>2 Flavor Combo</h3>
-        <p class='text-left step-subtitle'>Please choose the proportion of each flavor you'd like.</p>
-      </div>
-
-
-      <div class="row">
-        <div class="col-12 text-center">
-          <h5>{{order.new.tobaccoFlavors.list[0].name}}</h5>
-          <input id="combo2-flavor1" class="combo2-range wp-75" type="range" name="combo2-flavor1" min="25" max="75" :value='this.order.new.comboOptions.combo2.flavor1' step="25" @change="combo2RangeChange()">
-        </div>
-      </div>
-      <div class="wp-75 center">
-    
-        <div class="row">
-          <span class="col-2 text-left">25%</span>
-          <span class="col-2 text-center"></span>
-          <span class="col-4 text-center">50%</span>
-          <span class="col-2 text-center"></span>
-          <span class="col-2 text-right">75%</span>
-        </div>
-
-      </div>
-
-      <div class="row">
-        <div class="col-12 text-center">
-          <input id="combo2-flavor2" class="combo2-range wp-75" type="range" name="combo2-flavor2" min="25" max="75" :value='this.order.new.comboOptions.combo2.flavor2' step="25" disabled >
-          <h5>{{order.new.tobaccoFlavors.list[1].name}}</h5>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- COMBO3 -->
-  <div id="wizard-selection-combo3" class='wizard-selection row' v-if="this.$root.curStep==this.steps.combo3">
-
-    <div class="col-12">
-
-      <div class="text-center row">
-        <h3 class='step-title bg-secondary col-12'>3 Flavor Combo</h3>
-        <p class='text-left step-subtitle'>All flavors of the brands you choose will be available to choose from; you will be charged the higher cost for all.</p>
-      </div>
-
-      <div class="row">
-        <div class="col-6">
-          <input type="radio" name="combo3" id="combo3-thirds" value='thirds' v-model="order.new.comboOptions.combo3.split"> 
-          <label for="">1/3 + 1/3 + 1/3</label>
-        </div>
-      </div>
-      
-      <div class="row">
-        <div class="col-6">
-          <input type="radio" name="combo3" id="combo3-fifths-1/2" value='fifths-1/2' v-model="order.new.comboOptions.combo3.split"> 
-          <label for="">1/5 + 2/5 + 2/5</label>
-        </div>
-        
-        <div class="col-6" v-if="order.new.comboOptions.combo3.split=='fifths-1/2'">
-          <label for="">Which one is 1/5?</label>
-          <select name="" id="" v-model="order.new.comboOptions.combo3.whichIsOdd.id">
-            <option value="" disabled>Select</option>
-
-            <option v-for='(f, i) in order.new.tobaccoFlavors.list' :key="i" 
-            :value="f.id">
-              {{f.name}}
-            </option>
-          </select>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-6">
-          <input type="radio" name="combo3" id="combo3-fifths-1/3" value='fifths-1/3' v-model="order.new.comboOptions.combo3.split"> 
-          <label for="">1/5 + 1/5 + 3/5</label>
-        </div>
-        
-        <div class="col-6" v-if="order.new.comboOptions.combo3.split=='fifths-1/3'">
-          <label for="">Which one is 3/5?</label>
-          <select name="" id="" v-model="order.new.comboOptions.combo3.whichIsOdd.id">
-            <option value="" disabled>Select</option>
-
-            <option v-for='(f, i) in order.new.tobaccoFlavors.list' :key="i" 
-            :value="f.id" 
-            :data-flavorName='f.name'>
-              {{f.name}}
-            </option>
-          </select>
-        </div>
-      </div>
-
-    </div>
-
-  </div>
-
-  <!-- REVIEW1 -->
-  <div id="wizard-selection-review1" class='wizard-selection row' v-if="this.$root.curStep==this.steps.review1">
-
-    <div class="col-12">
-
-      <div class="text-center row">
-        <h3 class='step-title bg-secondary col-12'>Review Selection</h3>
-        <p class='text-left step-subtitle'>All flavors of the brands you choose will be available to choose from; you will be charged the higher cost for all.</p>
-      </div>
-      
-      <!-- <ul class='tile-list row p-0'>
-        <li class='col-6' >
-          <div class='tile p-1' @click="selectReview1Option('')">
-            <h5 class='text-center'></h5>
-            <span></span>
-          </div>
-        </li>
-        
-        <li class='col-6' >
-          <div class='tile p-1' @click="selectReview1Option('')">
-            <h5 class='text-center'></h5>
-            <span></span>
-          </div>
-        </li>
-        
-        <li class='col-6' >
-          <div class='tile p-1' @click="selectReview1Option('')">
-            <h5 class='text-center'></h5>
-            <span></span>
-          </div>
-        </li>
-        
-        <li class='col-6' >
-          <div class='tile p-1' @click="selectReview1Option('')">
-            <h5 class='text-center'></h5>
-            <span></span>
-          </div>
-        </li>
-      </ul> -->
-      
-      <div id="review1-options" class='col-12'>
-        <div class="row">
-          <div class="col-6" >
-            <h5>How many of this selection?</h5>
-            <input id='selectionQuantity-input' class='p-1' type="number" min=1 :value="order.new.quantity" @change="selectionQuantityChanged()">
-          </div>
-          
-          <div class="col-6 cursor-pointer markOnHover" @click='addAnother()'>
-            <h5>Add another selection... Pick something totally different!</h5>
-          </div>
-        
-          <div class="col-6 cursor-pointer markOnHover" @click="hookahs()">
-            <h5>Need a hookah? We got you covered.</h5>
-          </div>
-          
-          <div class="col-6 cursor-pointer markOnHover" @click="addons()">
-            <h5>Find all accessories you might need here.</h5>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-  
-  <!-- REVIEW -->
-  <div id="wizard-selection-review" class='wizard-selection row' v-if="this.$root.curStep==this.steps.reviewTotal">
-
-    <div class="col-12">
-
-      <div class="text-center row">
-        <h3 class='step-title bg-secondary col-12'>Review</h3>
-        <p class='text-left step-subtitle'>Please make sure all selections are correct and confirm your order.</p>
-      </div>
-
-      <div id="cart-review" class='row'>
-        <div class="container">
-
-          <div id="cart-review-items" class='row'>
-            <ul class='col'>
-              <li v-for='(item, i) in this.order.cleanCart' :key="i" class='review-item'>
-                
-                <div class="row">
-                  <div class="col-4">
-                    <img :src="'img/fruits/fruit-head/' + item.hookahHeadType.name + '.jpg'" alt="">
-                  </div>
-                  <div class="col-8">
-                    <div>Quantity: {{ item.quantity }}</div>
-                    <div>Hookah Head Type: {{ item.hookahHeadType.name }}</div>
-                    <div>Price: ${{ item.price }}</div>
-                    <div>
-                      Type: {{ item.mixType.name }} Mix
-                      
-                      <span v-if='item.mixType.name == "Custom"'>
-                        of {{ item.comboOptions.numberOfFlavors }} flavors:
-                      </span>
-                    </div>
-
-                    
-                    <span v-if='item.mixType.name == "House"'>
-                      <div>House Mix: {{ item.houseMix.name }}</div>
-                    </span>
-
-                    <span v-if='item.mixType.name == "Custom"'>
-
-                      <span v-if='item.comboOptions.numberOfFlavors == 2'>
-                        <div> {{ item.tobaccoFlavors[0].name }}: {{ item.comboOptions.flavor1 }} || {{ item.tobaccoFlavors[1].name }}: {{ item.comboOptions.flavor2 }}</div>
-                      </span>
-                      
-                      <span v-if='item.comboOptions.numberOfFlavors == 3'>
-                        <div>
-                          <span v-for="(f, i) in item.tobaccoFlavors" :key="i">
-                            {{f.name}} <span v-if="i != item.tobaccoFlavors.length - 1">,</span>
-                          </span>
-                        </div>
-
-                        <div> 
-                          Split: 
-                          
-                          <span v-if="item.comboOptions.split"></span>
-
-                        </div>
-                        <div> WhichIsOdd: {{ item.comboOptions.whichIsOdd.name }} </div>
-                      </span>
-
-                    </span>
-                  </div>
-                </div>
-                
-                <br>
-
-                <div class="row">
-                  <button class="col-6 btn-secondary" @click='editItem(i)'>Edit</button>
-                  <button class="col-6 btn-danger" @click='removeItem(i)'>Remove</button>
-                </div>
-                
-                
-                
-              </li>
-            </ul>
-          </div>
-
-          <div id="cart-review-summary" class='row'>
-            <div class='col'>
-              <table class='float-right'>
-                <tr>
-                  <td>Subtotal:</td>
-                  <td>${{ subtotalPrice }}</td>
-                </tr>
-                <tr>
-                  <td>Tax (10%):</td>
-                  <td>${{(subtotalPrice * .1).toFixed(2)}}</td>
-                </tr>
-                <tr>
-                  <td>Total:</td>
-                  <td>${{ totalPrice }}</td>
-                </tr>
-              </table>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-      
-    </div>
-
-  </div>
-
-  <!-- CONFIRMATION -->
-  <div id="wizard-selection-confirmation" class='wizard-selection row' v-if="this.$root.curStep==this.steps.confirmation">
-
-    <div class="col-12">
-
-      <div class="text-center row">
-        <h3 class='step-title bg-secondary col-12'>Confirmation</h3>
-        <p class='text-left step-subtitle'>Your order is being prepared. You can find details of your order below.</p>
-      </div>
-
-      <div id="confirmation">
-        <ul class='col'>
-          <li v-for='(item, i) in this.order.cleanCart' :key="i" class='review-item'>
-            
-            <div class="row">
-              <div class="col-4">
-                <img :src="'img/fruits/fruit-head/' + item.hookahHeadType.name + '.jpg'" alt="">
-              </div>
-              <div class="col-8">
-                <div>Quantity: {{ item.quantity }}</div>
-                <div>Hookah Head Type: {{ item.hookahHeadType.name }}</div>
-                <div>Price: ${{ item.price }}</div>
-                <div>
-                  Type: {{ item.mixType.name }} Mix
-                  
-                  <span v-if='item.mixType.name == "Custom"'>
-                    of {{ item.comboOptions.numberOfFlavors }} flavors:
-                  </span>
-                </div>
-
-                
-                <span v-if='item.mixType.name == "House"'>
-                  <div>House Mix: {{ item.houseMix.name }}</div>
-                </span>
-
-                <span v-if='item.mixType.name == "Custom"'>
-
-                  <span v-if='item.comboOptions.numberOfFlavors == 2'>
-                    <div> {{ item.tobaccoFlavors[0].name }}: {{ item.comboOptions.flavor1 }} || {{ item.tobaccoFlavors[1].name }}: {{ item.comboOptions.flavor2 }}</div>
-                  </span>
-                  
-                  <span v-if='item.comboOptions.numberOfFlavors == 3'>
-                    <div>
-                      <span v-for="(f, i) in item.tobaccoFlavors" :key="i">
-                        {{f.name}} <span v-if="i != item.tobaccoFlavors.length - 1">,</span>
-                      </span>
-                    </div>
-
-                    <div> 
-                      Split: 
-                      
-                      <span v-if="item.comboOptions.split"></span>
-
-                    </div>
-                    <div> WhichIsOdd: {{ item.comboOptions.whichIsOdd.name }} </div>
-                  </span>
-
-                </span>
-              </div>
-            </div>          
-            
-            
-          </li>
-        </ul>
-      </div>
-      
-    </div>
-
-  </div>
-
-  <div class="row mt-1">
-    <!-- <div class="col-12">
-      <div class="row"> -->
-        <div class="col-6 text-center">
-          <button class='btn-danger center wp-100' 
-          :class='backButtonClass'
-          @click="back()" >
-            {{backButtonName}}
-          </button>
-        </div>
-        <div class="col-6 text-center">
-          <button class='btn-success center wp-100' @click="next()">{{nextButtonName}}</button>
-        </div>
-      <!-- </div>
-    </div> -->
-  </div>
-
-  <!-- <button>
-    <a href="test1">TEST1 - aTag</a>
-  </button>
-
-  <button>
-    <router-link to='test1'>TEST1 - routerlink</router-link>
-  </button> -->
-</div>
 </template>
 
 
@@ -1422,7 +1423,7 @@ export default {
 }); */
 </script>
 
-<style>
+<style scoped>
   #wizard {
     width: 100%;
     min-height: 100px;
