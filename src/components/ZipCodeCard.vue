@@ -126,11 +126,14 @@ export default {
 }
 
 #eligibilityCard {
-  padding: 25px;
+  display: flex;
+  align-items: center;
   background-image: url("../assets/img/hookahs/sixFruitHookahs.png");
+  padding: 25px;
   background-size: cover;
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
+  min-height: 415px;
 }
 
 #eligibilityCard article {

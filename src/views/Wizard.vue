@@ -624,9 +624,7 @@
     </div>
 
     <div class="row mt-1">
-      <!-- <div class="col-12">
-      <div class="row"> -->
-      <div class="col-6 text-center">
+      <div id="backButton" class="col-6 text-center">
         <button
           class="btn-danger center wp-100"
           :class="backButtonClass"
@@ -635,13 +633,19 @@
           {{ backButtonName }}
         </button>
       </div>
-      <div class="col-6 text-center">
+
+      <div id="nextButton" class="col-6 text-center">
         <button class="btn-success center wp-100" @click="next()">
           {{ nextButtonName }}
         </button>
       </div>
-      <!-- </div>
-    </div> -->
+
+      <div id="skipToReview" class="col-6 offset-6 text-center mt-1">
+        <!-- :class="skipButtonClass" -->
+        <button class="btn-success center wp-100" @click="skipToReview()">
+          Skip To Review >>>
+        </button>
+      </div>
     </div>
 
     <!-- <button>
@@ -970,6 +974,19 @@ export default {
 
       return res;
     },
+    /* skipButtonClass() {
+      let res = "";
+      let cur = this.$root.curStep;
+      let s = this.steps;
+
+      if (cur == s.reviewTotal) {
+        if (!$('#skipToReview').hasClass("d-none")) {
+          res = "d-none";
+        }
+      }
+
+      return res;
+    }, */
     subtotalPrice() {
       let res = 0;
 
@@ -1076,14 +1093,10 @@ export default {
   methods: {
     /* COMMON */
     next() {
-      $("html, body").animate(
-        {
-          scrollTop: $("div#wizard").offset().top
-        },
-        50
-      );
+      this.scrollToWizardTop();
 
       if (this.$root.curStep == this.steps.confirmation) {
+        /* If you click next when you're on the confirmation page, do the following: */
         this.clearOrder();
         // this.$forceUpdate();
         location.reload();
@@ -1217,14 +1230,16 @@ export default {
     },
     createCleanCart() {
       /* ADD FINAL 'NEW' ORDER TO CART */
-      this.order.cart.push(this.order.new);
-      this.order.new = $.extend(true, {}, this.order.newTemp);
+      let cart = this.order.cart;
+      cart.push(this.order.new);
+      this.$set(this.order, 'cart', cart);
+      this.$set(this.order, 'new', $.extend(true, {}, this.order.newTemp));
 
       this.$root.stepSequence = [];
 
-      $(".selected").each(function(i, el) {
-        el.removeClass("selected");
-      });
+      // $(".selected").each(function(i, el) {
+      //   $(el).removeClass("selected");
+      // });
 
       /* SANITIZE CART CONTENT TO MAKE SEND OBJ */
       const cleanCart = [];
@@ -1284,7 +1299,7 @@ export default {
         cleanCart.push(cleanItem);
       });
 
-      this.order.cleanCart = cleanCart;
+      this.$set(this.order, 'cleanCart', cleanCart);
     },
     localSave() {
       let self = this;
@@ -1298,6 +1313,7 @@ export default {
     },
     back() {
       this.editStepSequence("back");
+      this.scrollToWizardTop();
     },
     editStepSequence(option) {
       let root = this.$root;
@@ -1314,6 +1330,34 @@ export default {
         root.curStep = root.stepSequence[curStep_i];
       }
     },
+    skipToReview() {
+      // this.nextStep = this.steps.reviewTotal;
+      // this.next();
+      // this.$root.curStep = this.steps.reviewTotal;
+     
+     /*  let cart = this.order.cart;
+      cart.push(this.order.new);
+      this.$set(this.order, 'cart', cart);
+      
+      // this.order.cart.push(this.order.new);
+      this.$set(this.order, 'new', $.extend(true, {}, this.order.newTemp));
+
+      this.$root.stepSequence = []; */
+
+     
+     /* $(".selected").each(function(i, el) {
+        $(el).removeClass("selected");
+      }); */
+      // this.next();
+      this.addAnother(this.steps.reviewTotal);
+
+      $("#skipToReview").hide();
+
+      // this.$root.curStep = this.steps.reviewTotal;
+
+      // this.nextStep = this.steps.reviewTotal;
+      // this.next();
+    },
     clearTiles() {
       $(".tile").each(function(i, el) {
         // $(el).css('background-color', '');
@@ -1322,7 +1366,7 @@ export default {
     },
 
     checkIfSelected() {
-      debugger;
+      // debugger;
     },
 
     /* HookahHeadType */
@@ -1534,24 +1578,34 @@ export default {
     selectionQuantityChanged() {
       this.order.new.quantity = +event.target.value;
     },
-    addAnother() {
-      this.order.cart.push(this.order.new);
-      this.order.new = $.extend(true, {}, this.order.newTemp);
+    addAnother(manualNextStep) {
+      /* let cart = this.order.cart;
+      cart.push(this.order.new);
+      this.$set(this.order, 'cart', cart); */
+
+
+      /* this.order.cart.push(this.order.new);
+      this.order.new = $.extend(true, {}, this.order.newTemp); */
 
       this.$root.stepSequence = [];
 
-      $(".selected").each(function(i, el) {
-        el.removeClass("selected");
-      });
-
-      this.nextStep = 0;
+      this.nextStep = manualNextStep || this.steps.hookahHeadType;
       this.next();
+      
+      // this.createCleanCart();
+
+      // this.$set(this.order, 'new', $.extend(true, {}, this.order.newTemp));
     },
     editItem(i) {
-      this.order.new = this.order.cart[i];
-      this.order.cart.splice(i, 1);
+      this.order.new = this.order.cart.splice(i, 1)[0];
+
       this.$root.curStep = this.steps.hookahHeadType;
       this.nextStep = this.steps.mixType;
+      this.$root.stepSequence = [];
+
+      // this.next();
+
+      $("#skipToReview").show();
     },
     removeItem(i) {
       this.order.cleanCart.splice(i, 1);
@@ -1559,6 +1613,16 @@ export default {
     },
     clearOrder() {
       sessionStorage.removeItem("order");
+    },
+    scrollToWizardTop() {
+      if (window.scrollY > $("div#wizard").offset().top) {
+        $("html, body").animate(
+          {
+            scrollTop: $("div#wizard").offset().top
+          },
+          50
+        );
+      }
     },
     hookahs() {},
     addons() {}
@@ -1658,5 +1722,9 @@ export default {
 #cart-review-summary table td:nth-child(2) {
   text-align: right;
   padding-left: 10px;
+}
+
+#skipToReview {
+  display: none;
 }
 </style>

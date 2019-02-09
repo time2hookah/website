@@ -5,7 +5,7 @@
   -->
   <header
     id="header"
-    class="u-header u-header--show-hide-md"
+    class="u-header u-header--show-hide-md "
     data-header-fix-moment="500"
     data-header-fix-effect="slide"
   >
@@ -324,5 +324,10 @@ export default {
 <style>
 #navBar {
   margin-left: auto;
+}
+
+.navbar-nav {
+  flex-direction: row;
+  justify-content: space-around;
 }
 </style>
