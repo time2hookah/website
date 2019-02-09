@@ -1,6 +1,8 @@
 <template>
-  <div id='wizard'>
 
+
+  <div id='wizard'> 
+     
     <!-- HOOKAH HEAD TYPE SELECTION -->
     <div id="wizard-selection-hookahHeadTypes" class='wizard-selection row' v-if="this.$root.curStep==this.steps.hookahHeadType">
       
