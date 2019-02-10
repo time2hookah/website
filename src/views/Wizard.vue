@@ -455,7 +455,12 @@
                         Type: {{ item.mixType.name }} Mix
 
                         <span v-if="item.mixType.name == 'Custom'">
-                          of {{ item.comboOptions.numberOfFlavors }} flavors:
+                          <span v-if="item.comboOptions.numberOfFlavors == 1">
+                            of {{ item.comboOptions.numberOfFlavors }} flavor:
+                          </span>
+                          <span v-if="item.comboOptions.numberOfFlavors > 1">
+                            of {{ item.comboOptions.numberOfFlavors }} flavors:
+                          </span>
                         </span>
                       </div>
 
@@ -464,6 +469,12 @@
                       </span>
 
                       <span v-if="item.mixType.name == 'Custom'">
+                        <span v-if="item.comboOptions.numberOfFlavors == 1">
+                          <div>
+                            {{ item.tobaccoFlavors[0].name }}
+                          </div>
+                        </span>
+
                         <span v-if="item.comboOptions.numberOfFlavors == 2">
                           <div>
                             {{ item.tobaccoFlavors[0].name }}:
@@ -918,9 +929,8 @@ export default {
       } else if (cur == s.tobaccoFlavors) {
       } else if (cur == s.combo2) {
       } else if (cur == s.combo3) {
-      } else if (cur == s.review1) { */
-      } else if (cur == s.reviewTotal) {
-        res = "d-none";
+      } else if (cur == s.review1) { 
+      } else if (cur == s.reviewTotal) { */
       } else if (cur == s.confirmation) {
         res = "d-none";
       }
@@ -942,6 +952,7 @@ export default {
       } else if (cur == s.combo3) {
       } else if (cur == s.review1) {
       } else if (cur == s.reviewTotal) {
+          res = "Add Another +"
       } 
 
       return res;
@@ -1092,7 +1103,7 @@ export default {
   },
   methods: {
     /* COMMON */
-    next() {
+    next(opt) {
       this.scrollToWizardTop();
 
       if (this.$root.curStep == this.steps.confirmation) {
@@ -1108,10 +1119,13 @@ export default {
         //   return;
         // }
 
-        /* INITIALIZATION */
+        /******************** INITIALIZATION ********************/
         let root = this.$root;
         let cur = this.stepList[root.curStep];
+
         if (cur == "combo2" || cur == "combo3") cur = "comboOptions";
+
+        /******************** PAGE DEPENDENT LOGIC ********************/
 
         /* CONFIRM or REJECT based on whether selection is made */
         if (cur != "review1" && cur != "reviewTotal") {
@@ -1124,14 +1138,6 @@ export default {
           }
         }
 
-        /* ONLY IF ON STEP 1: MIX TYPE SELECT */
-        if (root.curStep == this.steps.mixType) {
-          if (this.order.new.mixType.name == "House") {
-            this.nextStep = this.steps.houseMix;
-          } else {
-            this.nextStep = this.steps.tobaccoBrands;
-          }
-        }
         /* ONLY IF ON STEP 4: FLAVOR SELECT */
         if (root.curStep == this.steps.tobaccoFlavors) {
           /* set the price that will be paid for this mix */
@@ -1145,10 +1151,25 @@ export default {
 
           /* decide propper next step based on number of flavors chosen*/
           this.order.new.comboOptions.numberOfFlavors = this.order.new.tobaccoFlavors.list.length;
+        }
 
-          if (
-            this.order.new.comboOptions.numberOfFlavors == this.steps.mixType
-          ) {
+        /******************** DISPLAY APPROPRIATE SELECTION ********************/
+        if (opt == "skip") {
+          this.$root.curStep = "";
+        }
+
+        /* ONLY IF ON STEP 1: MIX TYPE SELECT */
+        if (root.curStep == this.steps.mixType) {
+          if (this.order.new.mixType.name == "House") {
+            this.nextStep = this.steps.houseMix;
+          } else {
+            this.nextStep = this.steps.tobaccoBrands;
+          }
+        }
+
+        /* ONLY IF ON STEP 4: FLAVOR SELECT */
+        if (root.curStep == this.steps.tobaccoFlavors) {
+          if (this.order.new.comboOptions.numberOfFlavors == 1) {
             this.nextStep = this.steps.review1;
           } else if (this.order.new.comboOptions.numberOfFlavors == 2) {
             this.nextStep = this.steps.combo2;
@@ -1156,8 +1177,6 @@ export default {
             this.nextStep = this.steps.combo3;
           }
         }
-
-        /* DISPLAY APPROPRIATE SELECTION */
 
         /* CHECK IF THERE IS ALREADY A DEFINED PATH FOR THE NEXT SLIDE, GIVEN FROM A PREVIOUS SELECTION */
         let curStep_i = root.stepSequence.indexOf(root.curStep);
@@ -1232,8 +1251,8 @@ export default {
       /* ADD FINAL 'NEW' ORDER TO CART */
       let cart = this.order.cart;
       cart.push(this.order.new);
-      this.$set(this.order, 'cart', cart);
-      this.$set(this.order, 'new', $.extend(true, {}, this.order.newTemp));
+      this.$set(this.order, "cart", cart);
+      this.$set(this.order, "new", $.extend(true, {}, this.order.newTemp));
 
       this.$root.stepSequence = [];
 
@@ -1299,7 +1318,7 @@ export default {
         cleanCart.push(cleanItem);
       });
 
-      this.$set(this.order, 'cleanCart', cleanCart);
+      this.$set(this.order, "cleanCart", cleanCart);
     },
     localSave() {
       let self = this;
@@ -1312,8 +1331,13 @@ export default {
       sessionStorage.setItem("nextStep", self.nextStep);
     },
     back() {
-      this.editStepSequence("back");
-      this.scrollToWizardTop();
+      if (this.$root.curStep == this.steps.reviewTotal) {
+        this.$root.curStep = this.steps.hookahHeadType;
+        this.nextStep = this.steps.mixType;
+      } else {
+        this.editStepSequence("back");
+        this.scrollToWizardTop();
+      }
     },
     editStepSequence(option) {
       let root = this.$root;
@@ -1331,32 +1355,13 @@ export default {
       }
     },
     skipToReview() {
-      // this.nextStep = this.steps.reviewTotal;
-      // this.next();
-      // this.$root.curStep = this.steps.reviewTotal;
-     
-     /*  let cart = this.order.cart;
-      cart.push(this.order.new);
-      this.$set(this.order, 'cart', cart);
-      
-      // this.order.cart.push(this.order.new);
-      this.$set(this.order, 'new', $.extend(true, {}, this.order.newTemp));
+      this.$root.stepSequence = [];
 
-      this.$root.stepSequence = []; */
-
-     
-     /* $(".selected").each(function(i, el) {
-        $(el).removeClass("selected");
-      }); */
-      // this.next();
-      this.addAnother(this.steps.reviewTotal);
+      // this.$root.curStep = this.steps.review1;
+      this.nextStep = this.steps.reviewTotal;
+      this.next("skip");
 
       $("#skipToReview").hide();
-
-      // this.$root.curStep = this.steps.reviewTotal;
-
-      // this.nextStep = this.steps.reviewTotal;
-      // this.next();
     },
     clearTiles() {
       $(".tile").each(function(i, el) {
@@ -1578,20 +1583,18 @@ export default {
     selectionQuantityChanged() {
       this.order.new.quantity = +event.target.value;
     },
-    addAnother(manualNextStep) {
-      /* let cart = this.order.cart;
+    addAnother() {
+      let cart = this.order.cart;
       cart.push(this.order.new);
-      this.$set(this.order, 'cart', cart); */
-
-
-      /* this.order.cart.push(this.order.new);
-      this.order.new = $.extend(true, {}, this.order.newTemp); */
+      this.$set(this.order, "cart", cart);
+      this.order.new = $.extend(true, {}, this.order.newTemp);
+      // this.order.cart.push(this.order.new);
 
       this.$root.stepSequence = [];
 
-      this.nextStep = manualNextStep || this.steps.hookahHeadType;
+      this.nextStep = this.steps.hookahHeadType;
       this.next();
-      
+
       // this.createCleanCart();
 
       // this.$set(this.order, 'new', $.extend(true, {}, this.order.newTemp));
@@ -1603,13 +1606,20 @@ export default {
       this.nextStep = this.steps.mixType;
       this.$root.stepSequence = [];
 
+      this.editStepSequence("next");
       // this.next();
 
       $("#skipToReview").show();
     },
     removeItem(i) {
-      this.order.cleanCart.splice(i, 1);
-      this.order.cart.splice(i, 1);
+      if (this.order.cart.length > 1) {
+        this.order.cleanCart.splice(i, 1);
+        this.order.cart.splice(i, 1);
+
+        this.localSave();
+      } else {
+        alert("You cannot remove your last item");
+      }
     },
     clearOrder() {
       sessionStorage.removeItem("order");
@@ -1705,6 +1715,7 @@ export default {
 
 .review-item img {
   width: 100%;
+  max-width: 150px;
   border-radius: 10px;
   margin: 10px 0;
 }
