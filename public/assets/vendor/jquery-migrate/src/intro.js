@@ -15,3 +15,5 @@
 	}
 } )( function( jQuery, window ) {
 "use strict";
+
+}); // Hamlet added this - it used to not be there and left the function open (i don't know why)

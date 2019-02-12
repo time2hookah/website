@@ -1,7 +1,10 @@
 module.exports = {
   root: true,
   env: {
-    node: true
+    browser: true,
+    node: true,
+    es6: true,
+    jquery: true
   },
   extends: ["plugin:vue/essential", "@vue/prettier"],
   rules: {

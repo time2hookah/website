@@ -1,35 +1,42 @@
 <template>
   <div id="app">
     <Header />
-    
-    <br><br><br><br><br><br>
- 
-    <router-view />
-     
-    <br><br><br><br><br><br>
-    <!-- <Footer /> -->
+
+    <router-view id="left-content" name="left" class="col-sm-2"></router-view>
+    <div id="main-content" class="col-sm">
+      <!-- <button id='goBack' @click='goBack' v-if='pageDepth > 0'>Back {{ pageDepth }} </button> -->
+      <router-view></router-view>
+    </div>
+    <router-view id="right-content" name="right" class="col-sm-2"></router-view>
+
+    <Footer />
+    <SecondaryContents />
+    <GoToTop />
   </div>
 </template>
-
 
 <script>
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
+import SecondaryContents from "@/components/SecondaryContents.vue";
+import GoToTop from "@/components/GoToTop.vue";
+
 export default {
-  name: 'App',
+  name: "App",
   components: {
     Header,
-    Footer
+    Footer,
+    SecondaryContents,
+    GoToTop
   },
-  data () {
+  data() {
     return {
-      title: 'APP'
-    }
+      title: "App",
+      publicPath: process.env.BASE_URL
+    };
   }
-   
-}
+};
 </script>
-
 
 <style>
 #app {
@@ -50,5 +57,9 @@ export default {
 
 #nav a.router-link-exact-active {
   color: #42b983;
+}
+
+#main-content {
+  padding: 20px;
 }
 </style>
