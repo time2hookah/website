@@ -198,7 +198,7 @@
               name="combo2-flavor1"
               min="25"
               max="75"
-              :value="this.order.new.comboOptions.combo2.flavor1"
+              :value="this.order.new.combo2.flavor1"
               step="25"
               @change="combo2RangeChange()"
             />
@@ -223,7 +223,7 @@
               name="combo2-flavor2"
               min="25"
               max="75"
-              :value="this.order.new.comboOptions.combo2.flavor2"
+              :value="this.order.new.combo2.flavor2"
               step="25"
               disabled
             />
@@ -255,7 +255,7 @@
               name="combo3"
               id="combo3-thirds"
               value="thirds"
-              v-model="order.new.comboOptions.combo3.split"
+              v-model="order.new.combo3.split"
             />
             <label for="">1/3 + 1/3 + 1/3</label>
           </div>
@@ -268,20 +268,20 @@
               name="combo3"
               id="combo3-fifths-1/2"
               value="fifths-1/2"
-              v-model="order.new.comboOptions.combo3.split"
+              v-model="order.new.combo3.split"
             />
             <label for="">1/5 + 2/5 + 2/5</label>
           </div>
 
           <div
             class="col-6"
-            v-if="order.new.comboOptions.combo3.split == 'fifths-1/2'"
+            v-if="order.new.combo3.split == 'fifths-1/2'"
           >
             <label for="">Which one is 1/5?</label>
             <select
               name=""
               id=""
-              v-model="order.new.comboOptions.combo3.whichIsOdd.id"
+              v-model="order.new.combo3.whichIsOdd.id"
             >
               <option value="" disabled>Select</option>
 
@@ -303,20 +303,20 @@
               name="combo3"
               id="combo3-fifths-1/3"
               value="fifths-1/3"
-              v-model="order.new.comboOptions.combo3.split"
+              v-model="order.new.combo3.split"
             />
             <label for="">1/5 + 1/5 + 3/5</label>
           </div>
 
           <div
             class="col-6"
-            v-if="order.new.comboOptions.combo3.split == 'fifths-1/3'"
+            v-if="order.new.combo3.split == 'fifths-1/3'"
           >
             <label for="">Which one is 3/5?</label>
             <select
               name=""
               id=""
-              v-model="order.new.comboOptions.combo3.whichIsOdd.id"
+              v-model="order.new.combo3.whichIsOdd.id"
             >
               <option value="" disabled>Select</option>
 
@@ -388,8 +388,7 @@
                 class="p-1"
                 type="number"
                 min="1"
-                :value="order.new.quantity"
-                @change="selectionQuantityChanged()"
+                v-model="order.new.quantity"
               />
             </div>
 
@@ -446,7 +445,11 @@
                       />
                     </div>
                     <div class="col-8">
-                      <div>Quantity: {{ item.quantity }}</div>
+                      <div>
+                        Quantity: 
+                        <input class='d-inline-block w-15 text-center' type="number" v-model="item.quantity">
+
+                      </div>
                       <div>
                         Hookah Head Type: {{ item.hookahHeadType.name }}
                       </div>
@@ -751,17 +754,17 @@ export default {
             confirmed: false,
             numberOfFlavors: "",
             priceOfMax: "",
-            combo2: {
-              mixCode: "",
-              flavor1: "50",
-              flavor2: "50"
-            },
-            combo3: {
-              split: "",
-              whichIsOdd: {
-                id: "",
-                name: ""
-              }
+          },
+          combo2: {
+            mixCode: "",
+            flavor1: "50",
+            flavor2: "50"
+          },
+          combo3: {
+            split: "",
+            whichIsOdd: {
+              id: "",
+              name: ""
             }
           }
         },
@@ -803,17 +806,17 @@ export default {
             confirmed: false,
             numberOfFlavors: "",
             priceOfMax: "",
-            combo2: {
-              mixCode: "",
-              flavor1: "50",
-              flavor2: "50"
-            },
-            combo3: {
-              split: "",
-              whichIsOdd: {
-                id: "",
-                name: ""
-              }
+          },
+          combo2: {
+            mixCode: "",
+            flavor1: "50",
+            flavor2: "50"
+          },
+          combo3: {
+            split: "",
+            whichIsOdd: {
+              id: "",
+              name: ""
             }
           }
         }
@@ -1112,8 +1115,6 @@ export default {
       let r = this.$root;
       let curStep_i = r.stepSequence.indexOf(r.curStep); // index of the current step in the step list
       let cur = this.stepList[r.curStep]; // name of the step - to be used to access object value by key
-      if (cur == "combo2" || cur == "combo3") cur = "comboOptions";
-
 
 
       /******************** PICK NEXT ACTION ********************/
@@ -1123,8 +1124,7 @@ export default {
         this.clearOrder();
         location.reload();
       } else {
-
-
+        
         /******************** VALIDATION ********************/
         /* CONFIRM or REJECT based on whether selection is made */
         if (r.curStep != this.steps.review1 && r.curStep != this.steps.review1) {
@@ -1254,7 +1254,6 @@ export default {
       let r = this.$root;
       let validation = null; 
       let cur = this.stepList[r.curStep];
-      if (cur == "combo2" || cur == "combo3") cur = "comboOptions";
 
 
       // combo2 gets CHANGED not PICKED; so this check is irrelevant
@@ -1285,10 +1284,6 @@ export default {
 
       this.$root.stepSequence = [];
 
-      // $(".selected").each(function(i, el) {
-      //   $(el).removeClass("selected");
-      // });
-
       /* SANITIZE CART CONTENT TO MAKE SEND OBJ */
       const cleanCart = [];
 
@@ -1303,7 +1298,7 @@ export default {
         [];
 
         /* STATIC ADDITIONS - won't change depending on chosen options */
-        cleanItem.quantity = el.quantity;
+        cleanItem.quantity = +el.quantity;
         cleanItem.mixType.id = el.mixType.id;
         cleanItem.mixType.name = el.mixType.name;
         cleanItem.numberOfFlavors = el.comboOptions.numberOfFlavors;
@@ -1328,13 +1323,13 @@ export default {
             el.comboOptions.numberOfFlavors;
 
           if (el.comboOptions.numberOfFlavors == 2) {
-            cleanItem.comboOptions.mixCode = el.comboOptions.combo2.mixCode;
-            cleanItem.comboOptions.flavor1 = el.comboOptions.combo2.flavor1;
-            cleanItem.comboOptions.flavor2 = el.comboOptions.combo2.flavor2;
+            cleanItem.comboOptions.mixCode = el.combo2.mixCode;
+            cleanItem.comboOptions.flavor1 = el.combo2.flavor1;
+            cleanItem.comboOptions.flavor2 = el.combo2.flavor2;
           } else if (el.comboOptions.numberOfFlavors == 3) {
-            cleanItem.comboOptions.split = el.comboOptions.combo3.split;
+            cleanItem.comboOptions.split = el.combo3.split;
             cleanItem.comboOptions.whichIsOdd =
-              el.comboOptions.combo3.whichIsOdd;
+              el.combo3.whichIsOdd;
 
             cleanItem.tobaccoFlavors.forEach(el => {
               if (el.id == cleanItem.comboOptions.whichIsOdd.id) {
@@ -1410,10 +1405,6 @@ export default {
       this.order.new.hookahHeadType.id = this.hookahHeadTypes.list[i]._id;
       this.order.new.hookahHeadType.name = this.hookahHeadTypes.list[i].name;
       this.order.new.hookahHeadType.price = this.hookahHeadTypes.list[i].price;
-
-      this.clearTiles();
-      // $(event.currentTarget).css('background-color', 'red');
-      $(event.currentTarget).addClass("selected");
     },
 
     /* MIX TYPE */
@@ -1421,9 +1412,6 @@ export default {
       this.order.new.mixType.picked = true;
       this.order.new.mixType.id = this.mixTypes.list[i].id;
       this.order.new.mixType.name = this.mixTypes.list[i].name;
-
-      this.clearTiles();
-      $(event.currentTarget).addClass("selected");
     },
 
     /* HOUSE MIX TYPE */
@@ -1432,43 +1420,26 @@ export default {
       this.order.new.houseMix.id = this.houseMixes.list[i].id;
       this.order.new.houseMix.name = this.houseMixes.list[i].name;
       this.order.new.houseMix.price = +this.houseMixes.list[i].price;
-
-      this.clearTiles();
-      $(event.currentTarget).addClass("selected");
     },
 
     /* TOBACCO BRANDS */
     selectTobaccoBrand(b) {
-      if (
-        $(event.currentTarget)
-          .parent()
-          .data("selected") == false
-      ) {
-        /* IF OPTION IS NOT SELECTED */
-        $(event.currentTarget)
-          .parent()
-          .data("selected", true);
-
-        let brand = {};
-
+      if ( $(event.currentTarget).parent().data("selected") == false ) {
+      /* IF OPTION IS NOT SELECTED */
+        $(event.currentTarget).parent().data("selected", true);
         this.order.new.tobaccoBrands.picked = true;
 
-        brand.id = b.id;
-        brand.name = b.name;
-        brand.price = b.price;
+        let brand = {
+          id    : b.id,
+          name  : b.name,
+          price : b.price
+        };
 
         this.order.new.tobaccoBrands.list.push(brand);
-
-        // $(event.currentTarget).css('background-color', 'red');
-        $(event.currentTarget).addClass("selected");
       } else {
         /* IF OPTION IS ALREADY SLECTED */
-        $(event.currentTarget)
-          .parent()
-          .data("selected", false);
-        // $(event.currentTarget).css('background-color', '');
-        $(event.currentTarget).removeClass("selected");
-
+        $(event.currentTarget).parent().data("selected", false);
+        
         this.order.new.tobaccoBrands.list = this.order.new.tobaccoBrands.list.filter(
           el => b.id != el.id
         );
@@ -1482,11 +1453,13 @@ export default {
       let test = false;
 
       this.order.new.tobaccoBrands.list.forEach(el => {
-        if (b.id == el.id) {
-          test = true;
-        }
+        if (b.id == el.id) test = true;
       });
 
+      /* let test = this.order.new.tobaccoBrands.list.some(el => {
+        return b.id == el.id;
+      });
+ */
       if (opt) {
         return test.toString();
       } else {
@@ -1530,17 +1503,11 @@ export default {
 
     /* TOBACCO FLAVORS */
     selectTobaccoFlavor(b, f) {
+      if ( $(event.currentTarget).parent().data("selected") == false ) {
       /* IF OPTION IS NOT SELECTED */
-      if (
-        $(event.currentTarget)
-          .parent()
-          .data("selected") == false
-      ) {
-        /* IF THERE ARE FEWER THAN 3 SELECTIONS */
         if (this.order.new.tobaccoFlavors.list.length < 3) {
-          $(event.currentTarget)
-            .parent()
-            .data("selected", true);
+        /* IF THERE ARE FEWER THAN 3 SELECTIONS */
+          $(event.currentTarget).parent().data("selected", true);
 
           let flavor = {};
 
@@ -1553,20 +1520,14 @@ export default {
           flavor.brandPrice = b.price;
 
           this.order.new.tobaccoFlavors.list.push(flavor);
-
-          // $(event.currentTarget).css('background-color', 'red');
-          $(event.currentTarget).addClass("selected");
         } else {
           alert("You can only add 3.");
           return;
         }
       } else {
         /* IF OPTION IS ALREADY ACTIVE */
-        $(event.currentTarget)
-          .parent()
-          .data("selected", false);
-        $(event.currentTarget).css("background-color", "");
-
+        $(event.currentTarget).parent().data("selected", false);
+      
         /* let toRemove;
         this.order.new.tobaccoFlavors.list.forEach(function(flavor, index) {
           if (flavor.id == f.id) {
@@ -1576,9 +1537,7 @@ export default {
         this.order.new.tobaccoFlavors.list.splice(toRemove, 1); */
 
         this.order.new.tobaccoFlavors.list = this.order.new.tobaccoFlavors.list.filter(
-          el => {
-            f.id != el.id;
-          }
+          el => f.id != el.id
         );
 
         if (this.order.new.tobaccoFlavors.list.length == 0) {
@@ -1604,15 +1563,15 @@ export default {
 
       $("#combo2-flavor2").val(f2);
 
-      this.order.new.comboOptions.combo2.mixCode = id;
-      this.order.new.comboOptions.combo2.flavor1 = f1;
-      this.order.new.comboOptions.combo2.flavor2 = f2;
+      this.order.new.combo2.mixCode = id;
+      this.order.new.combo2.flavor1 = f1;
+      this.order.new.combo2.flavor2 = f2;
     },
 
     /* REVIEW1 */
-    selectionQuantityChanged() {
+    /* selectionQuantityChanged() {
       this.order.new.quantity = +event.target.value;
-    },
+    }, */
     addAnother() {
       let cart = this.order.cart;
       cart.push(this.order.new);
@@ -1624,10 +1583,6 @@ export default {
 
       this.nextStep = this.steps.hookahHeadType;
       this.next();
-
-      // this.createCleanCart();
-
-      // this.$set(this.order, 'new', $.extend(true, {}, this.order.newTemp));
     },
     editItem(i) {
       this.order.new = this.order.cart.splice(i, 1)[0];
@@ -1637,7 +1592,6 @@ export default {
       this.$root.stepSequence = [];
 
       this.editStepSequence("next");
-      // this.next();
 
       $("#skipToReview").show();
     },
@@ -1671,9 +1625,6 @@ export default {
 
 /* CUSTOM JS */
 
-/* $('.tile').on('clikc', function() {
-  alert(1);
-}); */
 </script>
 
 <style>
