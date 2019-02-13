@@ -747,6 +747,7 @@ export default {
             list: []
           },
           comboOptions: {
+            picked: false,
             confirmed: false,
             numberOfFlavors: "",
             priceOfMax: "",
@@ -798,6 +799,7 @@ export default {
             list: []
           },
           comboOptions: {
+            picked: false,
             confirmed: false,
             numberOfFlavors: "",
             priceOfMax: "",
@@ -1106,40 +1108,35 @@ export default {
     next(opt) {
       this.scrollToWizardTop();
 
-      if (this.$root.curStep == this.steps.confirmation) {
+      /******************** INITIALIZATION ********************/
+      let r = this.$root;
+      let curStep_i = r.stepSequence.indexOf(r.curStep); // index of the current step in the step list
+      let cur = this.stepList[r.curStep]; // name of the step - to be used to access object value by key
+      if (cur == "combo2" || cur == "combo3") cur = "comboOptions";
+
+
+
+      /******************** PICK NEXT ACTION ********************/
+      // TODO: remove 'pick next action' conditional
+      if (r.curStep == this.steps.confirmation) {
         /* If you click next when you're on the confirmation page, do the following: */
         this.clearOrder();
-        // this.$forceUpdate();
         location.reload();
       } else {
-        // /* CHECK IF THERE IS ALREADY A DEFINED PATH FOR THE NEXT SLIDE, GIVEN FROM A PREVIOUS SELECTION */
-        // let curStep_i = this.$root.stepSequence.indexOf(this.$root.curStep);
-        // if (curStep_i != this.$root.stepSequence.length - 1 ) {
-        //   this.$root.curStep = this.$root.stepSequence[curStep_i + 1];
-        //   return;
-        // }
 
-        /******************** INITIALIZATION ********************/
-        let root = this.$root;
-        let cur = this.stepList[root.curStep];
 
-        if (cur == "combo2" || cur == "combo3") cur = "comboOptions";
+        /******************** VALIDATION ********************/
+        /* CONFIRM or REJECT based on whether selection is made */
+        if (r.curStep != this.steps.review1 && r.curStep != this.steps.review1) {
+          const validated = this.validate();
+          if (validated == false) return;
+        }
+
 
         /******************** PAGE DEPENDENT LOGIC ********************/
 
-        /* CONFIRM or REJECT based on whether selection is made */
-        if (cur != "review1" && cur != "reviewTotal") {
-          if (this.order.new[cur].picked == false || cur == "combo2") {
-            // combo2 gets CHANGED not PICKED- so this check is irrelevant
-            alert("Please pick an option to continue");
-            return;
-          } else {
-            this.order.new[cur].confirmed = true;
-          }
-        }
-
         /* ONLY IF ON STEP 4: FLAVOR SELECT */
-        if (root.curStep == this.steps.tobaccoFlavors) {
+        if (r.curStep == this.steps.tobaccoFlavors) {
           /* set the price that will be paid for this mix */
           let max = 0;
 
@@ -1153,13 +1150,19 @@ export default {
           this.order.new.comboOptions.numberOfFlavors = this.order.new.tobaccoFlavors.list.length;
         }
 
+        /* ONLY IF ON STEP COMBO3 SELECT */
+        if (r.curStep == this.steps.combo3) {
+          
+        }
+
+
         /******************** DISPLAY APPROPRIATE SELECTION ********************/
         if (opt == "skip") {
-          this.$root.curStep = "";
+          r.curStep = "";
         }
 
         /* ONLY IF ON STEP 1: MIX TYPE SELECT */
-        if (root.curStep == this.steps.mixType) {
+        if (r.curStep == this.steps.mixType) {
           if (this.order.new.mixType.name == "House") {
             this.nextStep = this.steps.houseMix;
           } else {
@@ -1168,7 +1171,7 @@ export default {
         }
 
         /* ONLY IF ON STEP 4: FLAVOR SELECT */
-        if (root.curStep == this.steps.tobaccoFlavors) {
+        if (r.curStep == this.steps.tobaccoFlavors) {
           if (this.order.new.comboOptions.numberOfFlavors == 1) {
             this.nextStep = this.steps.review1;
           } else if (this.order.new.comboOptions.numberOfFlavors == 2) {
@@ -1179,13 +1182,12 @@ export default {
         }
 
         /* CHECK IF THERE IS ALREADY A DEFINED PATH FOR THE NEXT SLIDE, GIVEN FROM A PREVIOUS SELECTION */
-        let curStep_i = root.stepSequence.indexOf(root.curStep);
         if (
-          curStep_i != root.stepSequence.length - 1 &&
-          root.curStep != this.steps.review1
+          curStep_i != r.stepSequence.length - 1 &&
+          r.curStep != this.steps.review1
         ) {
-          if (this.nextStep == root.stepSequence[curStep_i + 1]) {
-            root.curStep = root.stepSequence[curStep_i + 1];
+          if (this.nextStep == r.stepSequence[curStep_i + 1]) {
+            r.curStep = r.stepSequence[curStep_i + 1];
 
             if (this.nextStep == this.steps.hookahHeadType) {
               this.nextStep = this.steps.mixType;
@@ -1204,39 +1206,39 @@ export default {
             }
             return;
           } else {
-            root.stepSequence.splice(curStep_i + 1);
+            r.stepSequence.splice(curStep_i + 1);
           }
         }
 
         /* if next step isn't decided here, it happens dynamically either when next() or add() run */
         if (this.nextStep == this.steps.hookahHeadType) {
-          root.curStep = this.nextStep;
+          r.curStep = this.nextStep;
           this.nextStep = this.steps.mixType;
         } else if (this.nextStep == this.steps.mixType) {
-          root.curStep = this.nextStep;
+          r.curStep = this.nextStep;
         } else if (this.nextStep == this.steps.houseMix) {
-          root.curStep = this.nextStep;
+          r.curStep = this.nextStep;
           this.nextStep = this.steps.review1;
         } else if (this.nextStep == this.steps.tobaccoBrands) {
-          root.curStep = this.nextStep;
+          r.curStep = this.nextStep;
           this.nextStep = this.steps.tobaccoFlavors;
         } else if (this.nextStep == this.steps.tobaccoFlavors) {
-          root.curStep = this.nextStep;
+          r.curStep = this.nextStep;
         } else if (this.nextStep == this.steps.combo2) {
-          root.curStep = this.nextStep;
+          r.curStep = this.nextStep;
           this.nextStep = this.steps.review1;
         } else if (this.nextStep == this.steps.combo3) {
-          root.curStep = this.nextStep;
+          r.curStep = this.nextStep;
           this.nextStep = this.steps.review1;
         } else if (this.nextStep == this.steps.review1) {
-          root.curStep = this.nextStep;
+          r.curStep = this.nextStep;
           this.nextStep = this.steps.reviewTotal;
         } else if (this.nextStep == this.steps.reviewTotal) {
-          root.curStep = this.nextStep;
+          r.curStep = this.nextStep;
           this.createCleanCart();
           this.nextStep = this.steps.confirmation;
         } else if (this.nextStep == this.steps.confirmation) {
-          root.curStep = this.nextStep;
+          r.curStep = this.nextStep;
           alert(
             "Yay! You made your first purchase : \n Please find the confirmation below."
           );
@@ -1246,6 +1248,33 @@ export default {
 
         this.localSave();
       }
+    },
+    validate() {
+      /* VALIDATION -- CONFIRM or REJECT based on whether selection is made */
+      let r = this.$root;
+      let validation = null; 
+      let cur = this.stepList[r.curStep];
+      if (cur == "combo2" || cur == "combo3") cur = "comboOptions";
+
+
+      // combo2 gets CHANGED not PICKED; so this check is irrelevant
+     /*  if (this.order.new[cur].picked == false && (r.curStep != this.steps.combo2) ) {
+        validation = false; 
+        alert("Please pick an option to continue.");
+      } else {
+        validation = true;
+        this.order.new[cur].confirmed = true;
+      } */
+      
+      if (this.order.new[cur].picked == true || (r.curStep == this.steps.combo2) ) {
+        validation = true;
+        this.order.new[cur].confirmed = true;
+      } else {
+        validation = false; 
+        alert("Please pick an option to continue.");
+      }
+
+      return validation;
     },
     createCleanCart() {
       /* ADD FINAL 'NEW' ORDER TO CART */
@@ -1331,9 +1360,11 @@ export default {
       sessionStorage.setItem("nextStep", self.nextStep);
     },
     back() {
+      /* if you're on the review page, going back 'adds another' */
       if (this.$root.curStep == this.steps.reviewTotal) {
         this.$root.curStep = this.steps.hookahHeadType;
         this.nextStep = this.steps.mixType;
+        this.$root.stepSequence = [0];
       } else {
         this.editStepSequence("back");
         this.scrollToWizardTop();
@@ -1355,9 +1386,8 @@ export default {
       }
     },
     skipToReview() {
+      
       this.$root.stepSequence = [];
-
-      // this.$root.curStep = this.steps.review1;
       this.nextStep = this.steps.reviewTotal;
       this.next("skip");
 
