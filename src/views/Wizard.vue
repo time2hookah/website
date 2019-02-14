@@ -239,7 +239,7 @@
       class="wizard-selection row"
       v-if="this.$root.curStep == this.steps.combo3"
     >
-      <div class="col-12">
+      <div class="col-12" @change='combo3Change'>
         <div class="text-center row">
           <h3 class="step-title bg-secondary col-12">3 Flavor Combo</h3>
           <p class="text-left step-subtitle">
@@ -382,17 +382,20 @@
         <div id="review1-options" class="col-12">
           <div class="row">
             <div class="col-6">
-              <h5>How many of this selection?</h5>
-              <input
-                id="selectionQuantity-input"
-                class="p-1"
-                type="number"
-                min="1"
-                v-model="order.new.quantity"
-              />
+              <h5>
+                How many of this selection?
+                <input
+                  id="selectionQuantity-input"
+                  class="item-quantity"
+                  type="number"
+                  min="1"
+                  v-model="order.new.quantity"
+                  @change="localSave"
+                />
+              </h5>
             </div>
 
-            <div class="col-6 cursor-pointer markOnHover" @click="addAnother()">
+            <div class="col-6 cursor-pointer markOnHover" @click="addAnother_review1()">
               <h5>
                 Add another selection... Pick something totally different!
               </h5>
@@ -428,6 +431,13 @@
           <div class="container">
             <div id="cart-review-items" class="row">
               <ul class="col">
+                <!-- IF NO ITEMS IN CART -->
+                <li v-if="this.order.cleanCart.length == 0">
+                  <h4 class='text-danger'>You have no items in your cart.</h4>
+                  You can <span class='text-primary cursor-pointer' @click="addAnother_reviewTotal">add another</span>.
+                </li>
+
+                <!-- CART ITEMS -->
                 <li
                   v-for="(item, i) in this.order.cleanCart"
                   :key="i"
@@ -447,7 +457,13 @@
                     <div class="col-8">
                       <div>
                         Quantity: 
-                        <input class='d-inline-block w-15 text-center' type="number" v-model="item.quantity">
+                        <input 
+                          class='item-quantity' 
+                          type="number" 
+                          v-model="item.quantity"
+                          @change="localSave"
+                          min="1"
+                        >
 
                       </div>
                       <div>
@@ -457,59 +473,59 @@
                       <div>
                         Type: {{ item.mixType.name }} Mix
 
-                        <span v-if="item.mixType.name == 'Custom'">
+                        <span v-if="item.mixType.name == 'House'">
+                          <div>House Mix: {{ item.houseMix.name }}</div>
+                        </span>
+
+                        <span v-else-if="item.mixType.name == 'Custom'">
                           <span v-if="item.comboOptions.numberOfFlavors == 1">
                             of {{ item.comboOptions.numberOfFlavors }} flavor:
                           </span>
                           <span v-if="item.comboOptions.numberOfFlavors > 1">
                             of {{ item.comboOptions.numberOfFlavors }} flavors:
                           </span>
+                     
+                          <span v-if="item.comboOptions.numberOfFlavors == 1">
+                            <div>
+                              {{ item.tobaccoFlavors[0].name }}
+                            </div>
+                          </span>
+
+                          <span v-if="item.comboOptions.numberOfFlavors == 2">
+                            <div>
+                              {{ item.tobaccoFlavors[0].name }}:
+                              {{ item.comboOptions.flavor1 }} ||
+                              {{ item.tobaccoFlavors[1].name }}:
+                              {{ item.comboOptions.flavor2 }}
+                            </div>
+                          </span>
+
+                          <span v-if="item.comboOptions.numberOfFlavors == 3">
+                            <div>
+                              <span
+                                v-for="(f, i) in item.tobaccoFlavors"
+                                :key="i"
+                              >
+                                {{ f.name }}
+                                <span v-if="i != item.tobaccoFlavors.length - 1"
+                                  >,</span
+                                >
+                              </span>
+                            </div>
+
+                            <div>
+                              Split: {{ item.comboOptions.split }}
+                            </div>
+                            
+                            <div v-if="item.comboOptions.split != 'thirds'">
+                              WhichIsOdd: {{ item.comboOptions.whichIsOdd.name }}
+                            </div>
+                          </span>
                         </span>
                       </div>
 
-                      <span v-if="item.mixType.name == 'House'">
-                        <div>House Mix: {{ item.houseMix.name }}</div>
-                      </span>
+                      
 
-                      <span v-if="item.mixType.name == 'Custom'">
-                        <span v-if="item.comboOptions.numberOfFlavors == 1">
-                          <div>
-                            {{ item.tobaccoFlavors[0].name }}
-                          </div>
-                        </span>
-
-                        <span v-if="item.comboOptions.numberOfFlavors == 2">
-                          <div>
-                            {{ item.tobaccoFlavors[0].name }}:
-                            {{ item.comboOptions.flavor1 }} ||
-                            {{ item.tobaccoFlavors[1].name }}:
-                            {{ item.comboOptions.flavor2 }}
-                          </div>
-                        </span>
-
-                        <span v-if="item.comboOptions.numberOfFlavors == 3">
-                          <div>
-                            <span
-                              v-for="(f, i) in item.tobaccoFlavors"
-                              :key="i"
-                            >
-                              {{ f.name }}
-                              <span v-if="i != item.tobaccoFlavors.length - 1"
-                                >,</span
-                              >
-                            </span>
-                          </div>
-
-                          <div>
-                            Split:
-
-                            <span v-if="item.comboOptions.split"></span>
-                          </div>
-                          <div>
-                            WhichIsOdd: {{ item.comboOptions.whichIsOdd.name }}
-                          </div>
-                        </span>
-                      </span>
                     </div>
                   </div>
 
@@ -750,8 +766,6 @@ export default {
             list: []
           },
           comboOptions: {
-            picked: false,
-            confirmed: false,
             numberOfFlavors: "",
             priceOfMax: "",
           },
@@ -761,6 +775,8 @@ export default {
             flavor2: "50"
           },
           combo3: {
+            picked: false,
+            confirmed: false,
             split: "",
             whichIsOdd: {
               id: "",
@@ -802,8 +818,6 @@ export default {
             list: []
           },
           comboOptions: {
-            picked: false,
-            confirmed: false,
             numberOfFlavors: "",
             priceOfMax: "",
           },
@@ -813,6 +827,8 @@ export default {
             flavor2: "50"
           },
           combo3: {
+            picked: false,
+            confirmed: false,
             split: "",
             whichIsOdd: {
               id: "",
@@ -1035,7 +1051,7 @@ export default {
     // Get hookahHeadTypes
     this.$http({
       method: "get",
-      url: "http://localhost:3001/api/hookahHeadTypes/"
+      url: this.apiDomain + "hookahHeadTypes/"
     })
       .then(function(response) {
         // handle success
@@ -1054,7 +1070,7 @@ export default {
     /* // Get houseMixes
     this.$http({
       method: 'get',
-      url: 'http://localhost:3001/api/houseMixes/',
+      url: this.env.dev.apiDomain + 'houseMixes/',
       })
     .then(function (response) {
       // handle success
@@ -1074,7 +1090,7 @@ export default {
     // Get tobacco brands & their available flavors
     this.$http({
       method: 'get',
-      url: 'http://localhost:3001/api/tobaccobrands/',
+      url: this.env.dev.apiDomain + 'tobaccobrands/',
       })
     .then(function (response) {
       // handle success
@@ -1089,22 +1105,6 @@ export default {
     .then(function () {
       // always executed
     }); */
-  },
-  mounted() {},
-  beforeUpdate() {
-    /* eslint-disable */
-    const cur = this.$root.curStep;
-
-    if (cur == 9) {
-      }
-    /* eslint-enable */
-  },
-  updated() {
-    /* if (this.$root.curStep != this.steps.tobaccoFlavors) {
-      $('html, body').animate({
-        scrollTop: $("div#wizard").offset().top
-      }, 50);
-    } */
   },
   methods: {
     /* COMMON */
@@ -1126,8 +1126,8 @@ export default {
       } else {
         
         /******************** VALIDATION ********************/
-        /* CONFIRM or REJECT based on whether selection is made */
-        if (r.curStep != this.steps.review1 && r.curStep != this.steps.review1) {
+        /* CONFIRM or REJECT based on whether selection is made - combo2 gets CHANGED not PICKED; so this check is irrelevant */
+        if (r.curStep != this.steps.combo2 && r.curStep != this.steps.review1 && r.curStep != this.steps.reviewTotal) {
           const validated = this.validate();
           if (validated == false) return;
         }
@@ -1250,22 +1250,12 @@ export default {
       }
     },
     validate() {
-      /* VALIDATION -- CONFIRM or REJECT based on whether selection is made */
+    /* VALIDATION -- CONFIRM or REJECT based on whether selection is made */
       let r = this.$root;
       let validation = null; 
       let cur = this.stepList[r.curStep];
 
-
-      // combo2 gets CHANGED not PICKED; so this check is irrelevant
-     /*  if (this.order.new[cur].picked == false && (r.curStep != this.steps.combo2) ) {
-        validation = false; 
-        alert("Please pick an option to continue.");
-      } else {
-        validation = true;
-        this.order.new[cur].confirmed = true;
-      } */
-      
-      if (this.order.new[cur].picked == true || (r.curStep == this.steps.combo2) ) {
+      if (this.order.new[cur].picked == true ) {
         validation = true;
         this.order.new[cur].confirmed = true;
       } else {
@@ -1357,13 +1347,16 @@ export default {
     back() {
       /* if you're on the review page, going back 'adds another' */
       if (this.$root.curStep == this.steps.reviewTotal) {
-        this.$root.curStep = this.steps.hookahHeadType;
-        this.nextStep = this.steps.mixType;
-        this.$root.stepSequence = [0];
+        this.addAnother_reviewTotal();
       } else {
         this.editStepSequence("back");
         this.scrollToWizardTop();
       }
+    },
+    addAnother_reviewTotal() {
+      this.$root.curStep = this.steps.hookahHeadType;
+      this.nextStep = this.steps.mixType;
+      this.$root.stepSequence = [0];
     },
     editStepSequence(option) {
       let root = this.$root;
@@ -1437,11 +1430,17 @@ export default {
 
         this.order.new.tobaccoBrands.list.push(brand);
       } else {
-        /* IF OPTION IS ALREADY SLECTED */
+      /* IF OPTION IS ALREADY SLECTED */
         $(event.currentTarget).parent().data("selected", false);
         
+        /* remove tobacco brand from list */
         this.order.new.tobaccoBrands.list = this.order.new.tobaccoBrands.list.filter(
           el => b.id != el.id
+        );
+
+        /* remove tobacco flavors of removed brand from list */
+        this.order.new.tobaccoFlavors.list = this.order.new.tobaccoFlavors.list.filter(
+          el => b.id != el.brandID
         );
 
         if (this.order.new.tobaccoBrands.list.length == 0) {
@@ -1450,16 +1449,13 @@ export default {
       }
     },
     brandIsOrdered(b, opt) {
-      let test = false;
-
+      /* let test = false;
       this.order.new.tobaccoBrands.list.forEach(el => {
         if (b.id == el.id) test = true;
-      });
+      }); */
 
-      /* let test = this.order.new.tobaccoBrands.list.some(el => {
-        return b.id == el.id;
-      });
- */
+      let test = this.order.new.tobaccoBrands.list.some( el => b.id == el.id);
+
       if (opt) {
         return test.toString();
       } else {
@@ -1567,12 +1563,29 @@ export default {
       this.order.new.combo2.flavor1 = f1;
       this.order.new.combo2.flavor2 = f2;
     },
+    
+    /* COMBO3 */
+    combo3Change() {
+      const combo3 = this.order.new.combo3;
+
+      if (combo3.split == 'thirds') {
+        this.order.new.combo3.picked = true;
+
+        combo3.whichIsOdd = {
+          id: '', 
+          name: ''
+        }
+      } else {
+        if ( combo3.whichIsOdd.id == '' ) {
+          this.order.new.combo3.picked = false;
+        } else {
+          this.order.new.combo3.picked = true;
+        }
+      }
+    },
 
     /* REVIEW1 */
-    /* selectionQuantityChanged() {
-      this.order.new.quantity = +event.target.value;
-    }, */
-    addAnother() {
+    addAnother_review1() {
       let cart = this.order.cart;
       cart.push(this.order.new);
       this.$set(this.order, "cart", cart);
@@ -1596,14 +1609,10 @@ export default {
       $("#skipToReview").show();
     },
     removeItem(i) {
-      if (this.order.cart.length > 1) {
-        this.order.cleanCart.splice(i, 1);
-        this.order.cart.splice(i, 1);
+      this.order.cleanCart.splice(i, 1);
+      this.order.cart.splice(i, 1);
 
-        this.localSave();
-      } else {
-        alert("You cannot remove your last item");
-      }
+      this.localSave();
     },
     clearOrder() {
       sessionStorage.removeItem("order");
@@ -1655,6 +1664,13 @@ export default {
 
 .combo2-range {
   margin: 10px 20px;
+}
+
+.item-quantity {
+  text-align: center;
+  width: 15%;
+  min-width: 60px;
+  /* padding: 10px; */
 }
 
 #review1-options .col {
