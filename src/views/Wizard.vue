@@ -1,10 +1,11 @@
 <template>
   <div id="wizard" class="container">
     <!-- HOOKAH HEAD TYPE SELECTION -->
+    <button @click='clearAll'>Clear All</button>
     <div
       id="wizard-selection-hookahHeadTypes"
       class="wizard-selection row"
-      v-if="this.$root.curStep == this.steps.hookahHeadType"
+      v-if="this.curStep == this.steps.hookahHeadType"
     >
       <div class="col-12">
         <div class="text-center row">
@@ -39,7 +40,7 @@
     <div
       id="wizard-selection-mixTypes"
       class="wizard-selection row"
-      v-if="this.$root.curStep == this.steps.mixType"
+      v-if="this.curStep == this.steps.mixType"
     >
       <div class="col-12">
         <div class="text-center row">
@@ -66,7 +67,7 @@
     <div
       id="wizard-selection-houseMixes"
       class="wizard-selection row"
-      v-if="this.$root.curStep == this.steps.houseMix"
+      v-if="this.curStep == this.steps.houseMix"
     >
       <div class="col-12">
         <div class="text-center row">
@@ -94,7 +95,7 @@
     <div
       id="wizard-selection-tobaccoBrands"
       class="wizard-selection row"
-      v-if="this.$root.curStep == this.steps.tobaccoBrands"
+      v-if="this.curStep == this.steps.tobaccoBrands"
     >
       <div class="col-12">
         <div class="text-center row">
@@ -140,7 +141,7 @@
     <div
       id="wizard-selection-tobaccoFlavors"
       class="wizard-selection row"
-      v-if="this.$root.curStep == this.steps.tobaccoFlavors"
+      v-if="this.curStep == this.steps.tobaccoFlavors"
     >
       <div class="col-12">
         <div class="text-center row">
@@ -178,7 +179,7 @@
     <div
       id="wizard-selection-combo2"
       class="wizard-selection row"
-      v-if="this.$root.curStep == this.steps.combo2"
+      v-if="this.curStep == this.steps.combo2"
     >
       <div class="col-12">
         <div class="text-center row">
@@ -237,7 +238,7 @@
     <div
       id="wizard-selection-combo3"
       class="wizard-selection row"
-      v-if="this.$root.curStep == this.steps.combo3"
+      v-if="this.curStep == this.steps.combo3"
     >
       <div class="col-12" @change='combo3Change'>
         <div class="text-center row">
@@ -338,7 +339,7 @@
     <div
       id="wizard-selection-review1"
       class="wizard-selection row"
-      v-if="this.$root.curStep == this.steps.review1"
+      v-if="this.curStep == this.steps.review1"
     >
       <div class="col-12">
         <div class="text-center row">
@@ -417,7 +418,7 @@
     <div
       id="wizard-selection-review"
       class="wizard-selection row"
-      v-if="this.$root.curStep == this.steps.reviewTotal"
+      v-if="this.curStep == this.steps.reviewTotal"
     >
       <div class="col-12">
         <div class="text-center row">
@@ -570,7 +571,7 @@
     <div
       id="wizard-selection-confirmation"
       class="wizard-selection row"
-      v-if="this.$root.curStep == this.steps.confirmation"
+      v-if="this.curStep == this.steps.confirmation"
     >
       <div class="col-12">
         <div class="text-center row">
@@ -731,9 +732,12 @@ export default {
         reviewTotal: 8,
         confirmation: 9
       },
-      nextStep: 1,
-
-      order: {
+      // nextStep: 1,
+      curStep: this.$store.state.curStep,
+      nextStep: this.$store.state.nextStep,
+      stepSequence: this.$store.state.stepSequence,
+      order: this.$store.state.order,
+      /* order: {
         new: {
           quantity: 1,
           price: "",
@@ -836,7 +840,7 @@ export default {
             }
           }
         }
-      },
+      }, */
 
       hookahHeadTypes: {
         list: [
@@ -939,7 +943,7 @@ export default {
     },
     backButtonClass() {
       let res = "";
-      let cur = this.$root.curStep;
+      let cur = this.curStep;
       let s = this.steps;
 
       if (cur == s.hookahHeadType) {
@@ -961,7 +965,7 @@ export default {
     /* eslint-disable */
     backButtonName() {
       let res = "Back";
-      let cur = this.$root.curStep;
+      let cur = this.curStep;
       let s = this.steps;
 
       if (cur == s.hookahHeadType) {
@@ -982,7 +986,7 @@ export default {
     },
     nextButtonName() {
       let res = "Next >";
-      let cur = this.$root.curStep;
+      let cur = this.curStep;
       let s = this.steps;
 
       if (cur == s.review1) {
@@ -997,7 +1001,7 @@ export default {
     },
     nextButtonClass() {
       let res = "";
-      let cur = this.$root.curStep;
+      let cur = this.curStep;
       let s = this.steps;
 
       if (cur == s.reviewTotal) {
@@ -1008,7 +1012,7 @@ export default {
     },
     /* skipButtonClass() {
       let res = "";
-      let cur = this.$root.curStep;
+      let cur = this.curStep;
       let s = this.steps;
 
       if (cur == s.reviewTotal) {
@@ -1035,18 +1039,35 @@ export default {
       return res.toFixed(2);
     }
   },
+  beforeCreate() {
+    // debugger
+    // if (localStorage.getItem("store")) {
+      // this.order = this.$store.state.order;
+      // this.$store.commit('SET_STEP_SEQUENCE', this.$store.state.stepSequence);
+      // this.$store.commit('SET_NEXT_STEP', this.$store.state.nextStep);
+      // this.nextStep = this.$store.state.nextStep;
+    // }
+  },
   created() {
     let self = this;
 
     // Get saved order info if it exists
-    if (sessionStorage.getItem("order")) {
-      this.order = JSON.parse(sessionStorage.getItem("order"));
-      this.$root.stepSequence = JSON.parse(
-        sessionStorage.getItem("stepSequence")
+    /* if (localStorage.getItem("order")) {
+      this.order = JSON.parse(
+        localStorage.getItem("order")
       );
-      this.$root.curStep = +sessionStorage.getItem("curStep");
-      this.nextStep = +sessionStorage.getItem("nextStep");
-    }
+        this.$store.commit('SET_STEP_SEQUENCE', JSON.parse);
+        localStorage.getItem("stepSequence")
+      );
+      this.curStep = +localStorage.getItem("curStep");
+      this.$store.commit('SET_NEXT_STEP', localStorage.getItem("nextStep"));
+      this.nextStep = +localStorage.getItem("nextStep");
+    } */
+/* ------------------------------------------ */
+    // this.order = this.$store.state.order;
+    // this.$store.commit('SET_STEP_SEQUENCE', this.$store.state.stepSequence);
+    // this.$store.commit('SET_NEXT_STEP', this.$store.state.nextStep);
+    // this.nextStep = this.$store.state.nextStep;
 
     // Get hookahHeadTypes
     this.$http({
@@ -1112,22 +1133,21 @@ export default {
       this.scrollToWizardTop();
 
       /******************** INITIALIZATION ********************/
-      let r = this.$root;
-      let curStep_i = r.stepSequence.indexOf(r.curStep); // index of the current step in the step list
-      let cur = this.stepList[r.curStep]; // name of the step - to be used to access object value by key
+      let curStep_i = this.stepSequence.indexOf(this.curStep); // index of the current step in the step list
+      let cur = this.stepList[this.curStep]; // name of the step - to be used to access object value by key
 
 
       /******************** PICK NEXT ACTION ********************/
       // TODO: remove 'pick next action' conditional
-      if (r.curStep == this.steps.confirmation) {
+      if (this.curStep == this.steps.confirmation) {
         /* If you click next when you're on the confirmation page, do the following: */
-        this.clearOrder();
+        this.clearAll();
         location.reload();
       } else {
         
         /******************** VALIDATION ********************/
         /* CONFIRM or REJECT based on whether selection is made - combo2 gets CHANGED not PICKED; so this check is irrelevant */
-        if (r.curStep != this.steps.combo2 && r.curStep != this.steps.review1 && r.curStep != this.steps.reviewTotal) {
+        if (this.curStep != this.steps.combo2 && this.curStep != this.steps.review1 && this.curStep != this.steps.reviewTotal) {
           const validated = this.validate();
           if (validated == false) return;
         }
@@ -1136,7 +1156,7 @@ export default {
         /******************** PAGE DEPENDENT LOGIC ********************/
 
         /* ONLY IF ON STEP 4: FLAVOR SELECT */
-        if (r.curStep == this.steps.tobaccoFlavors) {
+        if (this.curStep == this.steps.tobaccoFlavors) {
           /* set the price that will be paid for this mix */
           let max = 0;
 
@@ -1151,94 +1171,94 @@ export default {
         }
 
         /* ONLY IF ON STEP COMBO3 SELECT */
-        if (r.curStep == this.steps.combo3) {
+        if (this.curStep == this.steps.combo3) {
           
         }
 
 
         /******************** DISPLAY APPROPRIATE SELECTION ********************/
         if (opt == "skip") {
-          r.curStep = "";
+          this.$store.commit('SET_CUR_STEP', '');
         }
 
         /* ONLY IF ON STEP 1: MIX TYPE SELECT */
-        if (r.curStep == this.steps.mixType) {
+        if (this.curStep == this.steps.mixType) {
           if (this.order.new.mixType.name == "House") {
-            this.nextStep = this.steps.houseMix;
+            this.$store.commit('SET_NEXT_STEP', this.steps.houseMix);
           } else {
-            this.nextStep = this.steps.tobaccoBrands;
+            this.$store.commit('SET_NEXT_STEP', this.steps.tobaccoBrands);
           }
         }
 
         /* ONLY IF ON STEP 4: FLAVOR SELECT */
-        if (r.curStep == this.steps.tobaccoFlavors) {
+        if (this.curStep == this.steps.tobaccoFlavors) {
           if (this.order.new.comboOptions.numberOfFlavors == 1) {
-            this.nextStep = this.steps.review1;
+            this.$store.commit('SET_NEXT_STEP', this.steps.review1);
           } else if (this.order.new.comboOptions.numberOfFlavors == 2) {
-            this.nextStep = this.steps.combo2;
+            this.$store.commit('SET_NEXT_STEP', this.steps.combo2);
           } else if (this.order.new.comboOptions.numberOfFlavors == 3) {
-            this.nextStep = this.steps.combo3;
+            this.$store.commit('SET_NEXT_STEP', this.steps.combo3);
           }
         }
 
         /* CHECK IF THERE IS ALREADY A DEFINED PATH FOR THE NEXT SLIDE, GIVEN FROM A PREVIOUS SELECTION */
         if (
-          curStep_i != r.stepSequence.length - 1 &&
-          r.curStep != this.steps.review1
+          curStep_i != this.stepSequence.length - 1 &&
+          this.curStep != this.steps.review1
         ) {
-          if (this.nextStep == r.stepSequence[curStep_i + 1]) {
-            r.curStep = r.stepSequence[curStep_i + 1];
+          if (this.nextStep == this.stepSequence[curStep_i + 1]) {
+            this.$store.commit('SET_CUR_STEP', this.stepSequence[curStep_i + 1]);
 
             if (this.nextStep == this.steps.hookahHeadType) {
-              this.nextStep = this.steps.mixType;
+              this.$store.commit('SET_NEXT_STEP', this.steps.mixType);
               // } else if (this.nextStep == this.steps.mixType) {
             } else if (this.nextStep == this.steps.houseMix) {
-              this.nextStep = this.steps.review1;
+              this.$store.commit('SET_NEXT_STEP', this.steps.review1);
             } else if (this.nextStep == this.steps.tobaccoBrands) {
-              this.nextStep = this.steps.tobaccoFlavors;
+              this.$store.commit('SET_NEXT_STEP', this.steps.tobaccoFlavors);
               // } else if (this.nextStep == this.steps.tobaccoFlavors) {
             } else if (this.nextStep == this.steps.combo2) {
-              this.nextStep = this.steps.review1;
+              this.$store.commit('SET_NEXT_STEP', this.steps.review1);
             } else if (this.nextStep == this.steps.combo3) {
-              this.nextStep = this.steps.review1;
+              this.$store.commit('SET_NEXT_STEP', this.steps.review1);
               // } else if (this.nextStep == this.steps.review1) {
               // } else if (this.nextStep == this.steps.reviewTotal) {
             }
             return;
           } else {
-            r.stepSequence.splice(curStep_i + 1);
+            this.$store.commit('SPLICE_STEP_SEQUENCE', curStep_i);
           }
         }
 
         /* if next step isn't decided here, it happens dynamically either when next() or add() run */
         if (this.nextStep == this.steps.hookahHeadType) {
-          r.curStep = this.nextStep;
-          this.nextStep = this.steps.mixType;
+          this.$store.commit('SET_CUR_STEP', this.$store.state.nextStep);
+          this.$store.commit('SET_NEXT_STEP', this.steps.mixType);
         } else if (this.nextStep == this.steps.mixType) {
-          r.curStep = this.nextStep;
+          this.$store.commit('SET_CUR_STEP', this.$store.state.nextStep);
         } else if (this.nextStep == this.steps.houseMix) {
-          r.curStep = this.nextStep;
-          this.nextStep = this.steps.review1;
+          this.$store.commit('SET_CUR_STEP', this.$store.state.nextStep);
+          this.$store.commit('SET_NEXT_STEP', this.steps.review1);
         } else if (this.nextStep == this.steps.tobaccoBrands) {
-          r.curStep = this.nextStep;
-          this.nextStep = this.steps.tobaccoFlavors;
+          this.$store.commit('SET_CUR_STEP', this.$store.state.nextStep);
+          this.$store.commit('SET_NEXT_STEP', this.steps.tobaccoFlavors);
         } else if (this.nextStep == this.steps.tobaccoFlavors) {
-          r.curStep = this.nextStep;
+          this.$store.commit('SET_CUR_STEP', this.$store.state.nextStep);
         } else if (this.nextStep == this.steps.combo2) {
-          r.curStep = this.nextStep;
-          this.nextStep = this.steps.review1;
+          this.$store.commit('SET_CUR_STEP', this.$store.state.nextStep);
+          this.$store.commit('SET_NEXT_STEP', this.steps.review1);
         } else if (this.nextStep == this.steps.combo3) {
-          r.curStep = this.nextStep;
-          this.nextStep = this.steps.review1;
+          this.$store.commit('SET_CUR_STEP', this.$store.state.nextStep);
+          this.$store.commit('SET_NEXT_STEP', this.steps.review1);
         } else if (this.nextStep == this.steps.review1) {
-          r.curStep = this.nextStep;
-          this.nextStep = this.steps.reviewTotal;
+          this.$store.commit('SET_CUR_STEP', this.$store.state.nextStep);
+          this.$store.commit('SET_NEXT_STEP', this.steps.reviewTotal);
         } else if (this.nextStep == this.steps.reviewTotal) {
-          r.curStep = this.nextStep;
+          this.$store.commit('SET_CUR_STEP', this.$store.state.nextStep);
           this.createCleanCart();
-          this.nextStep = this.steps.confirmation;
+          this.$store.commit('SET_NEXT_STEP', this.steps.confirmation);
         } else if (this.nextStep == this.steps.confirmation) {
-          r.curStep = this.nextStep;
+          this.$store.commit('SET_CUR_STEP', this.$store.state.nextStep);
           alert(
             "Yay! You made your first purchase : \n Please find the confirmation below."
           );
@@ -1251,9 +1271,8 @@ export default {
     },
     validate() {
     /* VALIDATION -- CONFIRM or REJECT based on whether selection is made */
-      let r = this.$root;
       let validation = null; 
-      let cur = this.stepList[r.curStep];
+      let cur = this.stepList[this.curStep];
 
       if (this.order.new[cur].picked == true ) {
         validation = true;
@@ -1272,7 +1291,7 @@ export default {
       this.$set(this.order, "cart", cart);
       this.$set(this.order, "new", $.extend(true, {}, this.order.newTemp));
 
-      this.$root.stepSequence = [];
+      this.$store.commit('SET_STEP_SEQUENCE', []);
 
       /* SANITIZE CART CONTENT TO MAKE SEND OBJ */
       const cleanCart = [];
@@ -1336,17 +1355,25 @@ export default {
     },
     localSave() {
       let self = this;
-      sessionStorage.setItem("order", JSON.stringify(self.order));
-      sessionStorage.setItem(
+      /* localStorage.setItem("order", JSON.stringify(self.order));
+      localStorage.setItem(
         "stepSequence",
         JSON.stringify(self.$root.stepSequence)
       );
-      sessionStorage.setItem("curStep", self.$root.curStep);
-      sessionStorage.setItem("nextStep", self.nextStep);
+      localStorage.setItem("curStep", self.this.curStep);
+      localStorage.setItem("nextStep", self.nextStep); */
+
+
+      /* --------------------------------------- */
+
+      debugger
+
+      this.$store.dispatch('saveOrder', self);
+
     },
     back() {
       /* if you're on the review page, going back 'adds another' */
-      if (this.$root.curStep == this.steps.reviewTotal) {
+      if (this.curStep == this.steps.reviewTotal) {
         this.addAnother_reviewTotal();
       } else {
         this.editStepSequence("back");
@@ -1354,28 +1381,32 @@ export default {
       }
     },
     addAnother_reviewTotal() {
-      this.$root.curStep = this.steps.hookahHeadType;
+      this.$store.commit('SET_CUR_STEP', this.steps.hookahHeadType);
+      
+      this.$store.commit('SET_NEXT_STEP', this.steps.mixType);
       this.nextStep = this.steps.mixType;
-      this.$root.stepSequence = [0];
+      this.$store.commit('SET_STEP_SEQUENCE', [0]);
     },
     editStepSequence(option) {
-      let root = this.$root;
 
       if (
         option == "next" &&
-        root.curStep != root.stepSequence[root.stepSequence.length - 1]
+        this.curStep != this.stepSequence[this.stepSequence.length - 1]
       ) {
-        root.stepSequence.push(root.curStep);
+        this.stepSequence.push(this.curStep);
       } else if (option == "back") {
-        this.nextStep = root.curStep;
+        this.$store.commit('SET_NEXT_STEP', this.curStep);
+        this.nextStep = this.curStep;
 
-        let curStep_i = root.stepSequence.indexOf(root.curStep) - 1;
-        root.curStep = root.stepSequence[curStep_i];
+        let curStep_i = this.stepSequence.indexOf(this.curStep) - 1;
+        this.$store.commit('SET_CUR_STEP', this.$store.state.nextStep);
+
       }
     },
     skipToReview() {
       
-      this.$root.stepSequence = [];
+      this.$store.commit('SET_STEP_SEQUENCE', []);
+      this.$store.commit('SET_NEXT_STEP', this.steps.reviewTotal);
       this.nextStep = this.steps.reviewTotal;
       this.next("skip");
 
@@ -1592,17 +1623,20 @@ export default {
       this.order.new = $.extend(true, {}, this.order.newTemp);
       // this.order.cart.push(this.order.new);
 
-      this.$root.stepSequence = [];
+      this.$store.commit('SET_STEP_SEQUENCE', []);
 
+      this.$store.commit('SET_NEXT_STEP', this.steps.hookahHeadType);
       this.nextStep = this.steps.hookahHeadType;
       this.next();
     },
     editItem(i) {
       this.order.new = this.order.cart.splice(i, 1)[0];
 
-      this.$root.curStep = this.steps.hookahHeadType;
+      this.$store.commit('SET_CUR_STEP', this.steps.hookahHeadType);
+
+      this.$store.commit('SET_NEXT_STEP', this.steps.mixType);
       this.nextStep = this.steps.mixType;
-      this.$root.stepSequence = [];
+      this.$store.commit('SET_STEP_SEQUENCE', []);
 
       this.editStepSequence("next");
 
@@ -1614,8 +1648,12 @@ export default {
 
       this.localSave();
     },
-    clearOrder() {
-      sessionStorage.removeItem("order");
+    clearAll() {
+      // localStorage.removeItem("order");
+
+      this.$store.dispatch('clearAll', this);
+      localStorage.removeItem("store");
+      
     },
     scrollToWizardTop() {
       if (window.scrollY > $("div#wizard").offset().top) {

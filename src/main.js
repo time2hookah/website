@@ -27,6 +27,13 @@ Vue.prototype.$http = axios;
 
 Vue.config.productionTip = false;
 
+// Subscribe to store updates
+store.subscribe((mutation, state) => {
+  debugger
+  // Store the state object as a JSON string
+  localStorage.setItem('store', JSON.stringify(state));
+});
+
 const vm = new Vue({
   router,
   store,
@@ -35,6 +42,9 @@ const vm = new Vue({
     message: "Hello Vue!",
     curStep: 0,
     stepSequence: [0]
+  },
+  beforeCreate() {
+    this.$store.commit('initialiseStore');
   },
   render: h => h(App)
 }).$mount("#app");
