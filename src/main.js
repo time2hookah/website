@@ -29,7 +29,6 @@ Vue.config.productionTip = false;
 
 // Subscribe to store updates
 store.subscribe((mutation, state) => {
-  debugger
   // Store the state object as a JSON string
   localStorage.setItem('store', JSON.stringify(state));
 });
@@ -40,8 +39,8 @@ const vm = new Vue({
   mixin,
   data: {
     message: "Hello Vue!",
-    curStep: 0,
-    stepSequence: [0]
+    // curStep: 0,
+    // stepSequence: [0]
   },
   beforeCreate() {
     this.$store.commit('initialiseStore');

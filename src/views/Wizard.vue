@@ -733,10 +733,10 @@ export default {
         confirmation: 9
       },
       // nextStep: 1,
-      curStep: this.$store.state.curStep,
-      nextStep: this.$store.state.nextStep,
-      stepSequence: this.$store.state.stepSequence,
-      order: this.$store.state.order,
+      // curStep: this.$store.state.curStep,
+      // nextStep: this.$store.state.nextStep,
+      // stepSequence: this.$store.state.stepSequence,
+      // order: this.$store.state.order,
       /* order: {
         new: {
           quantity: 1,
@@ -935,6 +935,18 @@ export default {
     };
   },
   computed: {
+    curStep() {
+      return this.$store.state.curStep;
+    },
+    nextStep() {
+      return this.$store.state.nextStep;
+    },
+    stepSequence() {
+      return this.$store.state.stepSequence;
+    },
+    order() {
+      return this.$store.state.order;
+    },
     orderedTobaccoBrands() {
       let self = this;
       let res = this.tobaccoBrands.list.filter(el => self.brandIsOrdered(el));
@@ -1045,7 +1057,6 @@ export default {
       // this.order = this.$store.state.order;
       // this.$store.commit('SET_STEP_SEQUENCE', this.$store.state.stepSequence);
       // this.$store.commit('SET_NEXT_STEP', this.$store.state.nextStep);
-      // this.nextStep = this.$store.state.nextStep;
     // }
   },
   created() {
@@ -1061,13 +1072,11 @@ export default {
       );
       this.curStep = +localStorage.getItem("curStep");
       this.$store.commit('SET_NEXT_STEP', localStorage.getItem("nextStep"));
-      this.nextStep = +localStorage.getItem("nextStep");
     } */
 /* ------------------------------------------ */
     // this.order = this.$store.state.order;
     // this.$store.commit('SET_STEP_SEQUENCE', this.$store.state.stepSequence);
     // this.$store.commit('SET_NEXT_STEP', this.$store.state.nextStep);
-    // this.nextStep = this.$store.state.nextStep;
 
     // Get hookahHeadTypes
     this.$http({
@@ -1147,7 +1156,11 @@ export default {
         
         /******************** VALIDATION ********************/
         /* CONFIRM or REJECT based on whether selection is made - combo2 gets CHANGED not PICKED; so this check is irrelevant */
-        if (this.curStep != this.steps.combo2 && this.curStep != this.steps.review1 && this.curStep != this.steps.reviewTotal) {
+        if (
+          this.curStep != this.steps.combo2 && 
+          this.curStep != this.steps.review1 && 
+          this.curStep != this.steps.reviewTotal
+        ) {
           const validated = this.validate();
           if (validated == false) return;
         }
@@ -1266,7 +1279,7 @@ export default {
 
         this.editStepSequence("next");
 
-        this.localSave();
+        // this.localSave();
       }
     },
     validate() {
@@ -1303,8 +1316,6 @@ export default {
           quantity: 0,
           mixType: {}
         };
-
-        [];
 
         /* STATIC ADDITIONS - won't change depending on chosen options */
         cleanItem.quantity = +el.quantity;
@@ -1366,8 +1377,6 @@ export default {
 
       /* --------------------------------------- */
 
-      debugger
-
       this.$store.dispatch('saveOrder', self);
 
     },
@@ -1384,7 +1393,6 @@ export default {
       this.$store.commit('SET_CUR_STEP', this.steps.hookahHeadType);
       
       this.$store.commit('SET_NEXT_STEP', this.steps.mixType);
-      this.nextStep = this.steps.mixType;
       this.$store.commit('SET_STEP_SEQUENCE', [0]);
     },
     editStepSequence(option) {
@@ -1393,13 +1401,12 @@ export default {
         option == "next" &&
         this.curStep != this.stepSequence[this.stepSequence.length - 1]
       ) {
-        this.stepSequence.push(this.curStep);
+        this.$store.commit('ADD_STEP_SEQUENCE', this.curStep);
       } else if (option == "back") {
         this.$store.commit('SET_NEXT_STEP', this.curStep);
-        this.nextStep = this.curStep;
 
         let curStep_i = this.stepSequence.indexOf(this.curStep) - 1;
-        this.$store.commit('SET_CUR_STEP', this.$store.state.nextStep);
+        this.$store.commit('SET_CUR_STEP', curStep_i);
 
       }
     },
@@ -1407,7 +1414,6 @@ export default {
       
       this.$store.commit('SET_STEP_SEQUENCE', []);
       this.$store.commit('SET_NEXT_STEP', this.steps.reviewTotal);
-      this.nextStep = this.steps.reviewTotal;
       this.next("skip");
 
       $("#skipToReview").hide();
@@ -1623,19 +1629,15 @@ export default {
       this.order.new = $.extend(true, {}, this.order.newTemp);
       // this.order.cart.push(this.order.new);
 
-      this.$store.commit('SET_STEP_SEQUENCE', []);
-
       this.$store.commit('SET_NEXT_STEP', this.steps.hookahHeadType);
-      this.nextStep = this.steps.hookahHeadType;
+      this.$store.commit('SET_STEP_SEQUENCE', []);
       this.next();
     },
     editItem(i) {
       this.order.new = this.order.cart.splice(i, 1)[0];
 
       this.$store.commit('SET_CUR_STEP', this.steps.hookahHeadType);
-
       this.$store.commit('SET_NEXT_STEP', this.steps.mixType);
-      this.nextStep = this.steps.mixType;
       this.$store.commit('SET_STEP_SEQUENCE', []);
 
       this.editStepSequence("next");
@@ -1646,7 +1648,7 @@ export default {
       this.order.cleanCart.splice(i, 1);
       this.order.cart.splice(i, 1);
 
-      this.localSave();
+      // this.localSave();
     },
     clearAll() {
       // localStorage.removeItem("order");
@@ -1657,12 +1659,9 @@ export default {
     },
     scrollToWizardTop() {
       if (window.scrollY > $("div#wizard").offset().top) {
-        $("html, body").animate(
-          {
-            scrollTop: $("div#wizard").offset().top
-          },
-          50
-        );
+        $("html, body").animate({
+          scrollTop: $("div#wizard").offset().top
+        }, 50);
       }
     },
     hookahs() {},

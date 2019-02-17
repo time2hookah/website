@@ -117,38 +117,47 @@ export default new Vuex.Store({
 
   },
   mutations: { // commit and track state changes
+    /* INITIALIZE */
     initialiseStore(state) {
       // Check if the ID exists
       if (localStorage.getItem('store')) {
         // Replace the state object with the stored item
         this.replaceState(
           Object.assign(state, JSON.parse(localStorage.getItem('store')))
-        );
-      }
-    },
+          );
+        }
+      },
+      
+    /* EDIT */
     SET_ORDER(state, order) {
       state.order = order;
-    },
-    SET_STEP_SEQUENCE(state, sequence) {
-      state.stepSequence = sequence;
-    },
-    SPLICE_STEP_SEQUENCE(state, curStep_i) {
-      state.stepSequence.splice(curStep_i + 1);
-    },
-    SET_CUR_STEP(state, curStep) {
-      state.curStep = curStep;
-    },
-    SET_NEXT_STEP(state, nextStep) {
-      state.nextStep = nextStep;
     },
     CLEAR_ORDER(state, order) {
       state.order = {};
     },
+
+    SET_STEP_SEQUENCE(state, sequence) {
+      state.stepSequence = sequence;
+    },
+    ADD_STEP_SEQUENCE(state, sequence) {
+      state.stepSequence.push(sequence);
+    },
+    SPLICE_STEP_SEQUENCE(state, curStep_i) {
+      state.stepSequence.splice(curStep_i + 1);
+    },
     CLEAR_STEP_SEQUENCE(state, sequence) {
       state.stepSequence = [0];
     },
+
+    SET_CUR_STEP(state, curStep) {
+      state.curStep = curStep;
+    },
     CLEAR_CUR_STEP(state, curStep) {
       state.curStep = 0;
+    },
+
+    SET_NEXT_STEP(state, nextStep) {
+      state.nextStep = nextStep;
     },
     CLEAR_NEXT_STEP(state, nextStep) {
       state.nextStep = 1;
@@ -159,18 +168,15 @@ export default new Vuex.Store({
 
     },
     saveOrder(context, self) {
-      debugger
-
       context.commit('SET_ORDER', self.order);
-      context.commit('SET_STEP_SEQUENCE', self.$root.stepSequence);
-      context.commit('SET_CUR_STEP', self.$root.curStep);
+      context.commit('SET_STEP_SEQUENCE', self.stepSequence);
+      context.commit('SET_CUR_STEP', self.curStep);
       context.commit('SET_NEXT_STEP', self.nextStep);
     },
     clearAll(context, self) {
-
       context.commit('CLEAR_ORDER', self.order);
-      context.commit('CLEAR_STEP_SEQUENCE', self.$root.stepSequence);
-      context.commit('CLEAR_CUR_STEP', self.$root.curStep);
+      context.commit('CLEAR_STEP_SEQUENCE', self.stepSequence);
+      context.commit('CLEAR_CUR_STEP', self.curStep);
       context.commit('CLEAR_NEXT_STEP', self.nextStep);
     }
   }
