@@ -390,8 +390,8 @@
                   class="item-quantity"
                   type="number"
                   min="1"
-                  v-model="order.new.quantity"
-                  @change="localSave"
+                  :value="order.new.quantity"
+                  @change="saveItemQuantity('new')"
                 />
               </h5>
             </div>
@@ -461,8 +461,8 @@
                         <input 
                           class='item-quantity' 
                           type="number" 
-                          v-model="item.quantity"
-                          @change="localSave"
+                          :value="item.quantity"
+                          @change="saveItemQuantity('cart', i)"
                           min="1"
                         >
 
@@ -1115,6 +1115,14 @@ export default {
       // always executed
     }); */
   },
+  /* watch: {
+    order: {
+      handler() {
+        this.createCleanCart();
+      },
+      deep: true
+    }
+  }, */
   methods: {
     /* COMMON */
     next(opt) {
@@ -1176,6 +1184,12 @@ export default {
         } */
 
 
+        /* ONLY IF ON STEP REVIEW TOTAL */
+        /* if (this.curStep == this.steps.reviewTotal) {
+          
+        } */
+
+
         /******************** DISPLAY APPROPRIATE SELECTION ********************/
         if (opt == "skip") {
           this.$store.dispatch('setCurStep', '');
@@ -1226,7 +1240,7 @@ export default {
             }
             return;
           } else {
-            this.$store.dispatch('REMOVE_STEP_SEQUENCE', curStep_i);
+            this.$store.dispatch('removeStepSequence', curStep_i);
           }
         }
 
@@ -1255,8 +1269,10 @@ export default {
           this.$store.dispatch('setNextStep', this.steps.reviewTotal);
         } else if (this.nextStep == this.steps.reviewTotal) {
           this.$store.dispatch('setCurStep', this.$store.state.nextStep);
-          this.createCleanCart();
           this.$store.dispatch('setNextStep', this.steps.confirmation);
+          this.$store.dispatch('createCleanCart_prep');
+          
+          this.createCleanCart();
         } else if (this.nextStep == this.steps.confirmation) {
           this.$store.dispatch('setCurStep', this.$store.state.nextStep);
           alert(
@@ -1265,8 +1281,6 @@ export default {
         }
 
         this.editStepSequence("next");
-
-        // this.localSave();
       }
     },
     validate() {
@@ -1279,7 +1293,7 @@ export default {
         
         this.$store.dispatch('setNewOrderInfo', {
           section: cur, 
-          key: 'picked', 
+          key: 'confirmed', 
           val: true 
         });
       } else {
@@ -1291,7 +1305,7 @@ export default {
     },
     createCleanCart() {
       /* ADD FINAL 'NEW' ORDER TO CART; AND RESET NEW AND STEP SEQUENCE */
-      this.$store.dispatch('createCleanCart_prep');
+      // this.$store.dispatch('createCleanCart_prep');
 
       /* SANITIZE CART CONTENT TO MAKE SEND OBJ */
       const cleanCart = [];
@@ -1346,23 +1360,10 @@ export default {
         cleanCart.push(cleanItem);
       });
 
-      this.$store.dispatch('creatCleanCart', cleanCart);
+      this.$store.dispatch('createCleanCart', cleanCart);
     },
     localSave() {
-      let self = this;
-      /* localStorage.setItem("order", JSON.stringify(self.order));
-      localStorage.setItem(
-        "stepSequence",
-        JSON.stringify(self.$root.stepSequence)
-      );
-      localStorage.setItem("curStep", self.this.curStep);
-      localStorage.setItem("nextStep", self.nextStep); */
-
-
-      /* --------------------------------------- */
-
-      this.$store.dispatch('saveOrder', self);
-
+      this.$store.dispatch('saveOrder', this);
     },
     back() {
       /* if you're on the review page, going back 'adds another' */
@@ -1373,14 +1374,7 @@ export default {
         this.scrollToWizardTop();
       }
     },
-    addAnother_reviewTotal() {
-      this.$store.dispatch('addAnother_reviewTotal', {
-        curStep: this.steps.hookahHeadType, 
-        nextStep: this.steps.mixType
-      });
-    },
     editStepSequence(opt) {
-
       if (opt == 'reset') {
         this.$store.dispatch('setStepSequence', [0]);
       } else if (
@@ -1389,15 +1383,13 @@ export default {
       ) {
         this.$store.dispatch('addStepSequence', this.curStep);
       } else if (opt == "back") {
-        this.$store.dispatch('setCurStep', this.curStep);
+        this.$store.dispatch('setNextStep', this.curStep);
 
         let curStep_i = this.stepSequence.indexOf(this.curStep) - 1;
-        this.$store.dispatch('setNextStep', curStep_i);
-
+        this.$store.dispatch('setCurStep', this.stepSequence[curStep_i]);
       }
     },
     skipToReview() {
-      
       this.$store.dispatch('setStepSequence', []);
       this.$store.dispatch('setNextStep', this.steps.reviewTotal);
       this.next("skip");
@@ -1545,7 +1537,7 @@ export default {
 
         /* remove tobacco flavors of removed brand from list */
         let fList = this.order.new.tobaccoFlavors.list.filter(
-          el => b.id != el.id
+          el => b.id != el.brandID
         );
         this.$store.dispatch('setNewOrderInfo', {
           section: 'tobaccoFlavors', 
@@ -1563,11 +1555,6 @@ export default {
       }
     },
     brandIsOrdered(b, opt) {
-      /* let test = false;
-      this.order.new.tobaccoBrands.list.forEach(el => {
-        if (b.id == el.id) test = true;
-      }); */
-
       let test = this.order.new.tobaccoBrands.list.some( el => b.id == el.id);
 
       if (opt) {
@@ -1577,35 +1564,7 @@ export default {
       }
     },
     flavorIsOrdered(f, opt) {
-      /* let test = false;
-
-      this.order.new.tobaccoFlavors.list.forEach(el => {
-        if (f.id == el.id) {
-          test = true;
-        }
-      }); */
-
       let test = this.order.new.tobaccoFlavors.list.some( el => f.id == el.id);
-
-
-      /* let brands = [];
-      let flavors = [];
-
-      this.order.new.tobaccoBrands.list.forEach( (el) => {
-        brands.push(el.id);
-      });
-
-      this.tobaccoBrands.list.forEach( (el) => {
-        if ( brands.indexOf(el.id) != -1 ) {
-          flavors = flavors.concat( el.flavors.list );
-        }
-      });
-
-      flavors.forEach(function(el) {
-        if (f.id == el.id) {
-          test = true;
-        }
-      }); */
 
       if (opt) {
         return test.toString();
@@ -1744,28 +1703,53 @@ export default {
 
     /* REVIEW1 */
     addAnother_review1() {
-      this.$store.dispatch('addAnother_review1', this.steps.hookahHeadType);
-      this.editStepSequence("reset");
-      this.next();
+      this.$store.dispatch('addAnother_review1', {
+        curStep: this.steps.hookahHeadType, 
+        nextStep: this.steps.mixType
+      });
+    },
+
+    saveItemQuantity(opt, i) {
+      const e = event;
+
+      if (opt == 'new') {
+        this.$store.dispatch('setNewOrderInfo', {
+          key: 'quantity', 
+          val: e.target.valueAsNumber
+        });
+      } else if (opt == 'cart') {
+        this.$store.dispatch('saveItemQuantity', {
+          i,
+          quantity: e.target.valueAsNumber
+        })
+      }
+
+      this.createCleanCart();
+    },
+
+    /* REVIEW TOTAL */
+    addAnother_reviewTotal() {
+      this.$store.dispatch('addAnother_reviewTotal', {
+        curStep: this.steps.hookahHeadType, 
+        nextStep: this.steps.mixType
+      });
     },
     editItem(i) {
-      const cur = this.steps.hookahHeadType;
-      const next = this.steps.mixType;
-      this.$store.dispatch('editItem', {curStep: cur, nextStep: next});
+      const curStep = this.steps.hookahHeadType;
+      const nextStep = this.steps.mixType;
+      this.$store.dispatch('editItem', {curStep, nextStep, i});
 
       this.editStepSequence("reset");
 
       $("#skipToReview").show();
     },
     removeItem(i) {
-      this.$store.dispatch('removeOrderItem', i);
+      let confirm = window.confirm('Are you sure you want to remove this item?');
+      if (confirm == true) this.$store.dispatch('removeOrderItem', i);
     },
     clearAll() {
-      // localStorage.removeItem("order");
-
       this.$store.dispatch('clearAll', this);
       localStorage.removeItem("store");
-      location.reload();
     },
     scrollToWizardTop() {
       if (window.scrollY > $("div#wizard").offset().top) {

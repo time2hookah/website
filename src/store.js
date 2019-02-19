@@ -143,17 +143,11 @@ export default new Vuex.Store({
     SET_CUR_STEP(state, curStep) {
       state.curStep = curStep;
     },
-    CLEAR_CUR_STEP(state, curStep) {
-      state.curStep = 0;
-    },
     
     SET_NEXT_STEP(state, nextStep) {
       state.nextStep = nextStep;
     },
-    CLEAR_NEXT_STEP(state, nextStep) {
-      state.nextStep = 1;
-    },
-    
+
     /* ORDER */
     SET_ORDER(state, order) {
       state.order = order;
@@ -162,21 +156,28 @@ export default new Vuex.Store({
       state.order = {};
     },
     SET_NEW_ORDER_INFO(state, obj) {
-      state.order.new[obj.section][obj.key] = obj.val;
+      if (obj.section) {
+        state.order.new[obj.section][obj.key] = obj.val;
+      } else {
+        state.order.new[obj.key] = obj.val;
+      }
     },
-    SET_NEW_TO_EDIT_ITEM(state) {
+    SET_NEW_TO_EDIT_ITEM(state, i) {
       state.order.new = state.order.cart.splice(i, 1)[0];
+    },
+    SAVE_ITEM_QUANTITY(state, obj) {
+      state.order.cart[obj.i].quantity = obj.quantity;
     },
     
     /* CART */
-    ADD_TO_CART(state) {
-      let cart = state.order.cart;
-      let newOrder = state.order.new;
-      
-      cart = [...cart, newOrder];
+    ADD_TO_CART(state) {    
+      state.order.cart = [...state.order.cart, state.order.new];
     },
     REMOVE_CART_ITEM(state, i) {
       state.order.cart.splice(i, 1);
+    },
+    RESET_CART(state) {
+      state.order.cart = [];
     },
     
     SET_CLEAN_CART(state, cart) {
@@ -185,10 +186,12 @@ export default new Vuex.Store({
     REMOVE_CLEAN_CART_ITEM(state, i) {
       state.order.cleanCart.splice(i, 1);
     },
+    RESET_CLEAN_CART(state) {
+      state.order.cart = [];
+    },
 
     RESET_NEW(state) {
-      let newOrder = state.order.new;
-      newOrder = { ...state.order.newTemp };
+      state.order.new = $.extend(true, {}, state.order.newTemp);
     }
   },
   actions: { // methods
@@ -202,10 +205,12 @@ export default new Vuex.Store({
       context.commit('SET_NEXT_STEP', self.nextStep);
     },
     clearAll(context, self) {
-      context.commit('CLEAR_ORDER', self.order);
-      context.commit('SET_STEP_SEQUENCE', self.stepSequence);
-      context.commit('CLEAR_CUR_STEP', self.curStep);
-      context.commit('CLEAR_NEXT_STEP', self.nextStep);
+      context.commit('RESET_NEW');
+      context.commit('RESET_CART');
+      context.commit('RESET_CLEAN_CART');
+      context.commit('SET_STEP_SEQUENCE', []);
+      context.commit('SET_CUR_STEP', 0);
+      context.commit('SET_NEXT_STEP', 1);
     },
 
     /* STEPS */
@@ -230,19 +235,24 @@ export default new Vuex.Store({
       context.commit('SET_NEW_ORDER_INFO', obj);
     },
     editItem(context, obj) {
-      context.commit('SET_NEW');
-      context.commit('SET_CUR_STEP', obj.cur);
-      context.commit('SET_NEXT_STEP', obj.next);
+      context.commit('SET_NEW_TO_EDIT_ITEM', obj.i);
+      context.commit('SET_CUR_STEP', obj.curStep);
+      context.commit('SET_NEXT_STEP', obj.nextStep);
+    },
+    saveItemQuantity(context, obj) {
+      context.commit('SAVE_ITEM_QUANTITY', obj);
     },
     removeOrderItem(context, i) {
       context.commit('REMOVE_CART_ITEM', i);
       context.commit('REMOVE_CLEAN_CART_ITEM', i);
     },
 
-    addAnother_review1(context, nextStep) {
+    addAnother_review1(context, obj) {
       context.commit('ADD_TO_CART');
       context.commit('RESET_NEW');
-      context.commit('SET_NEXT_STEP', nextStep);
+      context.commit('SET_CUR_STEP', obj.curStep);
+      context.commit('SET_NEXT_STEP', obj.nextStep);
+      context.commit('SET_STEP_SEQUENCE', [0]);
     },
     addAnother_reviewTotal(context, obj) {
       context.commit('SET_CUR_STEP', obj.curStep);
