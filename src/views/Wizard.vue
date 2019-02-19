@@ -1038,7 +1038,7 @@ export default {
     subtotalPrice() {
       let res = 0;
 
-      this.order.cleanCart.forEach(el => (res += el.price));
+      this.order.cleanCart.forEach(el => (res += (el.price * el.quantity) ) );
 
       return res.toFixed(2);
     },
@@ -1052,31 +1052,10 @@ export default {
     }
   },
   beforeCreate() {
-    // debugger
-    // if (localStorage.getItem("store")) {
-      // this.order = this.$store.state.order;
-      // this.$store.commit('SET_STEP_SEQUENCE', this.$store.state.stepSequence);
-      // this.$store.commit('SET_NEXT_STEP', this.$store.state.nextStep);
-    // }
+
   },
   created() {
     let self = this;
-
-    // Get saved order info if it exists
-    /* if (localStorage.getItem("order")) {
-      this.order = JSON.parse(
-        localStorage.getItem("order")
-      );
-        this.$store.commit('SET_STEP_SEQUENCE', JSON.parse);
-        localStorage.getItem("stepSequence")
-      );
-      this.curStep = +localStorage.getItem("curStep");
-      this.$store.commit('SET_NEXT_STEP', localStorage.getItem("nextStep"));
-    } */
-/* ------------------------------------------ */
-    // this.order = this.$store.state.order;
-    // this.$store.commit('SET_STEP_SEQUENCE', this.$store.state.stepSequence);
-    // this.$store.commit('SET_NEXT_STEP', this.$store.state.nextStep);
 
     // Get hookahHeadTypes
     this.$http({
@@ -1151,7 +1130,6 @@ export default {
       if (this.curStep == this.steps.confirmation) {
         /* If you click next when you're on the confirmation page, do the following: */
         this.clearAll();
-        location.reload();
       } else {
         
         /******************** VALIDATION ********************/
@@ -1177,40 +1155,49 @@ export default {
             if (+max < +el.brandPrice) max = el.brandPrice;
           });
 
-          this.order.new.comboOptions.priceOfMax = +max;
+          this.$store.dispatch('setNewOrderInfo', {
+            section: 'comboOptions', 
+            key: 'priceOfMax', 
+            val: +max 
+          });
 
           /* decide propper next step based on number of flavors chosen*/
-          this.order.new.comboOptions.numberOfFlavors = this.order.new.tobaccoFlavors.list.length;
+          this.$store.dispatch('setNewOrderInfo', {
+            section: 'comboOptions', 
+            key: 'numberOfFlavors', 
+            val: this.order.new.tobaccoFlavors.list.length 
+          });
+
         }
 
         /* ONLY IF ON STEP COMBO3 SELECT */
-        if (this.curStep == this.steps.combo3) {
+        /* if (this.curStep == this.steps.combo3) {
           
-        }
+        } */
 
 
         /******************** DISPLAY APPROPRIATE SELECTION ********************/
         if (opt == "skip") {
-          this.$store.commit('SET_CUR_STEP', '');
+          this.$store.dispatch('setCurStep', '');
         }
 
         /* ONLY IF ON STEP 1: MIX TYPE SELECT */
         if (this.curStep == this.steps.mixType) {
           if (this.order.new.mixType.name == "House") {
-            this.$store.commit('SET_NEXT_STEP', this.steps.houseMix);
+            this.$store.dispatch('setNextStep', this.steps.houseMix);
           } else {
-            this.$store.commit('SET_NEXT_STEP', this.steps.tobaccoBrands);
+            this.$store.dispatch('setNextStep', this.steps.tobaccoBrands);
           }
         }
 
         /* ONLY IF ON STEP 4: FLAVOR SELECT */
         if (this.curStep == this.steps.tobaccoFlavors) {
           if (this.order.new.comboOptions.numberOfFlavors == 1) {
-            this.$store.commit('SET_NEXT_STEP', this.steps.review1);
+            this.$store.dispatch('setNextStep', this.steps.review1);
           } else if (this.order.new.comboOptions.numberOfFlavors == 2) {
-            this.$store.commit('SET_NEXT_STEP', this.steps.combo2);
+            this.$store.dispatch('setNextStep', this.steps.combo2);
           } else if (this.order.new.comboOptions.numberOfFlavors == 3) {
-            this.$store.commit('SET_NEXT_STEP', this.steps.combo3);
+            this.$store.dispatch('setNextStep', this.steps.combo3);
           }
         }
 
@@ -1220,58 +1207,58 @@ export default {
           this.curStep != this.steps.review1
         ) {
           if (this.nextStep == this.stepSequence[curStep_i + 1]) {
-            this.$store.commit('SET_CUR_STEP', this.stepSequence[curStep_i + 1]);
+            this.$store.dispatch('setCurStep', this.stepSequence[curStep_i + 1]);
 
             if (this.nextStep == this.steps.hookahHeadType) {
-              this.$store.commit('SET_NEXT_STEP', this.steps.mixType);
+              this.$store.dispatch('setNextStep', this.steps.mixType);
               // } else if (this.nextStep == this.steps.mixType) {
             } else if (this.nextStep == this.steps.houseMix) {
-              this.$store.commit('SET_NEXT_STEP', this.steps.review1);
+              this.$store.dispatch('setNextStep', this.steps.review1);
             } else if (this.nextStep == this.steps.tobaccoBrands) {
-              this.$store.commit('SET_NEXT_STEP', this.steps.tobaccoFlavors);
+              this.$store.dispatch('setNextStep', this.steps.tobaccoFlavors);
               // } else if (this.nextStep == this.steps.tobaccoFlavors) {
             } else if (this.nextStep == this.steps.combo2) {
-              this.$store.commit('SET_NEXT_STEP', this.steps.review1);
+              this.$store.dispatch('setNextStep', this.steps.review1);
             } else if (this.nextStep == this.steps.combo3) {
-              this.$store.commit('SET_NEXT_STEP', this.steps.review1);
+              this.$store.dispatch('setNextStep', this.steps.review1);
               // } else if (this.nextStep == this.steps.review1) {
               // } else if (this.nextStep == this.steps.reviewTotal) {
             }
             return;
           } else {
-            this.$store.commit('SPLICE_STEP_SEQUENCE', curStep_i);
+            this.$store.dispatch('REMOVE_STEP_SEQUENCE', curStep_i);
           }
         }
 
         /* if next step isn't decided here, it happens dynamically either when next() or add() run */
         if (this.nextStep == this.steps.hookahHeadType) {
-          this.$store.commit('SET_CUR_STEP', this.$store.state.nextStep);
-          this.$store.commit('SET_NEXT_STEP', this.steps.mixType);
+          this.$store.dispatch('setCurStep', this.$store.state.nextStep);
+          this.$store.dispatch('setNextStep', this.steps.mixType);
         } else if (this.nextStep == this.steps.mixType) {
-          this.$store.commit('SET_CUR_STEP', this.$store.state.nextStep);
+          this.$store.dispatch('setCurStep', this.$store.state.nextStep);
         } else if (this.nextStep == this.steps.houseMix) {
-          this.$store.commit('SET_CUR_STEP', this.$store.state.nextStep);
-          this.$store.commit('SET_NEXT_STEP', this.steps.review1);
+          this.$store.dispatch('setCurStep', this.$store.state.nextStep);
+          this.$store.dispatch('setNextStep', this.steps.review1);
         } else if (this.nextStep == this.steps.tobaccoBrands) {
-          this.$store.commit('SET_CUR_STEP', this.$store.state.nextStep);
-          this.$store.commit('SET_NEXT_STEP', this.steps.tobaccoFlavors);
+          this.$store.dispatch('setCurStep', this.$store.state.nextStep);
+          this.$store.dispatch('setNextStep', this.steps.tobaccoFlavors);
         } else if (this.nextStep == this.steps.tobaccoFlavors) {
-          this.$store.commit('SET_CUR_STEP', this.$store.state.nextStep);
+          this.$store.dispatch('setCurStep', this.$store.state.nextStep);
         } else if (this.nextStep == this.steps.combo2) {
-          this.$store.commit('SET_CUR_STEP', this.$store.state.nextStep);
-          this.$store.commit('SET_NEXT_STEP', this.steps.review1);
+          this.$store.dispatch('setCurStep', this.$store.state.nextStep);
+          this.$store.dispatch('setNextStep', this.steps.review1);
         } else if (this.nextStep == this.steps.combo3) {
-          this.$store.commit('SET_CUR_STEP', this.$store.state.nextStep);
-          this.$store.commit('SET_NEXT_STEP', this.steps.review1);
+          this.$store.dispatch('setCurStep', this.$store.state.nextStep);
+          this.$store.dispatch('setNextStep', this.steps.review1);
         } else if (this.nextStep == this.steps.review1) {
-          this.$store.commit('SET_CUR_STEP', this.$store.state.nextStep);
-          this.$store.commit('SET_NEXT_STEP', this.steps.reviewTotal);
+          this.$store.dispatch('setCurStep', this.$store.state.nextStep);
+          this.$store.dispatch('setNextStep', this.steps.reviewTotal);
         } else if (this.nextStep == this.steps.reviewTotal) {
-          this.$store.commit('SET_CUR_STEP', this.$store.state.nextStep);
+          this.$store.dispatch('setCurStep', this.$store.state.nextStep);
           this.createCleanCart();
-          this.$store.commit('SET_NEXT_STEP', this.steps.confirmation);
+          this.$store.dispatch('setNextStep', this.steps.confirmation);
         } else if (this.nextStep == this.steps.confirmation) {
-          this.$store.commit('SET_CUR_STEP', this.$store.state.nextStep);
+          this.$store.dispatch('setCurStep', this.$store.state.nextStep);
           alert(
             "Yay! You made your first purchase : \n Please find the confirmation below."
           );
@@ -1289,7 +1276,12 @@ export default {
 
       if (this.order.new[cur].picked == true ) {
         validation = true;
-        this.order.new[cur].confirmed = true;
+        
+        this.$store.dispatch('setNewOrderInfo', {
+          section: cur, 
+          key: 'picked', 
+          val: true 
+        });
       } else {
         validation = false; 
         alert("Please pick an option to continue.");
@@ -1298,13 +1290,8 @@ export default {
       return validation;
     },
     createCleanCart() {
-      /* ADD FINAL 'NEW' ORDER TO CART */
-      let cart = this.order.cart;
-      cart.push(this.order.new);
-      this.$set(this.order, "cart", cart);
-      this.$set(this.order, "new", $.extend(true, {}, this.order.newTemp));
-
-      this.$store.commit('SET_STEP_SEQUENCE', []);
+      /* ADD FINAL 'NEW' ORDER TO CART; AND RESET NEW AND STEP SEQUENCE */
+      this.$store.dispatch('createCleanCart_prep');
 
       /* SANITIZE CART CONTENT TO MAKE SEND OBJ */
       const cleanCart = [];
@@ -1318,38 +1305,35 @@ export default {
         };
 
         /* STATIC ADDITIONS - won't change depending on chosen options */
-        cleanItem.quantity = +el.quantity;
-        cleanItem.mixType.id = el.mixType.id;
-        cleanItem.mixType.name = el.mixType.name;
-        cleanItem.numberOfFlavors = el.comboOptions.numberOfFlavors;
+        cleanItem.quantity              = +el.quantity;
+        cleanItem.mixType.id            = el.mixType.id;
+        cleanItem.mixType.name          = el.mixType.name;
+        cleanItem.numberOfFlavors       = el.comboOptions.numberOfFlavors;
+        cleanItem.hookahHeadType.id     = el.hookahHeadType.id;
+        cleanItem.hookahHeadType.name   = el.hookahHeadType.name;
 
-        cleanItem.hookahHeadType.id = el.hookahHeadType.id;
-        cleanItem.hookahHeadType.name = el.hookahHeadType.name;
-
-        cleanItem.price += +el.hookahHeadType.price;
+        cleanItem.price                += +el.hookahHeadType.price;
 
         /* DYNAMIC ADDITIONS - will change depending on chosen options */
         if (el.mixType.name == "House") {
-          cleanItem.houseMix = {};
-          cleanItem.houseMix.id = el.houseMix.id;
-          cleanItem.houseMix.name = el.houseMix.name;
+          cleanItem.houseMix            = {};
+          cleanItem.houseMix.id         = el.houseMix.id;
+          cleanItem.houseMix.name       = el.houseMix.name;
+          cleanItem.price              += +el.houseMix.price;
 
-          cleanItem.price += +el.houseMix.price;
         } else if (el.mixType.name == "Custom") {
-          cleanItem.price += +el.comboOptions.priceOfMax;
-          cleanItem.tobaccoFlavors = el.tobaccoFlavors.list;
-          cleanItem.comboOptions = {};
-          cleanItem.comboOptions.numberOfFlavors =
-            el.comboOptions.numberOfFlavors;
+          cleanItem.price              += +el.comboOptions.priceOfMax;
+          cleanItem.tobaccoFlavors      = el.tobaccoFlavors.list;
+          cleanItem.comboOptions        = {};
+          cleanItem.comboOptions.numberOfFlavors = el.comboOptions.numberOfFlavors;
 
           if (el.comboOptions.numberOfFlavors == 2) {
             cleanItem.comboOptions.mixCode = el.combo2.mixCode;
             cleanItem.comboOptions.flavor1 = el.combo2.flavor1;
             cleanItem.comboOptions.flavor2 = el.combo2.flavor2;
           } else if (el.comboOptions.numberOfFlavors == 3) {
-            cleanItem.comboOptions.split = el.combo3.split;
-            cleanItem.comboOptions.whichIsOdd =
-              el.combo3.whichIsOdd;
+            cleanItem.comboOptions.split      = el.combo3.split;
+            cleanItem.comboOptions.whichIsOdd = el.combo3.whichIsOdd;
 
             cleanItem.tobaccoFlavors.forEach(el => {
               if (el.id == cleanItem.comboOptions.whichIsOdd.id) {
@@ -1362,7 +1346,7 @@ export default {
         cleanCart.push(cleanItem);
       });
 
-      this.$set(this.order, "cleanCart", cleanCart);
+      this.$store.dispatch('creatCleanCart', cleanCart);
     },
     localSave() {
       let self = this;
@@ -1390,30 +1374,32 @@ export default {
       }
     },
     addAnother_reviewTotal() {
-      this.$store.commit('SET_CUR_STEP', this.steps.hookahHeadType);
-      
-      this.$store.commit('SET_NEXT_STEP', this.steps.mixType);
-      this.$store.commit('SET_STEP_SEQUENCE', [0]);
+      this.$store.dispatch('addAnother_reviewTotal', {
+        curStep: this.steps.hookahHeadType, 
+        nextStep: this.steps.mixType
+      });
     },
-    editStepSequence(option) {
+    editStepSequence(opt) {
 
-      if (
-        option == "next" &&
+      if (opt == 'reset') {
+        this.$store.dispatch('setStepSequence', [0]);
+      } else if (
+        opt == "next" &&
         this.curStep != this.stepSequence[this.stepSequence.length - 1]
       ) {
-        this.$store.commit('ADD_STEP_SEQUENCE', this.curStep);
-      } else if (option == "back") {
-        this.$store.commit('SET_NEXT_STEP', this.curStep);
+        this.$store.dispatch('addStepSequence', this.curStep);
+      } else if (opt == "back") {
+        this.$store.dispatch('setCurStep', this.curStep);
 
         let curStep_i = this.stepSequence.indexOf(this.curStep) - 1;
-        this.$store.commit('SET_CUR_STEP', curStep_i);
+        this.$store.dispatch('setNextStep', curStep_i);
 
       }
     },
     skipToReview() {
       
-      this.$store.commit('SET_STEP_SEQUENCE', []);
-      this.$store.commit('SET_NEXT_STEP', this.steps.reviewTotal);
+      this.$store.dispatch('setStepSequence', []);
+      this.$store.dispatch('setNextStep', this.steps.reviewTotal);
       this.next("skip");
 
       $("#skipToReview").hide();
@@ -1431,25 +1417,91 @@ export default {
 
     /* HookahHeadType */
     selectHookahHeadType(i) {
-      this.order.new.hookahHeadType.picked = true;
+      /* this.order.new.hookahHeadType.picked = true;
       this.order.new.hookahHeadType.id = this.hookahHeadTypes.list[i]._id;
       this.order.new.hookahHeadType.name = this.hookahHeadTypes.list[i].name;
-      this.order.new.hookahHeadType.price = this.hookahHeadTypes.list[i].price;
+      this.order.new.hookahHeadType.price = this.hookahHeadTypes.list[i].price; */
+
+      /* this.order.new.hookahHeadType = { 
+        ...this.order.new.hookahHeadType, 
+        picked: true,
+        id: this.hookahHeadTypes.list[i]._id,
+        name: this.hookahHeadTypes.list[i].name,
+        price: this.hookahHeadTypes.list[i].price,
+      } */
+
+      this.$store.dispatch('setNewOrderInfo', {
+        section: 'hookahHeadType', 
+        key: 'picked', 
+        val: true 
+      });
+      this.$store.dispatch('setNewOrderInfo', {
+        section: 'hookahHeadType', 
+        key: 'id', 
+        val: this.hookahHeadTypes.list[i]._id 
+      });
+      this.$store.dispatch('setNewOrderInfo', {
+        section: 'hookahHeadType', 
+        key: 'name', 
+        val: this.hookahHeadTypes.list[i].name 
+      });
+      this.$store.dispatch('setNewOrderInfo', {
+        section: 'hookahHeadType', 
+        key: 'price', 
+        val: this.hookahHeadTypes.list[i].price 
+      });
     },
 
     /* MIX TYPE */
     selectMixType(i) {
-      this.order.new.mixType.picked = true;
+      /* this.order.new.mixType.picked = true;
       this.order.new.mixType.id = this.mixTypes.list[i].id;
-      this.order.new.mixType.name = this.mixTypes.list[i].name;
+      this.order.new.mixType.name = this.mixTypes.list[i].name; */
+
+      this.$store.dispatch('setNewOrderInfo', {
+        section: 'mixType', 
+        key: 'picked', 
+        val: true 
+      });
+      this.$store.dispatch('setNewOrderInfo', {
+        section: 'mixType', 
+        key: 'id', 
+        val: this.mixTypes.list[i].id 
+      });
+      this.$store.dispatch('setNewOrderInfo', {
+        section: 'mixType', 
+        key: 'name', 
+        val: this.mixTypes.list[i].name 
+      });
     },
 
     /* HOUSE MIX TYPE */
     selectHouseMix(i) {
-      this.order.new.houseMix.picked = true;
+      /* this.order.new.houseMix.picked = true;
       this.order.new.houseMix.id = this.houseMixes.list[i].id;
       this.order.new.houseMix.name = this.houseMixes.list[i].name;
-      this.order.new.houseMix.price = +this.houseMixes.list[i].price;
+      this.order.new.houseMix.price = +this.houseMixes.list[i].price; */
+
+      this.$store.dispatch('setNewOrderInfo', {
+        section: 'houseMix', 
+        key: 'picked', 
+        val: true 
+      });
+      this.$store.dispatch('setNewOrderInfo', {
+        section: 'houseMix', 
+        key: 'id', 
+        val: this.houseMixes.list[i].id 
+      });
+      this.$store.dispatch('setNewOrderInfo', {
+        section: 'houseMix', 
+        key: 'name', 
+        val: this.houseMixes.list[i].name 
+      });
+      this.$store.dispatch('setNewOrderInfo', {
+        section: 'houseMix', 
+        key: 'price', 
+        val: this.houseMixes.list[i].price 
+      });
     },
 
     /* TOBACCO BRANDS */
@@ -1457,31 +1509,56 @@ export default {
       if ( $(event.currentTarget).parent().data("selected") == false ) {
       /* IF OPTION IS NOT SELECTED */
         $(event.currentTarget).parent().data("selected", true);
-        this.order.new.tobaccoBrands.picked = true;
 
-        let brand = {
+        let list = [...this.order.new.tobaccoBrands.list, {
           id    : b.id,
           name  : b.name,
           price : b.price
-        };
+        }];
 
-        this.order.new.tobaccoBrands.list.push(brand);
+        this.$store.dispatch('setNewOrderInfo', {
+          section: 'tobaccoBrands', 
+          key: 'list', 
+          val: list 
+        });
+        this.$store.dispatch('setNewOrderInfo', {
+          section: 'tobaccoBrands', 
+          key: 'picked', 
+          val: true 
+        });
+
       } else {
       /* IF OPTION IS ALREADY SLECTED */
         $(event.currentTarget).parent().data("selected", false);
         
         /* remove tobacco brand from list */
-        this.order.new.tobaccoBrands.list = this.order.new.tobaccoBrands.list.filter(
+        let bList = this.order.new.tobaccoBrands.list.filter(
           el => b.id != el.id
         );
+        this.$store.dispatch('setNewOrderInfo', {
+          section: 'tobaccoBrands', 
+          key: 'list', 
+          val: bList 
+        });
+
+
 
         /* remove tobacco flavors of removed brand from list */
-        this.order.new.tobaccoFlavors.list = this.order.new.tobaccoFlavors.list.filter(
-          el => b.id != el.brandID
+        let fList = this.order.new.tobaccoFlavors.list.filter(
+          el => b.id != el.id
         );
+        this.$store.dispatch('setNewOrderInfo', {
+          section: 'tobaccoFlavors', 
+          key: 'list', 
+          val: fList 
+        });
 
         if (this.order.new.tobaccoBrands.list.length == 0) {
-          this.order.new.tobaccoBrands.picked = false;
+          this.$store.dispatch('setNewOrderInfo', {
+            section: 'tobaccoBrands', 
+            key: 'picked', 
+            val: false 
+          });
         }
       }
     },
@@ -1500,13 +1577,16 @@ export default {
       }
     },
     flavorIsOrdered(f, opt) {
-      let test = false;
+      /* let test = false;
 
       this.order.new.tobaccoFlavors.list.forEach(el => {
         if (f.id == el.id) {
           test = true;
         }
-      });
+      }); */
+
+      let test = this.order.new.tobaccoFlavors.list.some( el => f.id == el.id);
+
 
       /* let brands = [];
       let flavors = [];
@@ -1542,17 +1622,25 @@ export default {
         /* IF THERE ARE FEWER THAN 3 SELECTIONS */
           $(event.currentTarget).parent().data("selected", true);
 
-          let flavor = {};
+          let list = [...this.order.new.tobaccoFlavors.list, {
+            id          : f.id,
+            name        : f.name,
+            brandID     : b.id,
+            brandName   : b.name,
+            brandPrice  : b.price
+          }];
 
-          this.order.new.tobaccoFlavors.picked = true;
+          this.$store.dispatch('setNewOrderInfo', {
+            section: 'tobaccoFlavors', 
+            key: 'list', 
+            val: list 
+          });
+          this.$store.dispatch('setNewOrderInfo', {
+            section: 'tobaccoFlavors', 
+            key: 'picked', 
+            val: true 
+          });
 
-          flavor.id = f.id;
-          flavor.name = f.name;
-          flavor.brandID = b.id;
-          flavor.brandName = b.name;
-          flavor.brandPrice = b.price;
-
-          this.order.new.tobaccoFlavors.list.push(flavor);
         } else {
           alert("You can only add 3.");
           return;
@@ -1560,21 +1648,23 @@ export default {
       } else {
         /* IF OPTION IS ALREADY ACTIVE */
         $(event.currentTarget).parent().data("selected", false);
-      
-        /* let toRemove;
-        this.order.new.tobaccoFlavors.list.forEach(function(flavor, index) {
-          if (flavor.id == f.id) {
-            toRemove = index;
-          }
-        });
-        this.order.new.tobaccoFlavors.list.splice(toRemove, 1); */
 
-        this.order.new.tobaccoFlavors.list = this.order.new.tobaccoFlavors.list.filter(
+        /* REMOVE FROM LIST */
+        let list = this.order.new.tobaccoFlavors.list.filter(
           el => f.id != el.id
         );
-
+        this.$store.dispatch('setNewOrderInfo', {
+          section: 'tobaccoFlavors', 
+          key: 'list', 
+          val: list 
+        });
+        
         if (this.order.new.tobaccoFlavors.list.length == 0) {
-          this.order.new.tobaccoFlavors.picked = false;
+          this.$store.dispatch('setNewOrderInfo', {
+            section: 'tobaccoFlavors', 
+            key: 'picked', 
+            val: false 
+          });
         }
       }
     },
@@ -1596,9 +1686,22 @@ export default {
 
       $("#combo2-flavor2").val(f2);
 
-      this.order.new.combo2.mixCode = id;
-      this.order.new.combo2.flavor1 = f1;
-      this.order.new.combo2.flavor2 = f2;
+      this.$store.dispatch('setNewOrderInfo', {
+        section: 'combo2', 
+        key: 'mixCode', 
+        val: id 
+      });
+      this.$store.dispatch('setNewOrderInfo', {
+        section: 'combo2', 
+        key: 'flavor1', 
+        val: f1 
+      });
+      this.$store.dispatch('setNewOrderInfo', {
+        section: 'combo2', 
+        key: 'flavor2', 
+        val: f2 
+      });
+      
     },
     
     /* COMBO3 */
@@ -1606,56 +1709,63 @@ export default {
       const combo3 = this.order.new.combo3;
 
       if (combo3.split == 'thirds') {
-        this.order.new.combo3.picked = true;
-
-        combo3.whichIsOdd = {
+        let whichIsOdd = {
           id: '', 
           name: ''
         }
+
+        this.$store.dispatch('setNewOrderInfo', {
+          section: 'combo3', 
+          key: 'picked', 
+          val: true 
+        });
+        this.$store.dispatch('setNewOrderInfo', {
+          section: 'combo3', 
+          key: 'whichIsOdd', 
+          val: whichIsOdd 
+        });
+
       } else {
         if ( combo3.whichIsOdd.id == '' ) {
-          this.order.new.combo3.picked = false;
+          this.$store.dispatch('setNewOrderInfo', {
+            section: 'combo3', 
+            key: 'picked', 
+            val: false 
+          });
         } else {
-          this.order.new.combo3.picked = true;
+          this.$store.dispatch('setNewOrderInfo', {
+            section: 'combo3', 
+            key: 'picked', 
+            val: true 
+          });
         }
       }
     },
 
     /* REVIEW1 */
     addAnother_review1() {
-      let cart = this.order.cart;
-      cart.push(this.order.new);
-      this.$set(this.order, "cart", cart);
-      this.order.new = $.extend(true, {}, this.order.newTemp);
-      // this.order.cart.push(this.order.new);
-
-      this.$store.commit('SET_NEXT_STEP', this.steps.hookahHeadType);
-      this.$store.commit('SET_STEP_SEQUENCE', []);
+      this.$store.dispatch('addAnother_review1', this.steps.hookahHeadType);
+      this.editStepSequence("reset");
       this.next();
     },
     editItem(i) {
-      this.order.new = this.order.cart.splice(i, 1)[0];
+      const cur = this.steps.hookahHeadType;
+      const next = this.steps.mixType;
+      this.$store.dispatch('editItem', {curStep: cur, nextStep: next});
 
-      this.$store.commit('SET_CUR_STEP', this.steps.hookahHeadType);
-      this.$store.commit('SET_NEXT_STEP', this.steps.mixType);
-      this.$store.commit('SET_STEP_SEQUENCE', []);
-
-      this.editStepSequence("next");
+      this.editStepSequence("reset");
 
       $("#skipToReview").show();
     },
     removeItem(i) {
-      this.order.cleanCart.splice(i, 1);
-      this.order.cart.splice(i, 1);
-
-      // this.localSave();
+      this.$store.dispatch('removeOrderItem', i);
     },
     clearAll() {
       // localStorage.removeItem("order");
 
       this.$store.dispatch('clearAll', this);
       localStorage.removeItem("store");
-      
+      location.reload();
     },
     scrollToWizardTop() {
       if (window.scrollY > $("div#wizard").offset().top) {
