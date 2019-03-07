@@ -292,6 +292,20 @@
                   >Sign Up</router-link
                 >
               </li>
+
+              <li
+                class="nav-item hs-has-mega-menu"
+                data-event="hover"
+                data-animation-in="slideInUp"
+                data-animation-out="fadeOut"
+                data-max-width="600px"
+                data-position="right"
+              >
+                <router-link to="/login" class="nav-link u-header__nav-link"
+                  >Log in</router-link
+                >
+              </li>
+
               <li
                 class="nav-item hs-has-mega-menu"
                 data-event="hover"

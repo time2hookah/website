@@ -5,7 +5,7 @@
 
       <div class="col-md-6">
         <form
-          @submit="checkForm"
+          
           class="js-validate mt-5"
           novalidate="novalidate"
           id="signupForm"
@@ -18,14 +18,52 @@
             </h1>
           </div>
           <!-- End Title -->
-          <p v-if="errors.length">
+            <p v-if="errors.length">
+              <b>Please correct the following error(s):</b>
+            </p>
+          <!-- <ul>
+            <li :key="i" v-for="(error, i) in errors.all()">{{ error }}</li>
+          </ul> -->
+          <!-- <p v-if="errors.length">
             <b>Please correct the following error(s):</b>
           </p>
 
           <ul id="errorMsg">
             <li v-for="(error, i) in errors" :key="i">{{ error }}</li>
-          </ul>
+          </ul> -->
           <!-- </p> -->
+          <!-- Form Group -->
+          <div class="js-form-message form-group">
+            <label class="form-label" for="signinFirstName">First Name</label>
+            <input
+              type="text"
+              
+              v-validate="'required'"
+              v-model="firstName"
+              class="form-control"
+              name="firstName"
+              id="signinFirstName"
+              placeholder="First Name"
+              aria-label="first name"  
+            />
+            <span class="text-danger">{{ errors.first('firstName') }}</span>
+          </div>
+          <!-- End Form Group -->
+          <!-- Form Group -->
+          <div class="js-form-message form-group">
+            <label class="form-label" for="signinLastName">Last Name</label>
+            <input
+              type="text"
+              v-model="lastName"
+              class="form-control"
+              name="lastName"
+              id="signinLastName"
+              placeholder="Last Name" 
+              v-validate="'required'"
+            />
+            <span class="text-danger">{{ errors.first('lastName') }}</span>
+          </div>
+          <!-- End Form Group -->
           <!-- Form Group -->
           <div class="js-form-message form-group">
             <label class="form-label" for="signinSrEmail">Email address</label>
@@ -36,12 +74,10 @@
               name="email"
               id="signinSrEmail"
               placeholder="Email address"
-              aria-label="Email address"
-              required
-              data-msg="Please enter a valid email address."
-              data-error-class="u-has-error"
-              data-success-class="u-has-success"
+              aria-label="Email address" 
+              v-validate="'required|email'"
             />
+            <span class="text-danger">{{ errors.first('email') }}</span>
           </div>
           <!-- End Form Group -->
           <!-- Form Group -->
@@ -50,16 +86,14 @@
             <input
               type="password"
               v-model="password"
+              ref="password"
               class="form-control"
               name="password"
               id="signinSrPassword"
-              placeholder="********"
-              aria-label="********"
-              required
-              data-msg="Your password is invalid. Please try again."
-              data-error-class="u-has-error"
-              data-success-class="u-has-success"
+              placeholder="********" 
+              v-validate="'required|min:8'"
             />
+            <span class="text-danger">{{ errors.first('password') }}</span>
           </div>
           <!-- End Form Group -->
           <!-- Form Group -->
@@ -73,13 +107,10 @@
               class="form-control"
               name="confirmPassword"
               id="signinSrConfirmPassword"
-              placeholder="********"
-              aria-label="********"
-              required
-              data-msg="Password does not match the confirm password."
-              data-error-class="u-has-error"
-              data-success-class="u-has-success"
+              placeholder="********" 
+              v-validate="'required|min:8|confirmed:password'"
             />
+            <span class="text-danger">{{ errors.first('confirmPassword') }}</span>
           </div>
           <!-- End Form Group -->
           <!-- Checkbox -->
@@ -91,11 +122,7 @@
                 type="checkbox"
                 class="custom-control-input"
                 id="termsCheckbox"
-                name="termsCheckbox"
-                required
-                data-msg="Please accept our Terms and Conditions."
-                data-error-class="u-has-error"
-                data-success-class="u-has-success"
+                name="termsCheckbox" 
               />
               <label class="custom-control-label" for="termsCheckbox">
                 <small>
@@ -116,7 +143,8 @@
             </div>
             <div class>
               <button
-                type="submit"
+                type="button" 
+                @click="submitSignup"
                 class="btn btn-primary transition-3d-hover pull-right"
               >
                 Sign Up
@@ -130,35 +158,50 @@
   </div>
 </template>
 
-<script>
+<script> 
 export default {
   name: "signup",
   data() {
     return {
-      errors: [],
+      // errors: [],
+      firstName: null,
+      lastName: null,
       email: null,
       password: null,
       conPassword: null
     };
   },
   methods: {
-    checkForm: function(e) {
-      e.preventDefault();
-      if (this.email && this.password && this.conPassword) {
-        return true;
-      }
+    submitSignup(){
+      let self = this;
+      this.$validator.validateAll().then((result) => {
+        if (result) {  
+          this.$http.post( "http://localhost:3001/api/users/",{
+              firstName: this.firstName,
+              lastName: this.lastName,
+              email: this.email,
+              password:this.password
+            }
+          ).then(function(response) {
+            // handle success
+            console.log("user save: ", response); 
+             
+            self.$router.push("wizard");  
+             
+          }).catch(function(error) {
+            // handle error
+            console.log(error);
+          }).then(function() {
+            // always executed
+            
+          });
 
-      this.errors = [];
+          return;
+        }
 
-      if (!this.email) {
-        this.errors.push("Email is required.");
-      }
-      if (!this.password) {
-        this.errors.push("Password is required.");
-      }
-      if (!this.conPassword) {
-        this.errors.push("Confirm Password is required.");
-      }
+      });
+
+      
     }
   }
 };
