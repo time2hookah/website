@@ -9,8 +9,6 @@ import veeValidate from "vee-validate";
 import vueTheMask from "vue-the-mask";
 import vueToastr2 from "vue-toastr-2";
 
-// import './mixin';
-
 window.toastr = require("toastr");
 window.toastr.options.positionClass = "toast-top-center";
 
@@ -37,13 +35,22 @@ const vm = new Vue({
   router,
   store,
   mixin,
-  data: {
-    message: "Hello Vue!",
-    // curStep: 0,
-    // stepSequence: [0]
-  },
+  /* computed: {
+    curStep() {
+      return this.$store.state.curStep;
+    },
+    nextStep() {
+      return this.$store.state.nextStep;
+    },
+    stepSequence() {
+      return this.$store.state.stepSequence;
+    },
+    order() {
+      return this.$store.state.order;
+    },
+  }, */
   beforeCreate() {
-    this.$store.commit('initialiseStore');
+    this.$store.dispatch('initializeStore');
   },
   render: h => h(App)
 }).$mount("#app");

@@ -1,5 +1,6 @@
 <template>
   <div id="wizard" class="container">
+    <ShoppingCart :cart='this.order.cleanCart'/>
     <!-- HOOKAH HEAD TYPE SELECTION -->
     <button @click='clearAll'>Clear All</button>
     <div
@@ -690,8 +691,12 @@
 </template>
 
 <script>
+import ShoppingCart from "../components/ShoppingCart";
 export default {
   name: "wizard",
+  components: {
+    ShoppingCart,
+  },
   data() {
     return {
       /* 
@@ -707,6 +712,10 @@ export default {
       7 - review1
       8 - reviewTotal
       */
+      /* curStep: this.$root.curStep,
+      nextStep: this.$root.nextStep,
+      stepSequence: this.$root.stepSequence,
+      order: this.$root.order, */
       myMessage: "Wizard's Message",
       stepList: [
         "hookahHeadType",
@@ -732,6 +741,7 @@ export default {
         reviewTotal: 8,
         confirmation: 9
       },
+      originalMixType: '',
       // nextStep: 1,
       // curStep: this.$store.state.curStep,
       // nextStep: this.$store.state.nextStep,
@@ -947,6 +957,9 @@ export default {
     order() {
       return this.$store.state.order;
     },
+    orderItemCount() {
+      return this.order.cart.length;
+    },
     orderedTobaccoBrands() {
       let self = this;
       let res = this.tobaccoBrands.list.filter(el => self.brandIsOrdered(el));
@@ -1115,14 +1128,15 @@ export default {
       // always executed
     }); */
   },
-  /* watch: {
+  watch: {
     order: {
-      handler() {
-        this.createCleanCart();
+      handler: function(order, oldOrder) {
+        // debugger
       },
-      deep: true
-    }
-  }, */
+      deep: true,
+      immediate: true
+    },
+  },
   methods: {
     /* COMMON */
     next(opt) {
@@ -1270,8 +1284,9 @@ export default {
         } else if (this.nextStep == this.steps.reviewTotal) {
           this.$store.dispatch('setCurStep', this.$store.state.nextStep);
           this.$store.dispatch('setNextStep', this.steps.confirmation);
-          this.$store.dispatch('createCleanCart_prep');
           
+          /* ADD FINAL 'NEW' ORDER TO CART; AND RESET NEW AND STEP SEQUENCE */
+          this.$store.dispatch('createCleanCart_prep');
           this.createCleanCart();
         } else if (this.nextStep == this.steps.confirmation) {
           this.$store.dispatch('setCurStep', this.$store.state.nextStep);
@@ -1304,9 +1319,6 @@ export default {
       return validation;
     },
     createCleanCart() {
-      /* ADD FINAL 'NEW' ORDER TO CART; AND RESET NEW AND STEP SEQUENCE */
-      // this.$store.dispatch('createCleanCart_prep');
-
       /* SANITIZE CART CONTENT TO MAKE SEND OBJ */
       const cleanCart = [];
 
@@ -1449,7 +1461,7 @@ export default {
       /* this.order.new.mixType.picked = true;
       this.order.new.mixType.id = this.mixTypes.list[i].id;
       this.order.new.mixType.name = this.mixTypes.list[i].name; */
-
+      
       this.$store.dispatch('setNewOrderInfo', {
         section: 'mixType', 
         key: 'picked', 
@@ -1465,6 +1477,8 @@ export default {
         key: 'name', 
         val: this.mixTypes.list[i].name 
       });
+
+      $("#skipToReview").hide();
     },
 
     /* HOUSE MIX TYPE */

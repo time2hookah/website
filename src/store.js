@@ -118,7 +118,7 @@ export default new Vuex.Store({
   },
   mutations: { // commit and track state changes
     /* INITIALIZE */
-    initialiseStore(state) {
+    INITIALIZE_STORE(state) {
       // Check if the ID exists
       if (localStorage.getItem('store')) {
         // Replace the state object with the stored item
@@ -195,6 +195,9 @@ export default new Vuex.Store({
     }
   },
   actions: { // methods
+    initializeStore(context) {
+      context.commit('INITIALIZE_STORE');
+    },
     fetchOrder(context) {
 
     },
@@ -208,7 +211,7 @@ export default new Vuex.Store({
       context.commit('RESET_NEW');
       context.commit('RESET_CART');
       context.commit('RESET_CLEAN_CART');
-      context.commit('SET_STEP_SEQUENCE', []);
+      context.commit('SET_STEP_SEQUENCE', [0]);
       context.commit('SET_CUR_STEP', 0);
       context.commit('SET_NEXT_STEP', 1);
     },
