@@ -446,6 +446,9 @@
                   class="review-item"
                 >
                   <div class="row">
+                    <h5 class='col-12'><u>
+                      {{ item.mixType.name }} Mix on {{ item.hookahHeadType.name }}
+                    </u></h5>
                     <div class="col-4">
                       <img
                         :src="
@@ -468,10 +471,9 @@
                         >
 
                       </div>
-                      <div>
-                        Hookah Head Type: {{ item.hookahHeadType.name }}
-                      </div>
+              
                       <div>Price: ${{ item.price }}</div>
+
                       <div>
                         Type: {{ item.mixType.name }} Mix
 
@@ -1915,6 +1917,7 @@ export default {
 
 .review-item img {
   width: 100%;
+  height: 125px;
   max-width: 150px;
   border-radius: 10px;
   margin: 10px 0;
