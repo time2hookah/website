@@ -88,7 +88,7 @@ export default {
   },
   methods: {
     submitLogin(){
-      let self = this;
+      let self = this; 
       // const { email, password } = this
       this.$validator.validateAll().then((result) => {
         if (result) { 
