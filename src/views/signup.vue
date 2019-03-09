@@ -5,11 +5,9 @@
 
       <div class="col-md-6">
         <form
-          
           class="js-validate mt-5"
           novalidate="novalidate"
-          id="signupForm"
-        >
+          id="signupForm">
           <!-- Title -->
           <div class="mb-7">
             <h1 class="h3 text-primary font-weight-normal mb-0">
@@ -178,7 +176,7 @@ export default {
         if (result) {  
           this.$http.post( "http://localhost:3001/api/users/",{
               firstName: this.firstName,
-              lastName: this.lastName,
+              lastName: this.lastName, 
               email: this.email,
               password:this.password
             }
@@ -186,7 +184,7 @@ export default {
             // handle success
             console.log("user save: ", response); 
              
-            self.$router.push("wizard");  
+              self.$router.push("login");  
              
           }).catch(function(error) {
             // handle error

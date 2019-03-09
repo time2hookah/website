@@ -70,8 +70,15 @@
 </template>
 
 <script>
+import {mapState} from "vuex";
+
 export default {
   name: "login",
+  computed: ({
+    ...mapState({
+      token : 'token'
+    })
+  }),
   data() {
     return {
       // errors: [], 
@@ -80,8 +87,9 @@ export default {
     };
   },
   methods: {
-    submitLogin(e){
+    submitLogin(){
       let self = this;
+      // const { email, password } = this
       this.$validator.validateAll().then((result) => {
         if (result) { 
           this.$http.post( "http://localhost:3001/api/auth/",{
@@ -92,16 +100,16 @@ export default {
           ).then(function(response) {
             // handle success
             console.log("user save: ", response); 
-            let token = response.data;
+            // self.token = response.data;
+            // token
+            self.$store.commit('SAVE_TOKEN', response.data);
             
-            this.$store.dispatch(AUTH_REQUEST, { email, password }).then(() => {
-              this.$router.push('/');
-            })
+            
              
-            // self.$router.push("wizard");  
+            self.$router.push("wizard");  
              
           }).catch(function(error) {
-            // handle error
+            // handle error 
             console.log(error);
           }).then(function() {
             // always executed

@@ -28,12 +28,6 @@ export default {
     Footer,
     SecondaryContents,
     GoToTop
-  },
-  data() {
-    return {
-      title: "App",
-      publicPath: process.env.BASE_URL
-    };
   }
 };
 </script>

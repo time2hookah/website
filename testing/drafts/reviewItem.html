@@ -1,0 +1,63 @@
+<div class="col-8">
+  <div>
+    Quantity:
+    <input class='d-inline-block w-15 text-center' type="number" v-model="item.quantity" @change="localSave">
+
+  </div>
+  <div>
+    Hookah Head Type: {{ item.hookahHeadType.name }}
+  </div>
+  <div>Price: ${{ item.price }}</div>
+  <div>
+    Type: {{ item.mixType.name }} Mix
+
+    <span v-if="item.mixType.name == 'Custom'">
+      <span v-if="item.comboOptions.numberOfFlavors == 1">
+        of {{ item.comboOptions.numberOfFlavors }} flavor:
+      </span>
+      <span v-if="item.comboOptions.numberOfFlavors > 1">
+        of {{ item.comboOptions.numberOfFlavors }} flavors:
+      </span>
+    </span>
+  </div>
+
+  <span v-if="item.mixType.name == 'House'">
+    <div>House Mix: {{ item.houseMix.name }}</div>
+  </span>
+
+  <span v-if="item.mixType.name == 'Custom'">
+    <span v-if="item.comboOptions.numberOfFlavors == 1">
+      <div>
+        {{ item.tobaccoFlavors[0].name }}
+      </div>
+    </span>
+
+    <span v-if="item.comboOptions.numberOfFlavors == 2">
+      <div>
+        {{ item.tobaccoFlavors[0].name }}:
+        {{ item.comboOptions.flavor1 }} ||
+        {{ item.tobaccoFlavors[1].name }}:
+        {{ item.comboOptions.flavor2 }}
+      </div>
+    </span>
+
+    <span v-if="item.comboOptions.numberOfFlavors == 3">
+      <div>
+        <span v-for="(f, i) in item.tobaccoFlavors" :key="i">
+          {{ f.name }}
+          <span v-if="i != item.tobaccoFlavors.length - 1">,</span>
+        </span>
+      </div>
+
+      <div>
+        Split: {{ item.comboOptions.split }}
+
+        <!-- <span v-if="item.comboOptions.split"></span> -->
+      </div>
+
+      <div v-if="item.comboOptions.split != 'thirds'">
+        WhichIsOdd: {{ item.comboOptions.whichIsOdd.name }}
+      </div>
+    </span>
+  </span>
+</div>
