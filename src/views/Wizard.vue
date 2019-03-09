@@ -432,7 +432,7 @@
         <div id="cart-review" class="row">
           <div class="container">
             <div id="cart-review-items" class="row">
-              <ul class="col">
+              <ul class="col-12 col-sm-11 ml-auto">
                 <!-- IF NO ITEMS IN CART -->
                 <li v-if="this.order.cleanCart.length == 0">
                   <h4 class='text-danger'>You have no items in your cart.</h4>
@@ -1805,6 +1805,7 @@ export default {
     clearAll() {
       this.$store.dispatch('clearAll', this);
       localStorage.removeItem("store");
+      location.reload();
     },
     scrollToWizardTop() {
       if (window.scrollY > $("div#wizard").offset().top) {
