@@ -1301,12 +1301,17 @@ export default {
         } else if (this.nextStep == this.steps.review1) {
           this.$store.dispatch('setCurStep', this.$store.state.nextStep);
           this.$store.dispatch('setNextStep', this.steps.reviewTotal);
+          
+          if (this.order.editting == true) {
+            this.next();
+            this.toggleWizardNavBtns('off');
+          }
         } else if (this.nextStep == this.steps.reviewTotal) {
           this.$store.dispatch('setCurStep', this.$store.state.nextStep);
           this.$store.dispatch('setNextStep', this.steps.confirmation);
           
-          /* ADD FINAL 'NEW' ORDER TO CART; AND RESET NEW AND STEP SEQUENCE */
-          this.$store.dispatch('createCleanCart_prep', opt=='skip'?'skip':null);
+          /* RESET NEW AND STEP SEQUENCE & ADD FINAL 'NEW' ORDER TO CART ONLY IF YOU ARENT EDITING */
+          this.$store.dispatch('createCleanCart_prep', (opt=='skip' || this.order.editting==true)?'skip':null);
           this.createCleanCart();
         } else if (this.nextStep == this.steps.confirmation) {
           this.$store.dispatch('setCurStep', this.$store.state.nextStep);
@@ -1510,7 +1515,8 @@ export default {
         val: this.mixTypes.list[i].name 
       });
 
-      this.toggleWizardNavBtns('off');
+      // this.toggleWizardNavBtns('off');
+      $("#skipToReview").hide();
     },
 
     /* HOUSE MIX TYPE */
@@ -1597,6 +1603,8 @@ export default {
             key: 'picked', 
             val: false 
           });
+
+          $("#skipToReview").hide();
         }
       }
     },
@@ -1753,6 +1761,7 @@ export default {
         curStep: this.steps.hookahHeadType, 
         nextStep: this.steps.mixType
       });
+
     },
 
     saveItemQuantity(opt, i) {

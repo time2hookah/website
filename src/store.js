@@ -274,7 +274,7 @@ export default new Vuex.Store({
     },
 
     addAnother_review1(context, obj) {
-      context.commit('ADD_TO_CART');
+      if (!this.state.order.editting) context.commit('ADD_TO_CART');
       context.commit('RESET_NEW');
       context.commit('SET_CUR_STEP', obj.curStep);
       context.commit('SET_NEXT_STEP', obj.nextStep);
