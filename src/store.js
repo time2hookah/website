@@ -107,7 +107,9 @@ export default new Vuex.Store({
             name: ""
           }
         }
-      }
+      },
+      editBackup: {},
+      editting: false
     },
     stepSequence: [0],
     curStep: 0,
@@ -139,11 +141,9 @@ export default new Vuex.Store({
     REMOVE_STEP_SEQUENCE(state, i) {
       state.stepSequence.splice(i + 1);
     },
-    
     SET_CUR_STEP(state, curStep) {
       state.curStep = curStep;
     },
-    
     SET_NEXT_STEP(state, nextStep) {
       state.nextStep = nextStep;
     },
@@ -163,8 +163,23 @@ export default new Vuex.Store({
       }
     },
     SET_NEW_TO_EDIT_ITEM(state, i) {
-      state.order.new = state.order.cart.splice(i, 1)[0];
+      // state.order.new = state.order.cart.splice(i, 1)[0];
+      state.order.editBackup = JSON.parse(JSON.stringify(state.order.cart[i]));
+
+      state.order.new = state.order.cart[i];
     },
+    SET_EDIT_ITEM_TO_BACKUP(state, i) {
+      // debugger
+      state.order.cart[i] = JSON.parse(JSON.stringify(state.order.editBackup));
+    },
+    TOGGLE_EDITTING (state, bool) {
+      state.order.editting = bool;
+    },
+    
+/*     SET_UP_EDIT_ITEM(state, i) {
+
+    },
+*/    
     SAVE_ITEM_QUANTITY(state, obj) {
       state.order.cart[obj.i].quantity = obj.quantity;
     },
@@ -239,8 +254,16 @@ export default new Vuex.Store({
     },
     editItem(context, obj) {
       context.commit('SET_NEW_TO_EDIT_ITEM', obj.i);
+
+      // context.commit('SET_UP_EDIT_ITEM', obj.i);
       context.commit('SET_CUR_STEP', obj.curStep);
       context.commit('SET_NEXT_STEP', obj.nextStep);
+      context.commit('TOGGLE_EDITTING', true);
+    },
+    cancelEdit(context, i) {
+      context.commit('SET_EDIT_ITEM_TO_BACKUP', i);
+      context.commit('RESET_NEW');
+      context.commit('TOGGLE_EDITTING', false);
     },
     saveItemQuantity(context, obj) {
       context.commit('SAVE_ITEM_QUANTITY', obj);
@@ -264,10 +287,11 @@ export default new Vuex.Store({
     },
 
     /* CLEAN CART */
-    createCleanCart_prep(context) {
-      context.commit('ADD_TO_CART');
+    createCleanCart_prep(context, opt) {
+      if (opt != 'skip') context.commit('ADD_TO_CART');
       context.commit('RESET_NEW');
       context.commit('SET_STEP_SEQUENCE', []);
+      context.commit('TOGGLE_EDITTING', false);
     },
     createCleanCart(context, cart) {
       context.commit('SET_CLEAN_CART', cart);

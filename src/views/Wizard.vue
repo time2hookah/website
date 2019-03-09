@@ -655,7 +655,7 @@
       </div>
     </div>
 
-    <div class="row mt-1">
+    <div id='wizard-nav-btns' class="row mt-1">
       <div id="backButton" class="col-6 text-center">
         <button
           class="btn-danger center wp-100"
@@ -672,7 +672,14 @@
         </button>
       </div>
 
-      <div id="skipToReview" class="col-6 offset-6 text-center mt-1">
+      <div id="cancelEdit" class="col-6 text-center mt-1">
+        <!-- :class="skipButtonClass" -->
+        <button class="btn-danger center wp-100" @click="cancelEdit()">
+          Cancel
+        </button>
+      </div>
+      
+      <div id="skipToReview" class="col-6 text-center mt-1">
         <!-- :class="skipButtonClass" -->
         <button class="btn-success center wp-100" @click="skipToReview()">
           Skip To Review >>>
@@ -702,15 +709,17 @@ export default {
       /* 
       WIZARD SELECTION PAGES
       -----------------------
-      0 - hookahHeadType
-      1 - mixType
-      2 - houseMix
-      3 - tobaccoBrands
-      4 - tobaccoFlavors
-      5 - combo2
-      6 - combo3
-      7 - review1
-      8 - reviewTotal
+      0 -  hookahHeadType
+      1 -  mixType
+      2 -  houseMix
+      3 -  tobaccoBrands
+      4 -  tobaccoFlavors
+      5 -  combo2
+      6 -  combo3
+      7 -  review1
+      8 -  reviewTotal
+      9 -  confirmation & payment
+      10 - summary
       */
       /* curStep: this.$root.curStep,
       nextStep: this.$root.nextStep,
@@ -727,7 +736,8 @@ export default {
         "combo3",
         "review1",
         "reviewTotal",
-        "confirmation"
+        "confirmation",
+        "summary"
       ],
       steps: {
         hookahHeadType: 0,
@@ -739,7 +749,8 @@ export default {
         combo3: 6,
         review1: 7,
         reviewTotal: 8,
-        confirmation: 9
+        confirmation: 9,
+        summary: 10
       },
       originalMixType: '',
       // nextStep: 1,
@@ -1129,13 +1140,22 @@ export default {
     }); */
   },
   watch: {
-    order: {
+    'order.new': {
       handler: function(order, oldOrder) {
         // debugger
+        this.createCleanCart();
       },
       deep: true,
       immediate: true
     },
+    /* 'order.cart': {
+      handler: function(order, oldOrder) {
+        debugger
+        this.createCleanCart();
+      },
+      deep: true,
+      immediate: true
+    }, */
   },
   methods: {
     /* COMMON */
@@ -1286,7 +1306,7 @@ export default {
           this.$store.dispatch('setNextStep', this.steps.confirmation);
           
           /* ADD FINAL 'NEW' ORDER TO CART; AND RESET NEW AND STEP SEQUENCE */
-          this.$store.dispatch('createCleanCart_prep');
+          this.$store.dispatch('createCleanCart_prep', opt=='skip'?'skip':null);
           this.createCleanCart();
         } else if (this.nextStep == this.steps.confirmation) {
           this.$store.dispatch('setCurStep', this.$store.state.nextStep);
@@ -1406,7 +1426,19 @@ export default {
       this.$store.dispatch('setNextStep', this.steps.reviewTotal);
       this.next("skip");
 
-      $("#skipToReview").hide();
+      this.toggleWizardNavBtns('off');
+    },
+    cancelEdit() {
+      let conf = confirm('Are you sure you want to cancel your changes?');
+
+      if (conf) {
+        let i = $(event.target).data('item');
+        this.$store.dispatch('cancelEdit', i);
+        this.$store.dispatch('setStepSequence', []);
+        this.$store.dispatch('setNextStep', this.steps.reviewTotal);
+        this.$store.dispatch('setCurStep', this.steps.reviewTotal);
+        this.toggleWizardNavBtns('off');
+      }
     },
     clearTiles() {
       $(".tile").each(function(i, el) {
@@ -1478,7 +1510,7 @@ export default {
         val: this.mixTypes.list[i].name 
       });
 
-      $("#skipToReview").hide();
+      this.toggleWizardNavBtns('off');
     },
 
     /* HOUSE MIX TYPE */
@@ -1755,7 +1787,7 @@ export default {
 
       this.editStepSequence("reset");
 
-      $("#skipToReview").show();
+      this.toggleWizardNavBtns('on', i);
     },
     removeItem(i) {
       let confirm = window.confirm('Are you sure you want to remove this item?');
@@ -1772,6 +1804,18 @@ export default {
         }, 50);
       }
     },
+    toggleWizardNavBtns(opt, i) {
+      if (opt == 'on') {
+        $("#skipToReview").show();
+        $("#cancelEdit").show();
+        $("#cancelEdit button").data('item', i);
+
+
+      } else {
+        $("#skipToReview").hide();
+        $("#cancelEdit").hide();
+      }
+    },
     hookahs() {},
     addons() {}
   }
@@ -1785,6 +1829,10 @@ export default {
 #wizard {
   width: 100%;
   min-height: 100px;
+}
+
+#wizard-nav-btns button {
+  cursor: pointer;
 }
 
 /* .wizard-selection {
@@ -1877,7 +1925,7 @@ export default {
   padding-left: 10px;
 }
 
-#skipToReview {
+#skipToReview, #cancelEdit {
   display: none;
 }
 </style>

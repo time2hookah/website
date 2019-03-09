@@ -9,7 +9,8 @@
       @click="toggleCartDropdown"
     >
       <i class="fa fa-circle fa-stack-1x" ></i>
-      <i id="shoppingCart-icon" class="fas fa-stack-2x" :class="orderItemCount ? 'fa-cart-plus': 'fa-shopping-cart'" ></i>
+      <!-- <i id="shoppingCart-icon" class="fas fa-stack-2x" :class="orderItemCount ? 'fa-cart-plus': 'fa-shopping-cart'" ></i> -->
+      <img id="shoppingCart-icon" class="fa fa-stack" src="../assets/img/hookah-shoppingCart.svg" alt="">
     </span>
 
     <!-- Dropdown -->
@@ -26,16 +27,30 @@
       <table id='shoppingCart-list' class='table-sm'>
             <tr v-if="!orderItemCount">No Items Yet</tr>
             <tr v-for="(item, i) in this.cart" :key='i'>
+              <td><div 
+                class='cartFruitBullet'
+                :style='
+                  (item.mixType.name == "Custom" ? 
+                  "background-color: black" +
+                  "; border: 8px solid " + cartBulletColors[item.hookahHeadType.name] 
+                  : 
+                  "background-color: " + cartBulletColors[item.hookahHeadType.name])
+                '
+              >
+              <!-- {{cartBulletColors[item.mixType.name]}} -->
+              <!-- (cartBulletColors[item.mixType.name] == "Custom" ? "3px solid black" : "")  -->
+                <!-- style='background-color:red' -->
+              </div></td>
               <td>{{item.mixType.name}}</td>
               <td>{{item.hookahHeadType.name}}</td>
-              <td> | ${{ item.price }}</td>
+              <td> <b>|</b> ${{ item.price }}</td>
               <td>X {{ item.quantity }}</td>
               <!-- <td>= {{ item.price * item.quantity}}</td> -->
               <!-- <td><i class="fas fa-times-circle"></i></td> -->
             </tr>
           </table>
 
-      <div class='mt-2'>
+      <div id='shoppingCart-info' class='mt-2' >
         <i class="fas fa-info-circle"></i> - Hover for more info
       </div>
 
@@ -142,6 +157,20 @@
   export default {
     name: "ShoppingCart",
     props: ['cart'],
+    data() {
+      return {
+        cartBulletColors: {
+          Apple: 'red',
+          Orange: 'orange',
+          Watermelon: 'pink',
+          Melon: 'lightgreen',
+          Pineapple: 'yellow',
+          'Ceramic Head': 'brown',
+          House: 'pink',
+          Custom: 'black'
+        }
+      }
+    },
     methods: {
       toggleCartDropdown () {
         $('#shoppingCart-dropdown').toggle();
@@ -149,7 +178,9 @@
     },
     computed: {
       orderItemCount() {
-        return this.cart.length;
+        return this.cart.reduce( (prev, cur) => {
+          return prev += cur.quantity;
+        }, 0);
       }, 
     }
   }
@@ -163,14 +194,17 @@
 
 #shoppingCart-btn {
   position: fixed;
-  cursor: pointer;
   bottom: 20px;
   left: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
   font-size: 50px;
-  padding: 15px 20px 15px 15px;
+  z-index: 1000;
+  /* padding: 15px 20px 15px 15px; */
   /* background: white;
   border-radius: 50%; */
-  z-index: 1000;
 }
 
 #shoppingCart-btn i.fa-circle {
@@ -185,9 +219,9 @@ i.fa-circle::before {
 }
 
 #shoppingCart-icon {
-  z-index: 10;
-  font-size: 65px;
-  top: 35px;
+  position: relative;
+  top: 12px;
+  font-size: 40px;
 }
 
 #shoppingCart-btn.drop-hover #shoppingCart-icon {
@@ -220,9 +254,21 @@ i.fa-circle::before {
   margin-left: 20px;
 }
 
+.cartFruitBullet {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+}
+
 #shoppingCart-list > li {
   position: relative;
   padding: 5px 0;
+}
+
+#shoppingCart-info {
+  font-size: 20px;
+  position: relative;
+  top: 3px;
 }
 
 #shoppingCart-goBtn {
@@ -242,7 +288,7 @@ i.fa-circle::before {
 
 .fa-stack[data-count]::after{
   position: absolute;
-  right: 0%;
+  /* right: 0%; */
   top: 1%;
   content:  attr(data-count);
   font-size: 30%;
